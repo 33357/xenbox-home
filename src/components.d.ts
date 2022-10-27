@@ -6,7 +6,6 @@ import '@vue/runtime-core'
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     BaseHeader: typeof import('./components/layouts/BaseHeader.vue')['default']
-    BaseSide: typeof import('./components/layouts/BaseSide.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
@@ -17,7 +16,12 @@ declare module '@vue/runtime-core' {
     ElMenuItemGroup: typeof import('element-plus/es')['ElMenuItemGroup']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElTag: typeof import('element-plus/es')['ElTag']
-    HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    Home: typeof import('./components/Home.vue')['default']
+    Mint: typeof import('./components/Mint.vue')['default']
+    Share: typeof import('./components/Share.vue')['default']
+    Stake: typeof import('./components/Stake.vue')['default']
+    Table: typeof import('./components/Table.vue')['default']
+    YEN: typeof import('./components/YEN.vue')['default']
   }
 }
 
