@@ -1,6 +1,6 @@
 <template>
-  <div class="content">
-    <img alt="Vue logo" class="element-plus-logo" src="../assets/logo.png" />
+  <div>
+    <img alt="Vue logo" src="../assets/logo.png" />
     <h1> Fair Minting + Halving + LP Staking </h1>
     <p>
       Second Generation XEN Mode
@@ -12,12 +12,21 @@
 </script>
 
 <style>
-.content {
-  text-align: center;
-  color: var(--ep-text-color-primary);
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.element-plus-logo {
-  width: 50%;
+.text {
+  font-size: 14px;
+}
+
+.item {
+  margin-bottom: 18px;
+}
+
+.box-card {
+  width: 480px;
 }
 </style>
