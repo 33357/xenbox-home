@@ -1,35 +1,41 @@
 <template>
   <el-config-provider namespace="ep">
-    <el-menu mode="horizontal">
-      <el-menu-item index="1" class="item" @click="changePage(1)"> YEN </el-menu-item>
-      <el-menu-item index="2" class="item" @click="changePage(2)"> Share </el-menu-item>
-      <el-menu-item index="3" class="item" @click="changePage(3)"> Mint </el-menu-item>
-      <el-menu-item index="4" class="item" @click="changePage(4)"> Stake </el-menu-item>
-      <el-menu-item index="5" class="item" @click="changePage(5)"> Table </el-menu-item>
-      <el-menu-item h="full" class="item" @click="toggleDark()">
+    <el-menu :default-active="activeIndex" mode="horizontal" :ellipsis="false" @select="handleSelect">
+      <el-menu-item index="1" class="item"> YEN </el-menu-item>
+      <el-menu-item index="2" class="item"> Share </el-menu-item>
+      <el-menu-item index="3" class="item"> Mint </el-menu-item>
+      <el-menu-item index="4" class="item"> Stake </el-menu-item>
+      <el-menu-item index="5" class="item"> Table </el-menu-item>
+      <el-menu-item h="full" class="item">
         <button class="border-none w-full bg-transparent cursor-pointer" style="height: var(--ep-menu-item-height);">
           <i inline-flex i="dark:ep-moon ep-sunny" />
         </button>
       </el-menu-item>
+      <div class="flex-grow" />
+      <el-menu-item index="6" class="item" @click="linkWeb3()"> Account </el-menu-item>
     </el-menu>
     <div>
-      <Home v-if="pageNum == 1"></Home>
-      <Mint v-if="pageNum == 2"></Mint>
-      <Share v-if="pageNum == 3"></Share>
-      <Stake v-if="pageNum == 4"></Stake>
-      <Table v-if="pageNum == 5"></Table>
+      <Home v-if="activeIndex == '1'"></Home>
+      <Share v-if="activeIndex == '2'"></Share>
+      <Mint v-if="activeIndex == '3'"></Mint>
+      <Stake v-if="activeIndex == '4'"></Stake>
+      <Table v-if="activeIndex == '5'"></Table>
     </div>
   </el-config-provider>
 </template>
 
 <script lang="ts" setup>
 import { useDark, useToggle } from '@vueuse/core'
+import { ref } from "vue"
 
-const toggleDark = useToggle(useDark())
-let pageNum = 1;
+const toggleDark = useToggle(useDark());
+const activeIndex = ref('1');
+const handleSelect = (key: string, keyPath: string[]) => {
+  activeIndex.value = key;
+}
 
-function changePage(num: number) {
-  pageNum = num;
+function linkWeb3() {
+
 }
 
 </script>
@@ -42,5 +48,9 @@ function changePage(num: number) {
 
 .item {
   width: 7%;
+}
+
+.flex-grow {
+  flex-grow: 1;
 }
 </style>

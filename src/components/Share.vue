@@ -1,36 +1,53 @@
 <template>
-    <div>
-      <el-card class="box-card">
-        <template #header>
-          <div class="card-header">
-            <span>Card name</span>
-            <el-button class="button" text>Operation button</el-button>
-          </div>
-        </template>
-        <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
-      </el-card>
-    </div>
-  </template>
+    <el-card class="box-card">
+        <el-form label-width="200px">
+            <el-form-item label="Total Share ETH Amount :">
+                <div> 123 ETH </div>
+            </el-form-item>
+            <el-form-item label="Share ETH Amount :">
+                <el-input v-model="shareAmount" type="string" />
+            </el-form-item>
+            <el-form-item label="Estimate Get YEN Amount :">
+                <div> 123 YEN </div>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="share()">Share</el-button>
+            </el-form-item>
+        </el-form>
+        <el-divider />
+        <el-form label-width="200px">
+            <el-form-item label="Total Locked Pair Amount :">
+                <div> 123 Pair </div>
+            </el-form-item>
+            <el-form-item label="Your Locked Pair Amount :">
+                <div> 123 Pair </div>
+            </el-form-item>
+            <el-form-item label="Your Claimable Pair Amount :">
+                <div> 123 Pair </div>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="claim()">Claim</el-button>
+            </el-form-item>
+        </el-form>
+    </el-card>
+</template>
   
-  <script setup lang="ts">
-  </script>
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const shareAmount = ref(0);
+
+function share() {
+
+}
+
+function claim() {
+
+}
+</script>
   
-  <style>
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .text {
-    font-size: 14px;
-  }
-  
-  .item {
-    margin-bottom: 18px;
-  }
-  
-  .box-card {
-    width: 480px;
-  }
-  </style>
+<style>
+.box-card {
+    width: 50%;
+}
+</style>
