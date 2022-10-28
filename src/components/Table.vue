@@ -32,5 +32,7 @@
   
   .box-card {
     width: 480px;
+    margin-left: auto;
+    margin-right: auto;
   }
   </style>

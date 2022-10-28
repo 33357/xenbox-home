@@ -2,10 +2,9 @@
     <div>
       <el-card class="box-card">
         <template #header>
-          <div class="card-header">
-            <span>Card name</span>
-            <el-button class="button" text>Operation button</el-button>
-          </div>
+            <div class="card-header">
+                <span>Stake Explanation</span>
+            </div>
         </template>
         <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
       </el-card>
@@ -22,15 +21,9 @@
     align-items: center;
   }
   
-  .text {
-    font-size: 14px;
-  }
-  
-  .item {
-    margin-bottom: 18px;
-  }
-  
   .box-card {
     width: 480px;
+    margin-left: auto;
+    margin-right: auto;
   }
   </style>

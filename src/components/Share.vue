@@ -1,5 +1,10 @@
 <template>
     <el-card class="box-card">
+        <template #header>
+            <div class="card-header">
+                <span>Share Explanation</span>
+            </div>
+        </template>
         <el-form label-width="200px">
             <el-form-item label="Total Share ETH Amount :">
                 <div> 123 ETH </div>
@@ -47,7 +52,15 @@ function claim() {
 </script>
   
 <style>
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .box-card {
     width: 50%;
+    margin-left: auto;
+    margin-right: auto;
 }
 </style>

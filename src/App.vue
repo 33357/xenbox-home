@@ -6,13 +6,13 @@
       <el-menu-item index="3" class="item"> Mint </el-menu-item>
       <el-menu-item index="4" class="item"> Stake </el-menu-item>
       <el-menu-item index="5" class="item"> Table </el-menu-item>
-      <el-menu-item h="full" class="item">
+      <el-menu-item index="-1" class="item" @click="toggleDark()">
         <button class="border-none w-full bg-transparent cursor-pointer" style="height: var(--ep-menu-item-height);">
           <i inline-flex i="dark:ep-moon ep-sunny" />
         </button>
       </el-menu-item>
       <div class="flex-grow" />
-      <el-menu-item index="6" class="item" @click="linkWeb3()"> Account </el-menu-item>
+      <el-menu-item index="-2" class="item" @click="linkWeb3()"> No Account </el-menu-item>
     </el-menu>
     <div>
       <Home v-if="activeIndex == '1'"></Home>
@@ -31,7 +31,9 @@ import { ref } from "vue"
 const toggleDark = useToggle(useDark());
 const activeIndex = ref('1');
 const handleSelect = (key: string, keyPath: string[]) => {
-  activeIndex.value = key;
+  if (Number(key) > 0) {
+    activeIndex.value = key;
+  }
 }
 
 function linkWeb3() {
