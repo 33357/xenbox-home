@@ -5,7 +5,8 @@
                 <span>Share Explanation</span>
             </div>
         </template>
-        <el-form label-width="200px">
+
+        <el-form label-width="50%">
             <el-form-item label="Total Share ETH Amount :">
                 <div> 123 ETH </div>
             </el-form-item>
@@ -19,8 +20,9 @@
                 <el-button type="primary" @click="share()">Share</el-button>
             </el-form-item>
         </el-form>
+
         <el-divider />
-        <el-form label-width="200px">
+        <el-form label-width="50%">
             <el-form-item label="Total Locked Pair Amount :">
                 <div> 123 Pair </div>
             </el-form-item>
