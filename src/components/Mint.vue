@@ -7,12 +7,9 @@
                 </div>
             </template>
 
-            <el-form label-width="50%">
-                <el-form-item label="Next Block Mint YEN Amount :">
+            <el-form label-width="30%">
+                <el-form-item label="Next Block Mint :">
                     <div> 50 YEN </div>
-                </el-form-item>
-                <el-form-item label="Halving Countdown :">
-                    <div> 10:10:10 </div>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="mint()">Mint</el-button>
@@ -20,8 +17,8 @@
             </el-form>
 
             <el-divider />
-            <el-form label-width="50%">
-                <el-form-item label="Minted YEN Amount :">
+            <el-form label-width="30%">
+                <el-form-item label="Minted :">
                     <div> 50 YEN </div>
                 </el-form-item>
                 <el-form-item>

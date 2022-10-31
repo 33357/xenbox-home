@@ -7,14 +7,11 @@
         </div>
       </template>
 
-      <el-form label-width="50%">
-        <el-form-item label="Pair Stake Amount :">
-          <div> 123 ETH </div>
-        </el-form-item>
+      <el-form label-width="30%">
         <el-form-item label="Predict APY :">
           <div> 100 % </div>
         </el-form-item>
-        <el-form-item label="stake Amount :">
+        <el-form-item label="stake :">
           <el-input v-model="stakeAmount" type="string" />
         </el-form-item>
         <el-form-item>
@@ -23,24 +20,24 @@
       </el-form>
 
       <el-divider />
-      <el-form label-width="50%">
-        <el-form-item label="Your Stake Amount :">
-          <div> 123 ETH </div>
+      <el-form label-width="30%">
+        <el-form-item label="Your Stake :">
+          <div> 123 Pair</div>
         </el-form-item>
-        <el-form-item label="withdrawStake Amount :">
+        <el-form-item label="withdrawStake :">
           <el-input v-model="withdrawStakeAmount" type="string" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="withdrawStake()">Claim</el-button>
+          <el-button type="primary" @click="withdrawStake()">WithdrawStake</el-button>
         </el-form-item>
       </el-form>
 
       <el-divider />
-      <el-form label-width="50%">
-        <el-form-item label="Your Reward Amount :">
+      <el-form label-width="30%">
+        <el-form-item label="Your Reward :">
           <div> 123 ETH </div>
         </el-form-item>
-        <el-form-item label="withdrawReward Amount :">
+        <el-form-item label="withdrawReward :">
           <el-input v-model="withdrawRewardAmount" type="string" />
         </el-form-item>
         <el-form-item>
@@ -49,7 +46,7 @@
       </el-form>
 
       <el-divider />
-      <el-form label-width="50%">
+      <el-form label-width="30%">
         <el-form-item>
           <el-button type="primary" @click="exit()">Exit</el-button>
         </el-form-item>

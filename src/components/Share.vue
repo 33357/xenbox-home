@@ -6,14 +6,14 @@
             </div>
         </template>
 
-        <el-form label-width="50%">
-            <el-form-item label="Total Share ETH Amount :">
+        <el-form label-width="30%">
+            <el-form-item label="Total Share ETH :">
                 <div> 123 ETH </div>
             </el-form-item>
-            <el-form-item label="Share ETH Amount :">
+            <el-form-item label="Share ETH :">
                 <el-input v-model="shareAmount" type="string" />
             </el-form-item>
-            <el-form-item label="Estimate Get YEN Amount :">
+            <el-form-item label="Estimate Get :">
                 <div> 123 YEN </div>
             </el-form-item>
             <el-form-item>
@@ -22,14 +22,14 @@
         </el-form>
 
         <el-divider />
-        <el-form label-width="50%">
-            <el-form-item label="Total Locked Pair Amount :">
+        <el-form label-width="30%">
+            <el-form-item label="Total Locked Pair :">
                 <div> 123 Pair </div>
             </el-form-item>
-            <el-form-item label="Your Locked Pair Amount :">
+            <el-form-item label="Your Locked Pair :">
                 <div> 123 Pair </div>
             </el-form-item>
-            <el-form-item label="Your Claimable Pair Amount :">
+            <el-form-item label="Your Claimable Pair :">
                 <div> 123 Pair </div>
             </el-form-item>
             <el-form-item>
