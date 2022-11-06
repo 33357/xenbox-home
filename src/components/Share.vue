@@ -10,6 +10,9 @@
             <el-form-item label="Total Share ETH :">
                 <div> 123 ETH </div>
             </el-form-item>
+            <el-form-item label="Total Share YEN :">
+                <div> 123 YEN </div>
+            </el-form-item>
             <el-form-item label="Share ETH :">
                 <el-input v-model="shareAmount" type="string" />
             </el-form-item>

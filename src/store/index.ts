@@ -1,6 +1,6 @@
 import { ActionTree, createStore } from "vuex";
 import { Ether } from "../network";
-import { config, log, retry, utils } from "../const";
+import { BigNumber, config, log, retry, utils } from "../const";
 import { YENClient } from "yen-sdk";
 import { toRaw } from "vue";
 
@@ -14,7 +14,24 @@ export interface Sync {
   appStart: boolean;
 }
 
-export interface Async {}
+export interface Async {
+  share: {
+    totalShareETH: BigNumber;
+    shareETH: BigNumber;
+    totalShareYEN: BigNumber;
+    totalLockedPair: BigNumber;
+    yourLockedPair: BigNumber;
+    yourClaimablePair: BigNumber;
+  };
+  mint: {
+    blockMint: BigNumber;
+    minted: BigNumber;
+  };
+  stake: {
+    yourStake: BigNumber;
+    yourReward: BigNumber;
+  };
+}
 
 export interface State {
   storage: Storage;
@@ -33,7 +50,24 @@ const state: State = {
     ether: new Ether(),
     appStart: false,
   },
-  async: {},
+  async: {
+    share: {
+      totalShareETH: BigNumber.from(0),
+      shareETH: BigNumber.from(0),
+      totalShareYEN: BigNumber.from(0),
+      totalLockedPair: BigNumber.from(0),
+      yourLockedPair: BigNumber.from(0),
+      yourClaimablePair: BigNumber.from(0),
+    },
+    mint: {
+      blockMint: BigNumber.from(0),
+      minted: BigNumber.from(0),
+    },
+    stake: {
+      yourStake: BigNumber.from(0),
+      yourReward: BigNumber.from(0),
+    },
+  },
 };
 
 const actions: ActionTree<State, State> = {
@@ -95,6 +129,8 @@ const actions: ActionTree<State, State> = {
       state.sync.avatarMap[address] = utils.get.avatar(address);
     }
   },
+
+  async getShareData({ state }) {},
 
   // async setPublishSortOfferIdList({ state }) {
   //   if (state.async.offerReward.offerLength == 0) {
