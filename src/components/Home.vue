@@ -8,7 +8,26 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { log } from "../const";
+import { mapState } from 'vuex'
+import { State } from '../store'
+
+export default {
+  data() {
+    return {
+      activeIndex: "1",
+    };
+  },
+  created() {
+  },
+  computed: mapState({
+        state: state => (state as State),
+    }),
+  methods: {
+  },
+};
+
 </script>
 
 <style>

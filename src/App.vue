@@ -21,7 +21,7 @@
       </el-menu-item>
       <div class="flex-grow" />
       <el-menu-item index="-2" class="item" @click="linkWeb3()">
-        No Account
+        {{ state.sync.userAddress }}
       </el-menu-item>
     </el-menu>
     <div>
@@ -37,6 +37,8 @@
 <script lang="ts">
 import { useDark, useToggle } from "@vueuse/core";
 import { log } from "./const";
+import { mapState } from "vuex";
+import { State } from "./store";
 
 export default {
   data() {
@@ -50,6 +52,9 @@ export default {
       await (this as any).$store.dispatch("start");
     });
   },
+  computed: mapState({
+    state: (state) => state as State,
+  }),
   methods: {
     toggleDark() {
       useToggle(useDark());
@@ -62,7 +67,6 @@ export default {
     linkWeb3() {},
   },
 };
-
 </script>
 
 <style>

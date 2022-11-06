@@ -1,23 +1,20 @@
-import { ActionTree, createStore } from 'vuex';
-import { Ether } from '../network';
-import { config, log, retry, utils } from '../const';
-import { YENClient } from 'yen-sdk';
-import { toRaw } from 'vue';
+import { ActionTree, createStore } from "vuex";
+import { Ether } from "../network";
+import { config, log, retry, utils } from "../const";
+import { YENClient } from "yen-sdk";
+import { toRaw } from "vue";
 
-export interface Storage {
-
-}
+export interface Storage {}
 
 export interface Sync {
   userAddress: string;
+  chainId: number;
   avatarMap: { [address: string]: string };
   ether: Ether;
   appStart: boolean;
 }
 
-export interface Async {
-
-}
+export interface Async {}
 
 export interface State {
   storage: Storage;
@@ -28,32 +25,29 @@ export interface State {
 const retryTime = 3;
 
 const state: State = {
-  storage: {
-
-  },
+  storage: {},
   sync: {
     userAddress: config.ZERO_ADDRESS,
+    chainId: 0,
     avatarMap: {},
     ether: new Ether(),
     appStart: false,
   },
-  async: {
-
-  },
+  async: {},
 };
 
 const actions: ActionTree<State, State> = {
   async start({ dispatch }) {
     try {
-      await dispatch('setSync');
-      await dispatch('watchStorage');
+      await dispatch("setSync");
+      await dispatch("watchStorage");
       // await Promise.all([
       //   dispatch('setPublishSortOfferIdList'),
       //   dispatch('setValueSortOfferIdList'),
       //   dispatch('setFinishSortOfferIdList')
       // ])
       state.sync.appStart = true;
-      log('app start success!');
+      log("app start success!");
     } catch (err) {
       log(err);
     }
@@ -62,26 +56,33 @@ const actions: ActionTree<State, State> = {
   async setSync({ state, dispatch }) {
     await toRaw(state.sync.ether).load();
     if (state.sync.ether.singer) {
-      state.sync.userAddress = await toRaw(state.sync.ether.singer).getAddress();
+      state.sync.userAddress = await toRaw(
+        state.sync.ether.singer
+      ).getAddress();
     }
-    await dispatch('setAvatar', { address: state.sync.userAddress });
+    const chainId = state.sync.ether.chainId;
+    if (chainId) {
+      state.sync.chainId = chainId;
+    }
+    await dispatch("setAvatar", { address: state.sync.userAddress });
   },
 
   async watchStorage({ state }) {
+    const storageName = `${state.sync.userAddress}_${state.sync.chainId}`;
     try {
-      const storage = localStorage.getItem(state.sync.userAddress);
+      const storage = localStorage.getItem(storageName);
       if (storage) {
         utils.deep.clone(state.storage, JSON.parse(storage));
       } else {
-        throw new Error('localStorage is empty!');
+        throw new Error("localStorage is empty!");
       }
     } catch (err) {
-      localStorage.setItem(state.sync.userAddress, JSON.stringify(state.storage));
+      localStorage.setItem(storageName, JSON.stringify(state.storage));
     }
     this.watch(
       (state) => state.storage,
       (storage) => {
-        localStorage.setItem(state.sync.userAddress, JSON.stringify(storage));
+        localStorage.setItem(storageName, JSON.stringify(storage));
       },
       {
         deep: true,
@@ -147,8 +148,6 @@ const actions: ActionTree<State, State> = {
   //     }
   //   }
   // },
-
-
 
   // async setPublisher({ state }, { address }) {
   //   if (!state.async.publisherMap[address]) {

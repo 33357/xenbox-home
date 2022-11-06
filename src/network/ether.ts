@@ -24,13 +24,11 @@ export class Ether {
       const provider = new ethers.providers.Web3Provider(ethereum);
       this.singer = provider.getSigner();
       this.chainId = await this.singer.getChainId();
-      if(DeploymentInfo[this.chainId]){
+      if (DeploymentInfo[this.chainId]) {
         this.yen = new YENClient(
           this.singer,
           DeploymentInfo[this.chainId]["TESTYEN"].proxyAddress
         );
-      }else{
-        throw "Not support network";
       }
     } else {
       throw "Please use a browser that supports web3 to open";
