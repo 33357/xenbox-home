@@ -9,7 +9,7 @@
 
       <el-form label-width="30%">
         <el-form-item label="Predict APY :">
-          <div> 100 % </div>
+          <div>100 %</div>
         </el-form-item>
         <el-form-item label="stake :">
           <el-input v-model="stakeAmount" type="string" />
@@ -22,26 +22,30 @@
       <el-divider />
       <el-form label-width="30%">
         <el-form-item label="Your Stake :">
-          <div> 123 Pair</div>
+          <div>{{ state.async.stake.person.stakeAmount }} Pair</div>
         </el-form-item>
         <el-form-item label="withdrawStake :">
           <el-input v-model="withdrawStakeAmount" type="string" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="withdrawStake()">WithdrawStake</el-button>
+          <el-button type="primary" @click="withdrawStake()"
+            >WithdrawStake</el-button
+          >
         </el-form-item>
       </el-form>
 
       <el-divider />
       <el-form label-width="30%">
         <el-form-item label="Your Reward :">
-          <div> 123 ETH </div>
+          <div>{{ state.async.stake.yourReward }} Pair</div>
         </el-form-item>
         <el-form-item label="withdrawReward :">
           <el-input v-model="withdrawRewardAmount" type="string" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="withdrawReward()">WithdrawReward</el-button>
+          <el-button type="primary" @click="withdrawReward()"
+            >WithdrawReward</el-button
+          >
         </el-form-item>
       </el-form>
 
@@ -51,35 +55,38 @@
           <el-button type="primary" @click="exit()">Exit</el-button>
         </el-form-item>
       </el-form>
-
     </el-card>
   </div>
 </template>
-  
-<script setup lang="ts">
-import { ref } from 'vue'
 
-const stakeAmount = ref(0);
-const withdrawStakeAmount = ref(0);
-const withdrawRewardAmount = ref(0);
+<script lang="ts">
+import { log } from "../const";
+import { mapState } from "vuex";
+import { State } from "../store";
 
-function stake() {
-
-}
-
-function withdrawStake() {
-
-}
-
-function withdrawReward() {
-
-}
-
-function exit() {
-
-}
+export default {
+  data() {
+    return {
+      stakeAmount: 0,
+      withdrawStakeAmount: 0,
+      withdrawRewardAmount: 0,
+    };
+  },
+  async created() {
+    await (this as any).$store.dispatch("getStakeData");
+  },
+  computed: mapState({
+    state: (state) => state as State,
+  }),
+  methods: {
+    stake() {},
+    withdrawStake() {},
+    withdrawReward() {},
+    exit() {},
+  },
+};
 </script>
-  
+
 <style>
 .card-header {
   display: flex;

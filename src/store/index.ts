@@ -1,7 +1,7 @@
 import { ActionTree, createStore } from "vuex";
 import { Ether } from "../network";
-import { BigNumber, config, log, retry, utils } from "../const";
-import { YENClient } from "yen-sdk";
+import { BigNumber, config, log, utils } from "../const";
+import { YENModel } from "yen-sdk";
 import { toRaw } from "vue";
 
 export interface Storage {}
@@ -17,18 +17,17 @@ export interface Sync {
 export interface Async {
   share: {
     totalShareETH: BigNumber;
-    shareETH: BigNumber;
     totalShareYEN: BigNumber;
     totalLockedPair: BigNumber;
-    yourLockedPair: BigNumber;
     yourClaimablePair: BigNumber;
+    sharer: YENModel.Sharer;
   };
   mint: {
-    blockMint: BigNumber;
-    minted: BigNumber;
+    nextBlockMint: BigNumber;
+    yourMinted: BigNumber;
   };
   stake: {
-    yourStake: BigNumber;
+    person: YENModel.Person;
     yourReward: BigNumber;
   };
 }
@@ -38,8 +37,6 @@ export interface State {
   sync: Sync;
   async: Async;
 }
-
-const retryTime = 3;
 
 const state: State = {
   storage: {},
@@ -53,18 +50,25 @@ const state: State = {
   async: {
     share: {
       totalShareETH: BigNumber.from(0),
-      shareETH: BigNumber.from(0),
       totalShareYEN: BigNumber.from(0),
       totalLockedPair: BigNumber.from(0),
-      yourLockedPair: BigNumber.from(0),
       yourClaimablePair: BigNumber.from(0),
+      sharer: {
+        shareAmount: BigNumber.from(0),
+        getAmount: BigNumber.from(0),
+      },
     },
     mint: {
-      blockMint: BigNumber.from(0),
-      minted: BigNumber.from(0),
+      nextBlockMint: BigNumber.from(0),
+      yourMinted: BigNumber.from(0),
     },
     stake: {
-      yourStake: BigNumber.from(0),
+      person: {
+        blockIndex: BigNumber.from(0),
+        stakeAmount: BigNumber.from(0),
+        rewardAmount: BigNumber.from(0),
+        lastPerStakeRewardAmount: BigNumber.from(0),
+      },
       yourReward: BigNumber.from(0),
     },
   },
@@ -75,11 +79,6 @@ const actions: ActionTree<State, State> = {
     try {
       await dispatch("setSync");
       await dispatch("watchStorage");
-      // await Promise.all([
-      //   dispatch('setPublishSortOfferIdList'),
-      //   dispatch('setValueSortOfferIdList'),
-      //   dispatch('setFinishSortOfferIdList')
-      // ])
       state.sync.appStart = true;
       log("app start success!");
     } catch (err) {
@@ -130,7 +129,48 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async getShareData({ state }) {},
+  async getShareData({ state }) {
+    if (state.sync.ether.yen) {
+      state.async.share.totalShareETH = await toRaw(
+        state.sync.ether.yen
+      ).shareEthAmount();
+      state.async.share.totalShareYEN = await toRaw(
+        state.sync.ether.yen
+      ).shareTokenAmount();
+      state.async.share.totalLockedPair = await toRaw(
+        state.sync.ether.yen
+      ).sharePairAmount();
+      state.async.share.yourClaimablePair = await toRaw(
+        state.sync.ether.yen
+      ).maxGetAmount(state.sync.userAddress);
+      state.async.share.sharer = await toRaw(state.sync.ether.yen).sharerMap(
+        state.sync.userAddress
+      );
+      log(state.async.share);
+    }
+  },
+
+  async getMintData({ state }) {
+    if (state.sync.ether.yen) {
+      state.async.mint.nextBlockMint = await toRaw(
+        state.sync.ether.yen
+      ).getMintAmount();
+      state.async.mint.yourMinted = await toRaw(
+        state.sync.ether.yen
+      ).getClaimAmount(state.sync.userAddress);
+    }
+  },
+
+  async getStakeData({ state }) {
+    if (state.sync.ether.yen) {
+      state.async.stake.person = await toRaw(state.sync.ether.yen).personMap(
+        state.sync.userAddress
+      );
+      state.async.stake.yourReward = await toRaw(
+        state.sync.ether.yen
+      ).getRewardAmount(state.sync.userAddress);
+    }
+  },
 
   // async setPublishSortOfferIdList({ state }) {
   //   if (state.async.offerReward.offerLength == 0) {
