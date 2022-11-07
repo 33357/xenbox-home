@@ -45,8 +45,12 @@ export default {
     state: (state) => state as State,
   }),
   methods: {
-    mint() {},
-    claim() {},
+    async mint() {
+      await (this as any).$store.dispatch("mint");
+    },
+    async claim() {
+      await (this as any).$store.dispatch("claim");
+    },
   },
 };
 </script>

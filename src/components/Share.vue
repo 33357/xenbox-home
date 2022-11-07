@@ -36,7 +36,7 @@
         <div>{{ state.async.share.sharer.getAmount }} Pair</div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="claim()">Claim</el-button>
+        <el-button type="primary" @click="get()">Get</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -61,7 +61,7 @@ export default {
   }),
   methods: {
     share() {},
-    claim() {},
+    get() {},
   },
 };
 </script>

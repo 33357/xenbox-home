@@ -27,7 +27,7 @@ export class Ether {
       if (DeploymentInfo[this.chainId]) {
         this.yen = new YENClient(
           this.singer,
-          DeploymentInfo[this.chainId]["TESTYEN"].proxyAddress
+          DeploymentInfo[this.chainId]["YEN"].proxyAddress
         );
       }
     } else {

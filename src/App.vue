@@ -20,7 +20,7 @@
         </button>
       </el-menu-item>
       <div class="flex-grow" />
-      <el-menu-item index="-2" class="item" @click="linkWeb3()">
+      <el-menu-item index="-2" class="item2">
         {{ state.sync.userAddress }}
       </el-menu-item>
     </el-menu>
@@ -44,6 +44,7 @@ export default {
   data() {
     return {
       activeIndex: "1",
+      toggleDark :useToggle(useDark())
     };
   },
   created() {
@@ -56,15 +57,11 @@ export default {
     state: (state) => state as State,
   }),
   methods: {
-    toggleDark() {
-      useToggle(useDark());
-    },
     handleSelect(key: string) {
       if (Number(key) > 0) {
         (this as any).activeIndex = key;
       }
     },
-    linkWeb3() {},
   },
 };
 </script>
@@ -77,6 +74,10 @@ export default {
 
 .item {
   width: 7%;
+}
+
+.item2 {
+  width: 25%;
 }
 
 .flex-grow {

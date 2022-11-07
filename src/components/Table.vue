@@ -11,17 +11,17 @@
           <div>50000000 YEN</div>
         </el-form-item>
         <el-form-item label="TotalSupply :">
-          <div>{{ state.async.table.totalSupply }}YEN</div>
+          <div>{{ state.async.table.totalSupply }} YEN</div>
         </el-form-item>
         <el-form-item label="Halving Countdown :">
-          <div>10:10:10</div>
+          <div>{{ state.async.table.halvingBlock }}</div>
         </el-form-item>
-        <el-form-item label="Mint Account :">
+        <!-- <el-form-item label="Mint Account :">
           <div>10000</div>
         </el-form-item>
         <el-form-item label="Pair TVL">
           <div>10000 ETH</div>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
     </el-card>
   </div>
