@@ -11,7 +11,7 @@
           <div>50000000 YEN</div>
         </el-form-item>
         <el-form-item label="TotalSupply :">
-          <div>1000 YEN</div>
+          <div>{{ state.async.table.totalSupply }}YEN</div>
         </el-form-item>
         <el-form-item label="Halving Countdown :">
           <div>10:10:10</div>
@@ -26,10 +26,26 @@
     </el-card>
   </div>
 </template>
-  
-<script setup lang="ts">
+
+<script lang="ts">
+import { log } from "../const";
+import { mapState } from "vuex";
+import { State } from "../store";
+
+export default {
+  data() {
+    return {};
+  },
+  async created() {
+    await (this as any).$store.dispatch("getTableData");
+  },
+  computed: mapState({
+    state: (state) => state as State,
+  }),
+  methods: {},
+};
 </script>
-  
+
 <style>
 .card-header {
   display: flex;

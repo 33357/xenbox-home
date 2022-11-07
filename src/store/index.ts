@@ -30,6 +30,10 @@ export interface Async {
     person: YENModel.Person;
     yourReward: BigNumber;
   };
+  table: {
+    totalSupply: BigNumber;
+    halvingBlock: BigNumber;
+  };
 }
 
 export interface State {
@@ -70,6 +74,10 @@ const state: State = {
         lastPerStakeRewardAmount: BigNumber.from(0),
       },
       yourReward: BigNumber.from(0),
+    },
+    table: {
+      totalSupply: BigNumber.from(0),
+      halvingBlock: BigNumber.from(0),
     },
   },
 };
@@ -169,6 +177,17 @@ const actions: ActionTree<State, State> = {
       state.async.stake.yourReward = await toRaw(
         state.sync.ether.yen
       ).getRewardAmount(state.sync.userAddress);
+    }
+  },
+
+  async getTableData({ state }) {
+    if (state.sync.ether.yen) {
+      state.async.table.totalSupply = await toRaw(
+        state.sync.ether.yen
+      ).totalSupply();
+      state.async.table.halvingBlock = await toRaw(
+        state.sync.ether.yen
+      ).halvingBlock();
     }
   },
 
