@@ -175,23 +175,23 @@ const format = {
   },
 };
 
-const go = {
-  address(chainId: number, address: string) {
-    window.open(COMMON.CHAIN[chainId].SCAN_URL + "address/" + address);
-  },
+// const go = {
+//   address(chainId: number, address: string) {
+//     window.open(config.CHAIN[chainId].SCAN_URL + "address/" + address);
+//   },
 
-  token(chainId: number, address: string) {
-    window.open(COMMON.CHAIN[chainId].SCAN_URL + "token/" + address);
-  },
+//   token(chainId: number, address: string) {
+//     window.open(COMMON.CHAIN[chainId].SCAN_URL + "token/" + address);
+//   },
 
-  tx(chainId: number, tx: string) {
-    window.open(COMMON.CHAIN[chainId].SCAN_URL + "tx/" + tx);
-  },
+//   tx(chainId: number, tx: string) {
+//     window.open(COMMON.CHAIN[chainId].SCAN_URL + "tx/" + tx);
+//   },
 
-  accounts(chainId: number) {
-    window.open(COMMON.CHAIN[chainId].SCAN_URL + "accounts");
-  },
-};
+//   accounts(chainId: number) {
+//     window.open(COMMON.CHAIN[chainId].SCAN_URL + "accounts");
+//   },
+// };
 
 export const utils = {
   deep,
@@ -199,7 +199,7 @@ export const utils = {
   is,
   have,
   format,
-  go,
+  // go,
   convert,
   etherUtils,
 };
