@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       activeIndex: "1",
-      toggleDark :useToggle(useDark())
+      toggleDark: useToggle(useDark()),
     };
   },
   created() {
