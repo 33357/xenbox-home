@@ -22,7 +22,7 @@
             }}
           </div>
         </el-form-item>
-        <el-form-item label="Halving Countdown :">
+        <el-form-item label="Halving Block :">
           <div>{{ state.async.table.halvingBlock }}</div>
         </el-form-item>
         <!-- <el-form-item label="Mint Account :">

@@ -19,6 +19,18 @@
           }}
         </div>
       </el-form-item>
+      <el-form-item label="Your Share ETH :">
+        <div>
+          {{
+            utils.format.balance(
+              Number(state.async.share.sharer.shareAmount),
+              18,
+              "ETH",
+              5
+            )
+          }}
+        </div>
+      </el-form-item>
       <el-form-item label="Total Share YEN :">
         <div>
           {{
@@ -31,11 +43,44 @@
           }}
         </div>
       </el-form-item>
+      <el-form-item label="Your Share YEN :">
+        <div v-if="!state.async.share.totalShareETH.eq(0)">
+          {{
+            utils.format.balance(
+              Number(
+                state.async.share.totalShareYEN
+                  .mul(state.async.share.sharer.shareAmount)
+                  .div(state.async.share.totalShareETH)
+              ),
+              18,
+              "YEN",
+              5
+            )
+          }}
+        </div>
+      </el-form-item>
       <el-form-item label="Share ETH :">
         <el-input v-model="shareAmount" type="string" />
       </el-form-item>
       <el-form-item label="Estimate Get :">
-        <div>0 YEN</div>
+        <div v-if="!state.async.share.totalShareETH.eq(0)">
+          {{
+            utils.format.balance(
+              Number(
+                state.async.share.totalShareYEN
+                  .mul((shareAmount * 10 ** 18).toString())
+                  .div(
+                    state.async.share.totalShareETH.add(
+                      (shareAmount * 10 ** 18).toString()
+                    )
+                  )
+              ),
+              18,
+              "YEN",
+              5
+            )
+          }}
+        </div>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="share()">Share</el-button>
@@ -49,18 +94,6 @@
           {{
             utils.format.balance(
               Number(state.async.share.totalLockedPair),
-              18,
-              "Pair",
-              5
-            )
-          }}
-        </div>
-      </el-form-item>
-      <el-form-item label="Your Locked Pair :">
-        <div>
-          {{
-            utils.format.balance(
-              Number(state.async.share.sharer.shareAmount),
               18,
               "Pair",
               5

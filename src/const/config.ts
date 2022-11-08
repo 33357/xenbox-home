@@ -7,12 +7,12 @@ export interface Chain {
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 const CHAIN: { [CHAIN_ID: string]: Chain } = {
-  56: {
+  1: {
     SCAN_URL: "https://bscscan.com/",
     CHAIN_NAME: "bsc",
     NODE_URL: "https://bsc-dataseed1.binance.org",
   },
-  97: {
+  5: {
     SCAN_URL: "https://testnet.bscscan.com/",
     CHAIN_NAME: "bscTest",
     NODE_URL: "https://data-seed-prebsc-1-s1.binance.org:8545/",
