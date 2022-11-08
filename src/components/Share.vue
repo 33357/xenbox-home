@@ -8,16 +8,34 @@
 
     <el-form label-width="30%">
       <el-form-item label="Total Share ETH :">
-        <div>{{ state.async.share.totalShareETH }} ETH</div>
+        <div>
+          {{
+            utils.format.balance(
+              Number(state.async.share.totalShareETH),
+              18,
+              "ETH",
+              5
+            )
+          }}
+        </div>
       </el-form-item>
       <el-form-item label="Total Share YEN :">
-        <div>{{ state.async.share.totalShareYEN }} YEN</div>
+        <div>
+          {{
+            utils.format.balance(
+              Number(state.async.share.totalShareYEN),
+              18,
+              "YEN",
+              5
+            )
+          }}
+        </div>
       </el-form-item>
       <el-form-item label="Share ETH :">
         <el-input v-model="shareAmount" type="string" />
       </el-form-item>
       <el-form-item label="Estimate Get :">
-        <div>123 YEN</div>
+        <div>0 YEN</div>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="share()">Share</el-button>
@@ -27,13 +45,40 @@
     <el-divider />
     <el-form label-width="30%">
       <el-form-item label="Total Locked Pair :">
-        <div>{{ state.async.share.totalLockedPair }} Pair</div>
+        <div>
+          {{
+            utils.format.balance(
+              Number(state.async.share.totalLockedPair),
+              18,
+              "Pair",
+              5
+            )
+          }}
+        </div>
       </el-form-item>
       <el-form-item label="Your Locked Pair :">
-        <div>{{ state.async.share.sharer.shareAmount }} Pair</div>
+        <div>
+          {{
+            utils.format.balance(
+              Number(state.async.share.sharer.shareAmount),
+              18,
+              "Pair",
+              5
+            )
+          }}
+        </div>
       </el-form-item>
       <el-form-item label="Your Claimable Pair :">
-        <div>{{ state.async.share.sharer.getAmount }} Pair</div>
+        <div>
+          {{
+            utils.format.balance(
+              Number(state.async.share.sharer.getAmount),
+              18,
+              "Pair",
+              5
+            )
+          }}
+        </div>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="get()">Get</el-button>
@@ -43,7 +88,7 @@
 </template>
 
 <script lang="ts">
-import { log } from "../const";
+import { log, utils } from "../const";
 import { mapState } from "vuex";
 import { State } from "../store";
 
@@ -51,6 +96,7 @@ export default {
   data() {
     return {
       shareAmount: 0,
+      utils: utils,
     };
   },
   async created() {

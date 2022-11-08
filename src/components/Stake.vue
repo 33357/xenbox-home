@@ -22,7 +22,16 @@
       <el-divider />
       <el-form label-width="30%">
         <el-form-item label="Your Stake :">
-          <div>{{ state.async.stake.person.stakeAmount }} Pair</div>
+          <div>
+            {{
+              utils.format.balance(
+                Number(state.async.stake.person.stakeAmount),
+                18,
+                "Pair",
+                5
+              )
+            }}
+          </div>
         </el-form-item>
         <el-form-item label="withdrawStake :">
           <el-input v-model="withdrawStakeAmount" type="string" />
@@ -37,7 +46,16 @@
       <el-divider />
       <el-form label-width="30%">
         <el-form-item label="Your Reward :">
-          <div>{{ state.async.stake.yourReward }} Pair</div>
+          <div>
+            {{
+              utils.format.balance(
+                Number(state.async.stake.yourReward),
+                18,
+                "Pair",
+                5
+              )
+            }}
+          </div>
         </el-form-item>
         <el-form-item label="withdrawReward :">
           <el-input v-model="withdrawRewardAmount" type="string" />
@@ -60,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { log } from "../const";
+import { log, utils } from "../const";
 import { mapState } from "vuex";
 import { State } from "../store";
 
@@ -70,6 +88,7 @@ export default {
       stakeAmount: 0,
       withdrawStakeAmount: 0,
       withdrawRewardAmount: 0,
+      utils: utils,
     };
   },
   async created() {

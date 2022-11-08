@@ -9,7 +9,16 @@
 
       <el-form label-width="30%">
         <el-form-item label="Next Block Mint :">
-          <div>{{ state.async.mint.nextBlockMint }} YEN</div>
+          <div>
+            {{
+              utils.format.balance(
+                Number(state.async.mint.nextBlockMint),
+                18,
+                "YEN",
+                5
+              )
+            }}
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="mint()">Mint</el-button>
@@ -19,7 +28,16 @@
       <el-divider />
       <el-form label-width="30%">
         <el-form-item label="Minted :">
-          <div>{{ state.async.mint.yourMinted }} YEN</div>
+          <div>
+            {{
+              utils.format.balance(
+                Number(state.async.mint.yourMinted),
+                18,
+                "YEN",
+                5
+              )
+            }}
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="claim()">Claim</el-button>
@@ -30,13 +48,15 @@
 </template>
 
 <script lang="ts">
-import { log } from "../const";
+import { log, utils } from "../const";
 import { mapState } from "vuex";
 import { State } from "../store";
 
 export default {
   data() {
-    return {};
+    return {
+      utils: utils,
+    };
   },
   async created() {
     await (this as any).$store.dispatch("getMintData");

@@ -11,7 +11,16 @@
           <div>50000000 YEN</div>
         </el-form-item>
         <el-form-item label="TotalSupply :">
-          <div>{{ state.async.table.totalSupply }} YEN</div>
+          <div>
+            {{
+              utils.format.balance(
+                Number(state.async.table.totalSupply),
+                18,
+                "YEN",
+                5
+              )
+            }}
+          </div>
         </el-form-item>
         <el-form-item label="Halving Countdown :">
           <div>{{ state.async.table.halvingBlock }}</div>
@@ -28,13 +37,15 @@
 </template>
 
 <script lang="ts">
-import { log } from "../const";
+import { log, utils } from "../const";
 import { mapState } from "vuex";
 import { State } from "../store";
 
 export default {
   data() {
-    return {};
+    return {
+      utils: utils,
+    };
   },
   async created() {
     await (this as any).$store.dispatch("getTableData");

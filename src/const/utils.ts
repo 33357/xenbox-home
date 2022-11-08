@@ -1,6 +1,6 @@
 import Identicon from "identicon.js";
 import moment from "moment";
-import { utils as etherUtils } from "ethers";
+import { BigNumber, utils as etherUtils } from "ethers";
 
 let lastTime: number;
 
