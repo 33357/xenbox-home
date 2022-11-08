@@ -68,12 +68,8 @@
             utils.format.balance(
               Number(
                 state.async.share.totalShareYEN
-                  .mul((shareAmount * 10 ** 18).toString())
-                  .div(
-                    state.async.share.totalShareETH.add(
-                      (shareAmount * 10 ** 18).toString()
-                    )
-                  )
+                  .mul(shareAmountBig)
+                  .div(state.async.share.totalShareETH.add(shareAmountBig))
               ),
               18,
               "YEN",
@@ -121,7 +117,7 @@
 </template>
 
 <script lang="ts">
-import { log, utils } from "../const";
+import { log, utils, BigNumber } from "../const";
 import { mapState } from "vuex";
 import { State } from "../store";
 
@@ -129,11 +125,19 @@ export default {
   data() {
     return {
       shareAmount: 0,
+      shareAmountBig: BigNumber.from(0),
       utils: utils,
     };
   },
   async created() {
     await (this as any).$store.dispatch("getShareData");
+  },
+  watch: {
+    shareAmount(value) {
+      (this as any).shareAmountBig = BigNumber.from(value * 10 ** 9).mul(
+        10 ** 9
+      );
+    },
   },
   computed: mapState({
     state: (state) => state as State,
