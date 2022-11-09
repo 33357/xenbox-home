@@ -143,15 +143,18 @@ const actions: ActionTree<State, State> = {
         state.async.share.totalShareETH,
         state.async.share.totalShareYEN,
         state.async.share.totalLockedPair,
-        state.async.share.yourClaimablePair,
         state.async.share.sharer,
       ] = await Promise.all([
         toRaw(state.sync.ether.yen).shareEthAmount(),
         toRaw(state.sync.ether.yen).shareTokenAmount(),
         toRaw(state.sync.ether.yen).sharePairAmount(),
-        toRaw(state.sync.ether.yen).maxGetAmount(state.sync.userAddress),
         toRaw(state.sync.ether.yen).sharerMap(state.sync.userAddress),
       ]);
+      if (state.async.share.totalShareETH.gt(0)) {
+        state.async.share.yourClaimablePair = await toRaw(
+          state.sync.ether.yen
+        ).maxGetAmount(state.sync.userAddress);
+      }
     }
   },
 
@@ -194,6 +197,18 @@ const actions: ActionTree<State, State> = {
   async claim({ state }) {
     if (state.sync.ether.yen) {
       await toRaw(state.sync.ether.yen).claim();
+    }
+  },
+
+  async share({ state }, shareAmount: BigNumber) {
+    if (state.sync.ether.yen) {
+      await toRaw(state.sync.ether.yen).share({ value: shareAmount });
+    }
+  },
+
+  async get({ state }, getAmount: BigNumber) {
+    if (state.sync.ether.yen) {
+      await toRaw(state.sync.ether.yen).get(getAmount);
     }
   },
 };

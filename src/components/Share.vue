@@ -44,14 +44,16 @@
         </div>
       </el-form-item>
       <el-form-item label="Your Share YEN :">
-        <div v-if="!state.async.share.totalShareETH.eq(0)">
+        <div>
           {{
             utils.format.balance(
-              Number(
-                state.async.share.totalShareYEN
-                  .mul(state.async.share.sharer.shareAmount)
-                  .div(state.async.share.totalShareETH)
-              ),
+              state.async.share.totalShareETH.eq(0)
+                ? 0
+                : Number(
+                    state.async.share.totalShareYEN
+                      .mul(state.async.share.sharer.shareAmount)
+                      .div(state.async.share.totalShareETH)
+                  ),
               18,
               "YEN",
               5
@@ -63,14 +65,16 @@
         <el-input v-model="shareAmount" type="string" />
       </el-form-item>
       <el-form-item label="Estimate Get :">
-        <div v-if="!state.async.share.totalShareETH.eq(0)">
+        <div>
           {{
             utils.format.balance(
-              Number(
-                state.async.share.totalShareYEN
-                  .mul(shareAmountBig)
-                  .div(state.async.share.totalShareETH.add(shareAmountBig))
-              ),
+              state.async.share.totalShareETH.add(shareAmountBig).eq(0)
+                ? 0
+                : Number(
+                    state.async.share.totalShareYEN
+                      .mul(shareAmountBig)
+                      .div(state.async.share.totalShareETH.add(shareAmountBig))
+                  ),
               18,
               "YEN",
               5
@@ -143,8 +147,15 @@ export default {
     state: (state) => state as State,
   }),
   methods: {
-    share() {},
-    get() {},
+    async share() {
+      await (this as any).$store.dispatch(
+        "share",
+        (this as any).shareAmountBig
+      );
+    },
+    async get() {
+      await (this as any).$store.dispatch("get");
+    },
   },
 };
 </script>
