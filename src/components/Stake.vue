@@ -102,14 +102,14 @@ export default {
       );
     },
     withdrawStakeAmount(value) {
-      (this as any).withdrawStakeAmountBig = BigNumber.from(value * 10 ** 9).mul(
-        10 ** 9
-      );
+      (this as any).withdrawStakeAmountBig = BigNumber.from(
+        value * 10 ** 9
+      ).mul(10 ** 9);
     },
     withdrawRewardAmount(value) {
-      (this as any).withdrawRewardAmountBig = BigNumber.from(value * 10 ** 9).mul(
-        10 ** 9
-      );
+      (this as any).withdrawRewardAmountBig = BigNumber.from(
+        value * 10 ** 9
+      ).mul(10 ** 9);
     },
   },
   computed: mapState({
@@ -117,9 +117,7 @@ export default {
   }),
   methods: {
     async approve() {
-      await (this as any).$store.dispatch(
-        "approve"
-      );
+      await (this as any).$store.dispatch("approve");
     },
     async stake() {
       await (this as any).$store.dispatch(
@@ -134,14 +132,10 @@ export default {
       );
     },
     async withdrawReward() {
-      await (this as any).$store.dispatch(
-        "withdrawReward"
-      );
+      await (this as any).$store.dispatch("withdrawReward");
     },
     async exit() {
-      await (this as any).$store.dispatch(
-        "exit"
-      );
+      await (this as any).$store.dispatch("exit");
     },
   },
 };

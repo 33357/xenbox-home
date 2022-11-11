@@ -227,10 +227,11 @@ const actions: ActionTree<State, State> = {
   },
 
   async approve({ state }) {
-    if (state.sync.ether.pair&&state.sync.ether.yen) {
-      await toRaw(
-        state.sync.ether.pair
-      ).approve(toRaw(state.sync.ether.yen).address(),BigNumber.from(-1))
+    if (state.sync.ether.pair && state.sync.ether.yen) {
+      await toRaw(state.sync.ether.pair).approve(
+        toRaw(state.sync.ether.yen).address(),
+        BigNumber.from(-1)
+      );
     }
   },
 
