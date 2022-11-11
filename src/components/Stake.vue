@@ -15,6 +15,9 @@
           <el-input v-model="stakeAmount" type="string" />
         </el-form-item>
         <el-form-item>
+          <el-button type="primary" @click="approve()">Approve</el-button>
+        </el-form-item>
+        <el-form-item>
           <el-button type="primary" @click="stake()">Stake</el-button>
         </el-form-item>
       </el-form>
@@ -57,9 +60,6 @@
             }}
           </div>
         </el-form-item>
-        <el-form-item label="withdrawReward :">
-          <el-input v-model="withdrawRewardAmount" type="string" />
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="withdrawReward()"
             >WithdrawReward</el-button
@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { log, utils } from "../const";
+import { log, utils, BigNumber } from "../const";
 import { mapState } from "vuex";
 import { State } from "../store";
 
@@ -86,22 +86,63 @@ export default {
   data() {
     return {
       stakeAmount: 0,
+      stakeAmountBig: BigNumber.from(0),
       withdrawStakeAmount: 0,
-      withdrawRewardAmount: 0,
+      withdrawStakeAmountBig: BigNumber.from(0),
       utils: utils,
     };
   },
   async created() {
     await (this as any).$store.dispatch("getStakeData");
   },
+  watch: {
+    stakeAmount(value) {
+      (this as any).stakeAmountBig = BigNumber.from(value * 10 ** 9).mul(
+        10 ** 9
+      );
+    },
+    withdrawStakeAmount(value) {
+      (this as any).withdrawStakeAmountBig = BigNumber.from(value * 10 ** 9).mul(
+        10 ** 9
+      );
+    },
+    withdrawRewardAmount(value) {
+      (this as any).withdrawRewardAmountBig = BigNumber.from(value * 10 ** 9).mul(
+        10 ** 9
+      );
+    },
+  },
   computed: mapState({
     state: (state) => state as State,
   }),
   methods: {
-    stake() {},
-    withdrawStake() {},
-    withdrawReward() {},
-    exit() {},
+    async approve() {
+      await (this as any).$store.dispatch(
+        "approve"
+      );
+    },
+    async stake() {
+      await (this as any).$store.dispatch(
+        "stake",
+        (this as any).stakeAmountBig
+      );
+    },
+    async withdrawStake() {
+      await (this as any).$store.dispatch(
+        "stake",
+        (this as any).withdrawStakeAmountBig
+      );
+    },
+    async withdrawReward() {
+      await (this as any).$store.dispatch(
+        "withdrawReward"
+      );
+    },
+    async exit() {
+      await (this as any).$store.dispatch(
+        "exit"
+      );
+    },
   },
 };
 </script>

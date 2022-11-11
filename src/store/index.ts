@@ -211,6 +211,36 @@ const actions: ActionTree<State, State> = {
       await toRaw(state.sync.ether.yen).get(getAmount);
     }
   },
+
+  async approve({ state }) {
+    if (state.sync.ether.yen) {
+      await toRaw(state.sync.ether.yen).exit();
+    }
+  },
+
+  async stake({ state }, stakeAmount: BigNumber) {
+    if (state.sync.ether.yen) {
+      await toRaw(state.sync.ether.yen).stake(stakeAmount);
+    }
+  },
+
+  async withdrawStake({ state }, withdrawStakeAmount: BigNumber) {
+    if (state.sync.ether.yen) {
+      await toRaw(state.sync.ether.yen).withdrawStake(withdrawStakeAmount);
+    }
+  },
+
+  async withdrawReward({ state }) {
+    if (state.sync.ether.yen) {
+      await toRaw(state.sync.ether.yen).withdrawReward();
+    }
+  },
+
+  async exit({ state }) {
+    if (state.sync.ether.yen) {
+      await toRaw(state.sync.ether.yen).exit();
+    }
+  },
 };
 
 export default createStore({
