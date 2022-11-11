@@ -3,6 +3,7 @@ import { Ether } from "../network";
 import { BigNumber, config, log, utils } from "../const";
 import { YENModel } from "yen-sdk";
 import { toRaw } from "vue";
+import { ethers } from "ethers";
 
 export interface Storage {}
 
@@ -28,6 +29,7 @@ export interface Async {
   };
   stake: {
     person: YENModel.Person;
+    yourPairAmount: BigNumber;
     yourReward: BigNumber;
   };
   table: {
@@ -73,6 +75,7 @@ const state: State = {
         rewardAmount: BigNumber.from(0),
         lastPerStakeRewardAmount: BigNumber.from(0),
       },
+      yourPairAmount: BigNumber.from(0),
       yourReward: BigNumber.from(0),
     },
     table: {
@@ -175,6 +178,17 @@ const actions: ActionTree<State, State> = {
           toRaw(state.sync.ether.yen).personMap(state.sync.userAddress),
           toRaw(state.sync.ether.yen).getRewardAmount(state.sync.userAddress),
         ]);
+      if (!state.sync.ether.pair) {
+        const pairAddress = await toRaw(state.sync.ether.yen).pair();
+        if (pairAddress != config.ZERO_ADDRESS) {
+          await toRaw(state.sync.ether).loadPair(pairAddress);
+        }
+      }
+      if (state.sync.ether.pair) {
+        state.async.stake.yourPairAmount = await toRaw(
+          state.sync.ether.pair
+        ).balanceOf(state.sync.userAddress);
+      }
     }
   },
 
@@ -213,8 +227,10 @@ const actions: ActionTree<State, State> = {
   },
 
   async approve({ state }) {
-    if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).exit();
+    if (state.sync.ether.pair&&state.sync.ether.yen) {
+      await toRaw(
+        state.sync.ether.pair
+      ).approve(toRaw(state.sync.ether.yen).address(),BigNumber.from(-1))
     }
   },
 

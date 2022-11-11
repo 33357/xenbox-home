@@ -1,4 +1,4 @@
-import { YENClient, DeploymentInfo } from "yen-sdk";
+import { YENClient, ERC20Client, DeploymentInfo } from "yen-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers, Signer } from "ethers";
 
@@ -9,7 +9,7 @@ export class Ether {
 
   public yen: YENClient | undefined;
 
-  constructor() {}
+  public pair: ERC20Client | undefined;
 
   async load() {
     const ethereum = (await detectEthereumProvider()) as any;
@@ -33,5 +33,9 @@ export class Ether {
     } else {
       throw "Please use a browser that supports web3 to open";
     }
+  }
+
+  async loadPair(address: string) {
+    if (this.singer) this.pair = new ERC20Client(this.singer, address);
   }
 }
