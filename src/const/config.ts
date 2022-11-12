@@ -6,6 +6,8 @@ export interface Chain {
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
+const MAX_UINT256 = "0xffffffffffffffffffffffffffffffffffffffff";
+
 const CHAIN: { [CHAIN_ID: string]: Chain } = {
   1: {
     SCAN_URL: "https://bscscan.com/",
@@ -56,4 +58,5 @@ export const config = {
   SERVICE_URL,
   BACKGROUND_LIST,
   ZERO_ADDRESS,
+  MAX_UINT256
 };

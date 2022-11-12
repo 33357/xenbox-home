@@ -11,6 +11,16 @@
         <el-form-item label="Predict APY :">
           <div>100 %</div>
         </el-form-item>
+        <el-form-item label="Your Pair Amount :">
+          <div> {{
+              utils.format.balance(
+                Number(state.async.stake.yourPairAmount),
+                18,
+                "Pair",
+                5
+              )
+            }}</div>
+        </el-form-item>
         <el-form-item label="stake :">
           <el-input v-model="stakeAmount" type="string"
            />
@@ -95,8 +105,6 @@ export default {
   },
   async created() {
     await (this as any).$store.dispatch("getStakeData");
-    (this as any).stakeAmountBig = Number((this as any).state.async.stake.yourPairAmount);
-    log((this as any).stakeAmountBig)
   },
   watch: {
     stakeAmount(value) {

@@ -3,7 +3,6 @@ import { Ether } from "../network";
 import { BigNumber, config, log, utils } from "../const";
 import { YENModel } from "yen-sdk";
 import { toRaw } from "vue";
-import { ethers } from "ethers";
 
 export interface Storage {}
 
@@ -30,6 +29,7 @@ export interface Async {
   stake: {
     person: YENModel.Person;
     yourPairAmount: BigNumber;
+    yourPairAllowance: BigNumber;
     yourReward: BigNumber;
   };
   table: {
@@ -76,6 +76,7 @@ const state: State = {
         lastPerStakeRewardAmount: BigNumber.from(0),
       },
       yourPairAmount: BigNumber.from(0),
+      yourPairAllowance: BigNumber.from(0),
       yourReward: BigNumber.from(0),
     },
     table: {
@@ -173,23 +174,23 @@ const actions: ActionTree<State, State> = {
 
   async getStakeData({ state }) {
     if (state.sync.ether.yen) {
-      [state.async.stake.person, state.async.stake.yourReward] =
+      let pairAddress;
+      [state.async.stake.person, state.async.stake.yourReward,pairAddress] =
         await Promise.all([
           toRaw(state.sync.ether.yen).personMap(state.sync.userAddress),
           toRaw(state.sync.ether.yen).getRewardAmount(state.sync.userAddress),
+          toRaw(state.sync.ether.yen).pair()
         ]);
-      if (!state.sync.ether.pair) {
-        const pairAddress = await toRaw(state.sync.ether.yen).pair();
-        if (pairAddress != config.ZERO_ADDRESS) {
-          await toRaw(state.sync.ether).loadPair(pairAddress);
-        }
+      if (!state.sync.ether.pair && pairAddress != config.ZERO_ADDRESS) {
+        toRaw(state.sync.ether).loadPair(pairAddress);
       }
-      
       if (state.sync.ether.pair) {
         state.async.stake.yourPairAmount = await toRaw(
           state.sync.ether.pair
         ).balanceOf(state.sync.userAddress);
-        log(state.async.stake.yourPairAmount)
+        state.async.stake.yourPairAllowance = await toRaw(
+          state.sync.ether.pair
+        ).allowance(state.sync.userAddress,toRaw(state.sync.ether.yen).address());
       }
     }
   },
@@ -232,7 +233,7 @@ const actions: ActionTree<State, State> = {
     if (state.sync.ether.pair && state.sync.ether.yen) {
       await toRaw(state.sync.ether.pair).approve(
         toRaw(state.sync.ether.yen).address(),
-        BigNumber.from(-1)
+        BigNumber.from(config.MAX_UINT256)
       );
     }
   },

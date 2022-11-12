@@ -35,7 +35,9 @@ export class Ether {
     }
   }
 
-  async loadPair(address: string) {
-    if (this.singer) this.pair = new ERC20Client(this.singer, address);
+  loadPair(address: string) {
+    if (this.singer) {
+      this.pair = new ERC20Client(this.singer, address);
+    }
   }
 }
