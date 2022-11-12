@@ -58,5 +58,5 @@ export const config = {
   SERVICE_URL,
   BACKGROUND_LIST,
   ZERO_ADDRESS,
-  MAX_UINT256
+  MAX_UINT256,
 };

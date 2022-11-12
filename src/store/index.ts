@@ -175,11 +175,11 @@ const actions: ActionTree<State, State> = {
   async getStakeData({ state }) {
     if (state.sync.ether.yen) {
       let pairAddress;
-      [state.async.stake.person, state.async.stake.yourReward,pairAddress] =
+      [state.async.stake.person, state.async.stake.yourReward, pairAddress] =
         await Promise.all([
           toRaw(state.sync.ether.yen).personMap(state.sync.userAddress),
           toRaw(state.sync.ether.yen).getRewardAmount(state.sync.userAddress),
-          toRaw(state.sync.ether.yen).pair()
+          toRaw(state.sync.ether.yen).pair(),
         ]);
       if (!state.sync.ether.pair && pairAddress != config.ZERO_ADDRESS) {
         toRaw(state.sync.ether).loadPair(pairAddress);
@@ -190,7 +190,10 @@ const actions: ActionTree<State, State> = {
         ).balanceOf(state.sync.userAddress);
         state.async.stake.yourPairAllowance = await toRaw(
           state.sync.ether.pair
-        ).allowance(state.sync.userAddress,toRaw(state.sync.ether.yen).address());
+        ).allowance(
+          state.sync.userAddress,
+          toRaw(state.sync.ether.yen).address()
+        );
       }
     }
   },

@@ -12,23 +12,24 @@
           <div>100 %</div>
         </el-form-item>
         <el-form-item label="Your Pair Amount :">
-          <div> {{
+          <div>
+            {{
               utils.format.balance(
                 Number(state.async.stake.yourPairAmount),
                 18,
                 "Pair",
                 5
               )
-            }}</div>
+            }}
+          </div>
         </el-form-item>
         <el-form-item label="stake :">
-          <el-input v-model="stakeAmount" type="string"
-           />
+          <el-input v-model="stakeAmount" type="string" />
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-if="state.async.stake.yourPairAllowance.eq(0)">
           <el-button type="primary" @click="approve()">Approve</el-button>
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-else>
           <el-button type="primary" @click="stake()">Stake</el-button>
         </el-form-item>
       </el-form>
