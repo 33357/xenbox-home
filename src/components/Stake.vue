@@ -12,7 +12,8 @@
           <div>100 %</div>
         </el-form-item>
         <el-form-item label="stake :">
-          <el-input v-model="stakeAmount" type="string" />
+          <el-input v-model="stakeAmount" type="string"
+           />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="approve()">Approve</el-button>
@@ -94,6 +95,8 @@ export default {
   },
   async created() {
     await (this as any).$store.dispatch("getStakeData");
+    (this as any).stakeAmountBig = Number((this as any).state.async.stake.yourPairAmount);
+    log((this as any).stakeAmountBig)
   },
   watch: {
     stakeAmount(value) {

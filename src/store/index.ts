@@ -184,10 +184,12 @@ const actions: ActionTree<State, State> = {
           await toRaw(state.sync.ether).loadPair(pairAddress);
         }
       }
+      
       if (state.sync.ether.pair) {
         state.async.stake.yourPairAmount = await toRaw(
           state.sync.ether.pair
         ).balanceOf(state.sync.userAddress);
+        log(state.async.stake.yourPairAmount)
       }
     }
   },
