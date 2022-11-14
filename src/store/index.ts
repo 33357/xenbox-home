@@ -157,7 +157,7 @@ const actions: ActionTree<State, State> = {
       if (state.async.share.totalShareETH.gt(0)) {
         state.async.share.yourClaimablePair = await toRaw(
           state.sync.ether.yen
-        ).maxGetAmount(state.sync.userAddress);
+        ).getAmount(state.sync.userAddress);
       }
     }
   },
@@ -226,9 +226,9 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async get({ state }, getAmount: BigNumber) {
+  async get({ state }) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).get(getAmount);
+      await toRaw(state.sync.ether.yen).get();
     }
   },
 
