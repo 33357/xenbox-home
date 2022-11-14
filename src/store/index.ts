@@ -61,7 +61,7 @@ const state: State = {
       yourClaimablePair: BigNumber.from(0),
       sharer: {
         shareAmount: BigNumber.from(0),
-        getAmount: BigNumber.from(0),
+        gettedAmount: BigNumber.from(0),
       },
     },
     mint: {
