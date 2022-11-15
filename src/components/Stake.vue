@@ -8,9 +8,9 @@
       </template>
 
       <el-form label-width="30%">
-        <el-form-item label="Predict APY :">
+        <!-- <el-form-item label="Predict APY :">
           <div>100 %</div>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="Your Pair Amount :">
           <div>
             {{
@@ -31,6 +31,14 @@
         </el-form-item>
         <el-form-item v-else>
           <el-button type="primary" @click="stake()">Stake</el-button>
+        </el-form-item>
+        <el-form-item>
+          <a
+            target="_blank"
+            :href="`https://app.uniswap.org/#/add/v2/ETH/${state.sync.yenAddress}`"
+          >
+          Add Liquidity
+          </a>
         </el-form-item>
       </el-form>
 

@@ -8,6 +8,7 @@ export interface Storage {}
 
 export interface Sync {
   userAddress: string;
+  yenAddress: string;
   chainId: number;
   avatarMap: { [address: string]: string };
   ether: Ether;
@@ -48,6 +49,7 @@ const state: State = {
   storage: {},
   sync: {
     userAddress: config.ZERO_ADDRESS,
+    yenAddress:config.ZERO_ADDRESS,
     chainId: 0,
     avatarMap: {},
     ether: new Ether(),
@@ -105,9 +107,13 @@ const actions: ActionTree<State, State> = {
         state.sync.ether.singer
       ).getAddress();
     }
-    const chainId = state.sync.ether.chainId;
-    if (chainId) {
-      state.sync.chainId = chainId;
+    if (state.sync.ether.chainId) {
+      state.sync.chainId = state.sync.ether.chainId;
+    }
+    if (state.sync.ether.yen) {
+      state.sync.yenAddress = toRaw(
+        state.sync.ether.yen
+      ).address();
     }
     await dispatch("setAvatar", { address: state.sync.userAddress });
   },
