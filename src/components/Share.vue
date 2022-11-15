@@ -105,7 +105,7 @@
         <div>
           {{
             utils.format.balance(
-              Number(state.async.share.sharer.getAmount),
+              Number(state.async.share.yourClaimablePair),
               18,
               "Pair",
               5
