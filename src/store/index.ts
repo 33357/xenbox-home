@@ -32,6 +32,7 @@ export interface Async {
     yourPairAmount: BigNumber;
     yourPairAllowance: BigNumber;
     yourReward: BigNumber;
+    stakeAmount: BigNumber;
   };
   table: {
     totalSupply: BigNumber;
@@ -77,6 +78,7 @@ const state: State = {
         rewardAmount: BigNumber.from(0),
         lastPerStakeRewardAmount: BigNumber.from(0),
       },
+      stakeAmount: BigNumber.from(0),
       yourPairAmount: BigNumber.from(0),
       yourPairAllowance: BigNumber.from(0),
       yourReward: BigNumber.from(0),
@@ -181,11 +183,12 @@ const actions: ActionTree<State, State> = {
   async getStakeData({ state }) {
     if (state.sync.ether.yen) {
       let pairAddress;
-      [state.async.stake.person, state.async.stake.yourReward, pairAddress] =
+      [state.async.stake.person, state.async.stake.yourReward, pairAddress,state.async.stake.stakeAmount] =
         await Promise.all([
           toRaw(state.sync.ether.yen).personMap(state.sync.userAddress),
           toRaw(state.sync.ether.yen).getRewardAmount(state.sync.userAddress),
           toRaw(state.sync.ether.yen).pair(),
+          toRaw(state.sync.ether.yen).stakeAmount(),
         ]);
       if (!state.sync.ether.pair && pairAddress != config.ZERO_ADDRESS) {
         toRaw(state.sync.ether).loadPair(pairAddress);

@@ -23,6 +23,14 @@
             }}
           </div>
         </el-form-item>
+        <el-form-item>
+          <a
+            target="_blank"
+            :href="`https://app.uniswap.org/#/add/v2/ETH/${state.sync.yenAddress}`"
+          >
+          Add Liquidity
+          </a>
+        </el-form-item>
         <el-form-item label="stake :">
           <el-input v-model="stakeAmount" type="string" />
         </el-form-item>
@@ -32,18 +40,22 @@
         <el-form-item v-else>
           <el-button type="primary" @click="stake()">Stake</el-button>
         </el-form-item>
-        <el-form-item>
-          <a
-            target="_blank"
-            :href="`https://app.uniswap.org/#/add/v2/ETH/${state.sync.yenAddress}`"
-          >
-          Add Liquidity
-          </a>
-        </el-form-item>
       </el-form>
 
       <el-divider />
       <el-form label-width="30%">
+        <el-form-item label="Total Stake :">
+          <div>
+            {{
+              utils.format.balance(
+                Number(state.async.stake.stakeAmount),
+                18,
+                "Pair",
+                5
+              )
+            }}
+          </div>
+        </el-form-item>
         <el-form-item label="Your Stake :">
           <div>
             {{
