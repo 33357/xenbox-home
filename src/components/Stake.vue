@@ -11,11 +11,11 @@
         <!-- <el-form-item label="Predict APY :">
           <div>100 %</div>
         </el-form-item> -->
-        <el-form-item label="Your Pair Amount :">
+        <el-form-item label="Your Pairs :">
           <div>
             {{
               utils.format.balance(
-                Number(state.async.stake.yourPairAmount),
+                Number(state.async.stake.yourPairs),
                 18,
                 "Pair",
                 5
@@ -32,7 +32,7 @@
           </a>
         </el-form-item>
         <el-form-item label="stake :">
-          <el-input v-model="stakeAmount" type="string" />
+          <el-input v-model="stakes" type="string" />
         </el-form-item>
         <el-form-item v-if="state.async.stake.yourPairAllowance.eq(0)">
           <el-button type="primary" @click="approve()">Approve</el-button>
@@ -48,7 +48,7 @@
           <div>
             {{
               utils.format.balance(
-                Number(state.async.stake.stakeAmount),
+                Number(state.async.stake.stakes),
                 18,
                 "Pair",
                 5
@@ -60,7 +60,7 @@
           <div>
             {{
               utils.format.balance(
-                Number(state.async.stake.person.stakeAmount),
+                Number(state.async.stake.person.stakes),
                 18,
                 "Pair",
                 5
@@ -69,7 +69,7 @@
           </div>
         </el-form-item>
         <el-form-item label="withdrawStake :">
-          <el-input v-model="withdrawStakeAmount" type="string" />
+          <el-input v-model="withdrawStakes" type="string" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="withdrawStake()"
@@ -117,10 +117,10 @@ import { State } from "../store";
 export default {
   data() {
     return {
-      stakeAmount: 0,
-      stakeAmountBig: BigNumber.from(0),
-      withdrawStakeAmount: 0,
-      withdrawStakeAmountBig: BigNumber.from(0),
+      stakes: 0,
+      stakesBig: BigNumber.from(0),
+      withdrawStakes: 0,
+      withdrawStakesig: BigNumber.from(0),
       utils: utils,
     };
   },
@@ -128,18 +128,18 @@ export default {
     await (this as any).$store.dispatch("getStakeData");
   },
   watch: {
-    stakeAmount(value) {
-      (this as any).stakeAmountBig = BigNumber.from(value * 10 ** 9).mul(
+    stakes(value) {
+      (this as any).stakesBig = BigNumber.from(value * 10 ** 9).mul(
         10 ** 9
       );
     },
-    withdrawStakeAmount(value) {
-      (this as any).withdrawStakeAmountBig = BigNumber.from(
+    withdrawStakes(value) {
+      (this as any).withdrawStakesBig = BigNumber.from(
         value * 10 ** 9
       ).mul(10 ** 9);
     },
-    withdrawRewardAmount(value) {
-      (this as any).withdrawRewardAmountBig = BigNumber.from(
+    withdrawRewards(value) {
+      (this as any).withdrawRewardsBig = BigNumber.from(
         value * 10 ** 9
       ).mul(10 ** 9);
     },
@@ -154,13 +154,13 @@ export default {
     async stake() {
       await (this as any).$store.dispatch(
         "stake",
-        (this as any).stakeAmountBig
+        (this as any).stakesBig
       );
     },
     async withdrawStake() {
       await (this as any).$store.dispatch(
         "stake",
-        (this as any).withdrawStakeAmountBig
+        (this as any).withdrawStakesBig
       );
     },
     async withdrawReward() {

@@ -23,7 +23,7 @@
         <div>
           {{
             utils.format.balance(
-              Number(state.async.share.sharer.shareAmount),
+              Number(state.async.share.sharer.shares),
               18,
               "ETH",
               5
@@ -51,7 +51,7 @@
                 ? 0
                 : Number(
                     state.async.share.totalShareYEN
-                      .mul(state.async.share.sharer.shareAmount)
+                      .mul(state.async.share.sharer.shares)
                       .div(state.async.share.totalShareETH)
                   ),
               18,
@@ -62,18 +62,18 @@
         </div>
       </el-form-item>
       <el-form-item label="Share ETH :">
-        <el-input v-model="shareAmount" type="string" />
+        <el-input v-model="shares" type="string" />
       </el-form-item>
       <el-form-item label="Estimate Get :">
         <div>
           {{
             utils.format.balance(
-              state.async.share.totalShareETH.add(shareAmountBig).eq(0)
+              state.async.share.totalShareETH.add(sharesBig).eq(0)
                 ? 0
                 : Number(
                     state.async.share.totalShareYEN
-                      .mul(shareAmountBig)
-                      .div(state.async.share.totalShareETH.add(shareAmountBig))
+                      .mul(sharesBig)
+                      .div(state.async.share.totalShareETH.add(sharesBig))
                   ),
               18,
               "YEN",
@@ -128,8 +128,8 @@ import { State } from "../store";
 export default {
   data() {
     return {
-      shareAmount: 0,
-      shareAmountBig: BigNumber.from(0),
+      shares: 0,
+      sharesBig: BigNumber.from(0),
       utils: utils,
     };
   },
@@ -137,8 +137,8 @@ export default {
     await (this as any).$store.dispatch("getShareData");
   },
   watch: {
-    shareAmount(value) {
-      (this as any).shareAmountBig = BigNumber.from(value * 10 ** 9).mul(
+    shares(value) {
+      (this as any).sharesBig = BigNumber.from(value * 10 ** 9).mul(
         10 ** 9
       );
     },
@@ -150,7 +150,7 @@ export default {
     async share() {
       await (this as any).$store.dispatch(
         "share",
-        (this as any).shareAmountBig
+        (this as any).sharesBig
       );
     },
     async get() {

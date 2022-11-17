@@ -29,10 +29,10 @@ export interface Async {
   };
   stake: {
     person: YENModel.Person;
-    yourPairAmount: BigNumber;
+    yourPairs: BigNumber;
     yourPairAllowance: BigNumber;
     yourReward: BigNumber;
-    stakeAmount: BigNumber;
+    stakes: BigNumber;
   };
   table: {
     totalSupply: BigNumber;
@@ -63,8 +63,8 @@ const state: State = {
       totalLockedPair: BigNumber.from(0),
       yourClaimablePair: BigNumber.from(0),
       sharer: {
-        shareAmount: BigNumber.from(0),
-        gettedAmount: BigNumber.from(0),
+        shares: BigNumber.from(0),
+        getteds: BigNumber.from(0),
       },
     },
     mint: {
@@ -74,12 +74,12 @@ const state: State = {
     stake: {
       person: {
         blockIndex: BigNumber.from(0),
-        stakeAmount: BigNumber.from(0),
-        rewardAmount: BigNumber.from(0),
-        lastPerStakeRewardAmount: BigNumber.from(0),
+        stakes: BigNumber.from(0),
+        rewards: BigNumber.from(0),
+        lastPerStakeRewards: BigNumber.from(0),
       },
-      stakeAmount: BigNumber.from(0),
-      yourPairAmount: BigNumber.from(0),
+      stakes: BigNumber.from(0),
+      yourPairs: BigNumber.from(0),
       yourPairAllowance: BigNumber.from(0),
       yourReward: BigNumber.from(0),
     },
@@ -157,15 +157,15 @@ const actions: ActionTree<State, State> = {
         state.async.share.totalLockedPair,
         state.async.share.sharer,
       ] = await Promise.all([
-        toRaw(state.sync.ether.yen).shareEthAmount(),
-        toRaw(state.sync.ether.yen).shareTokenAmount(),
-        toRaw(state.sync.ether.yen).sharePairAmount(),
+        toRaw(state.sync.ether.yen).shareEths(),
+        toRaw(state.sync.ether.yen).shareTokens(),
+        toRaw(state.sync.ether.yen).sharePairs(),
         toRaw(state.sync.ether.yen).sharerMap(state.sync.userAddress),
       ]);
       if (state.async.share.totalShareETH.gt(0)) {
         state.async.share.yourClaimablePair = await toRaw(
           state.sync.ether.yen
-        ).getAmount(state.sync.userAddress);
+        ).gets(state.sync.userAddress);
       }
     }
   },
@@ -174,8 +174,8 @@ const actions: ActionTree<State, State> = {
     if (state.sync.ether.yen) {
       [state.async.mint.nextBlockMint, state.async.mint.yourMinted] =
         await Promise.all([
-          toRaw(state.sync.ether.yen).getMintAmount(),
-          toRaw(state.sync.ether.yen).getClaimAmount(state.sync.userAddress),
+          toRaw(state.sync.ether.yen).getMints(),
+          toRaw(state.sync.ether.yen).getClaims(state.sync.userAddress),
         ]);
     }
   },
@@ -183,18 +183,18 @@ const actions: ActionTree<State, State> = {
   async getStakeData({ state }) {
     if (state.sync.ether.yen) {
       let pairAddress;
-      [state.async.stake.person, state.async.stake.yourReward, pairAddress,state.async.stake.stakeAmount] =
+      [state.async.stake.person, state.async.stake.yourReward, pairAddress,state.async.stake.stakes] =
         await Promise.all([
           toRaw(state.sync.ether.yen).personMap(state.sync.userAddress),
-          toRaw(state.sync.ether.yen).getRewardAmount(state.sync.userAddress),
+          toRaw(state.sync.ether.yen).getRewards(state.sync.userAddress),
           toRaw(state.sync.ether.yen).pair(),
-          toRaw(state.sync.ether.yen).stakeAmount(),
+          toRaw(state.sync.ether.yen).stakes(),
         ]);
       if (!state.sync.ether.pair && pairAddress != config.ZERO_ADDRESS) {
         toRaw(state.sync.ether).loadPair(pairAddress);
       }
       if (state.sync.ether.pair) {
-        state.async.stake.yourPairAmount = await toRaw(
+        state.async.stake.yourPairs = await toRaw(
           state.sync.ether.pair
         ).balanceOf(state.sync.userAddress);
         state.async.stake.yourPairAllowance = await toRaw(
@@ -229,9 +229,9 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async share({ state }, shareAmount: BigNumber) {
+  async share({ state }, shares: BigNumber) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).share({ value: shareAmount });
+      await toRaw(state.sync.ether.yen).share({ value: shares });
     }
   },
 
@@ -250,15 +250,15 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async stake({ state }, stakeAmount: BigNumber) {
+  async stake({ state }, stakes: BigNumber) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).stake(stakeAmount);
+      await toRaw(state.sync.ether.yen).stake(stakes);
     }
   },
 
-  async withdrawStake({ state }, withdrawStakeAmount: BigNumber) {
+  async withdrawStake({ state }, withdrawStakes: BigNumber) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).withdrawStake(withdrawStakeAmount);
+      await toRaw(state.sync.ether.yen).withdrawStake(withdrawStakes);
     }
   },
 
