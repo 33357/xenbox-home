@@ -48,6 +48,40 @@
         </el-form-item>
       </el-form>
     </el-card>
+
+    <el-dialog
+      v-model="mintDialogVisible"
+      title="Minted"
+      width="30%"
+      align-center
+    >
+      <span>{{
+        `You Minted ${utils.format.balance(
+          Number(
+            state.async.mint.mintBlock.mints.div(
+              state.async.mint.mintBlock.persons
+            )
+          ),
+          18,
+          "YEN",
+          10
+        )}, ${
+          state.async.mint.mintBlock.persons
+        } Person Share ${utils.format.balance(
+          Number(state.async.mint.mintBlock.mints),
+          18,
+          "YEN",
+          10
+        )} !`
+      }}</span>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="mintDialogVisible = false">
+            Confirm
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -60,8 +94,10 @@ export default {
   data() {
     return {
       utils: utils,
+      mintDialogText: "",
       mintLoad: false,
       claimLoad: false,
+      mintDialogVisible: false,
     };
   },
   async created() {
@@ -75,9 +111,16 @@ export default {
       (this as any).mintLoad = true;
       await (this as any).$store.dispatch(
         "mint",
-        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
             (this as any).mintLoad = false;
+            const blockNumber = e.blockNumber;
+            if (blockNumber) {
+              await (this as any).$store.dispatch("getMintBlock", blockNumber);
+              log((this as any).state.async.mint.mintBlock);
+              (this as any).mintDialogText = (this as any).mintDialogVisible =
+                true;
+            }
           }
         }
       );

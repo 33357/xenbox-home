@@ -30,6 +30,7 @@ export interface Async {
   mint: {
     nextBlockMint: BigNumber;
     yourMinted: BigNumber;
+    mintBlock: YENModel.Block;
   };
   stake: {
     person: YENModel.Person;
@@ -78,6 +79,10 @@ const state: State = {
     mint: {
       nextBlockMint: BigNumber.from(0),
       yourMinted: BigNumber.from(0),
+      mintBlock: {
+        persons: BigNumber.from(0),
+        mints: BigNumber.from(0),
+      },
     },
     stake: {
       person: {
@@ -297,6 +302,12 @@ const actions: ActionTree<State, State> = {
   async exit({ state }, func: Function) {
     if (state.sync.ether.yen) {
       await toRaw(state.sync.ether.yen).exit({}, func);
+    }
+  },
+
+  async getMintBlock({ state }, blockNumber: number) {
+    if (state.sync.ether.yen) {
+      state.async.mint.mintBlock = await toRaw(state.sync.ether.yen).blockMap(blockNumber);
     }
   },
 };
