@@ -154,7 +154,7 @@ export default {
       );
     },
     async get() {
-      await (this as any).$store.dispatch("get");
+      await (this as any).$store.dispatch("getShare");
     },
   },
 };

@@ -165,7 +165,7 @@ const actions: ActionTree<State, State> = {
       if (state.async.share.totalShareETH.gt(0)) {
         state.async.share.yourClaimablePair = await toRaw(
           state.sync.ether.yen
-        ).gets(state.sync.userAddress);
+        ).getShares(state.sync.userAddress);
       }
     }
   },
@@ -235,9 +235,9 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async get({ state }) {
+  async getShare({ state }) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).get();
+      await toRaw(state.sync.ether.yen).getShare();
     }
   },
 
