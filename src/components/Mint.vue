@@ -12,7 +12,7 @@
           <div>
             {{
               utils.format.balance(
-                Number(state.async.mint.nextBlockMint) / 2,
+                Number(state.async.mint.nextBlockMint),
                 18,
                 "YEN",
                 10
