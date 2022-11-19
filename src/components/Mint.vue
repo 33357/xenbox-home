@@ -8,7 +8,7 @@
       </template>
 
       <el-form label-width="30%">
-        <el-form-item label="Next Block Mint :">
+        <el-form-item label="Next Block Mint (Block Miners Share Rewards) :">
           <div>
             {{
               utils.format.balance(
