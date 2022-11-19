@@ -13,10 +13,13 @@ export interface Sync {
   avatarMap: { [address: string]: string };
   ether: Ether;
   appStart: boolean;
+  thisBlock: number;
+  thisTime: number;
 }
 
 export interface Async {
   share: {
+    shareEndBlock: BigNumber;
     totalShareETH: BigNumber;
     totalShareYEN: BigNumber;
     totalLockedPair: BigNumber;
@@ -50,14 +53,17 @@ const state: State = {
   storage: {},
   sync: {
     userAddress: config.ZERO_ADDRESS,
-    yenAddress:config.ZERO_ADDRESS,
+    yenAddress: config.ZERO_ADDRESS,
     chainId: 0,
     avatarMap: {},
     ether: new Ether(),
     appStart: false,
+    thisBlock: 0,
+    thisTime: 0,
   },
   async: {
     share: {
+      shareEndBlock: BigNumber.from(0),
       totalShareETH: BigNumber.from(0),
       totalShareYEN: BigNumber.from(0),
       totalLockedPair: BigNumber.from(0),
@@ -105,17 +111,26 @@ const actions: ActionTree<State, State> = {
   async setSync({ state, dispatch }) {
     await toRaw(state.sync.ether).load();
     if (state.sync.ether.singer) {
-      state.sync.userAddress = await toRaw(
-        state.sync.ether.singer
-      ).getAddress();
+      let blockNumber;
+      [state.sync.userAddress, blockNumber] = await Promise.all([
+        toRaw(state.sync.ether.singer).getAddress(),
+        toRaw(state.sync.ether.singer).provider?.getBlockNumber(),
+      ]);
+      if (blockNumber) {
+        state.sync.thisBlock = blockNumber;
+        const block = await toRaw(state.sync.ether.singer).provider?.getBlock(
+          state.sync.thisBlock
+        );
+        if (block) {
+          state.sync.thisTime = block.timestamp;
+        }
+      }
     }
     if (state.sync.ether.chainId) {
       state.sync.chainId = state.sync.ether.chainId;
     }
     if (state.sync.ether.yen) {
-      state.sync.yenAddress = toRaw(
-        state.sync.ether.yen
-      ).address();
+      state.sync.yenAddress = toRaw(state.sync.ether.yen).address();
     }
     await dispatch("setAvatar", { address: state.sync.userAddress });
   },
@@ -152,11 +167,13 @@ const actions: ActionTree<State, State> = {
   async getShareData({ state }) {
     if (state.sync.ether.yen) {
       [
+        state.async.share.shareEndBlock,
         state.async.share.totalShareETH,
         state.async.share.totalShareYEN,
         state.async.share.totalLockedPair,
         state.async.share.sharer,
       ] = await Promise.all([
+        toRaw(state.sync.ether.yen).shareEndBlock(),
         toRaw(state.sync.ether.yen).shareEths(),
         toRaw(state.sync.ether.yen).shareTokens(),
         toRaw(state.sync.ether.yen).sharePairs(),
@@ -183,13 +200,17 @@ const actions: ActionTree<State, State> = {
   async getStakeData({ state }) {
     if (state.sync.ether.yen) {
       let pairAddress;
-      [state.async.stake.person, state.async.stake.yourReward, pairAddress,state.async.stake.stakes] =
-        await Promise.all([
-          toRaw(state.sync.ether.yen).personMap(state.sync.userAddress),
-          toRaw(state.sync.ether.yen).getRewards(state.sync.userAddress),
-          toRaw(state.sync.ether.yen).pair(),
-          toRaw(state.sync.ether.yen).stakes(),
-        ]);
+      [
+        state.async.stake.person,
+        state.async.stake.yourReward,
+        pairAddress,
+        state.async.stake.stakes,
+      ] = await Promise.all([
+        toRaw(state.sync.ether.yen).personMap(state.sync.userAddress),
+        toRaw(state.sync.ether.yen).getRewards(state.sync.userAddress),
+        toRaw(state.sync.ether.yen).pair(),
+        toRaw(state.sync.ether.yen).stakes(),
+      ]);
       if (!state.sync.ether.pair && pairAddress != config.ZERO_ADDRESS) {
         toRaw(state.sync.ether).loadPair(pairAddress);
       }

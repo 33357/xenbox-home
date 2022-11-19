@@ -7,6 +7,20 @@
     </template>
 
     <el-form label-width="30%">
+      <el-form-item label="Share Deadline :">
+        <div v-if="state.async.share.shareEndBlock.gte(state.sync.thisBlock)">
+          {{
+            new Date(
+              (Number(
+                state.async.share.shareEndBlock.sub(state.sync.thisBlock)
+              ) *
+                12 +
+                state.sync.thisTime) *
+                1000
+            )
+          }}
+        </div>
+      </el-form-item>
       <el-form-item label="Total Share ETH :">
         <div>
           {{
@@ -138,9 +152,7 @@ export default {
   },
   watch: {
     shares(value) {
-      (this as any).sharesBig = BigNumber.from(value * 10 ** 9).mul(
-        10 ** 9
-      );
+      (this as any).sharesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
     },
   },
   computed: mapState({
@@ -148,10 +160,7 @@ export default {
   }),
   methods: {
     async share() {
-      await (this as any).$store.dispatch(
-        "share",
-        (this as any).sharesBig
-      );
+      await (this as any).$store.dispatch("share", (this as any).sharesBig);
     },
     async get() {
       await (this as any).$store.dispatch("getShare");
