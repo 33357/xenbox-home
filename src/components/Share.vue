@@ -29,7 +29,7 @@
               Number(state.async.share.totalShareETH),
               18,
               "ETH",
-              5
+              10
             )
           }}
         </div>
@@ -41,7 +41,7 @@
               Number(state.async.share.sharer.shares),
               18,
               "ETH",
-              5
+              10
             )
           }}
         </div>
@@ -53,7 +53,7 @@
               Number(state.async.share.totalShareYEN),
               18,
               "YEN",
-              5
+              10
             )
           }}
         </div>
@@ -71,7 +71,7 @@
                   ),
               18,
               "YEN",
-              5
+              10
             )
           }}
         </div>
@@ -92,7 +92,7 @@
                   ),
               18,
               "YEN",
-              5
+              10
             )
           }}
         </div>
@@ -111,7 +111,7 @@
               Number(state.async.share.totalLockedPair),
               18,
               "Pair",
-              5
+              10
             )
           }}
         </div>
@@ -123,7 +123,7 @@
               Number(state.async.share.yourClaimablePair),
               18,
               "Pair",
-              5
+              10
             )
           }}
         </div>

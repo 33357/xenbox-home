@@ -8,9 +8,6 @@
       </template>
 
       <el-form label-width="30%">
-        <!-- <el-form-item label="Predict APY :">
-          <div>100 %</div>
-        </el-form-item> -->
         <el-form-item label="Your Pairs :">
           <div>
             {{
@@ -18,7 +15,7 @@
                 Number(state.async.stake.yourPairs),
                 18,
                 "Pair",
-                5
+                10
               )
             }}
           </div>
@@ -28,7 +25,7 @@
             target="_blank"
             :href="`https://app.uniswap.org/#/add/v2/ETH/${state.sync.yenAddress}`"
           >
-          Add Liquidity
+            Add Liquidity
           </a>
         </el-form-item>
         <el-form-item label="stake :">
@@ -51,7 +48,7 @@
                 Number(state.async.stake.stakes),
                 18,
                 "Pair",
-                5
+                10
               )
             }}
           </div>
@@ -63,7 +60,7 @@
                 Number(state.async.stake.person.stakes),
                 18,
                 "Pair",
-                5
+                10
               )
             }}
           </div>
@@ -86,8 +83,8 @@
               utils.format.balance(
                 Number(state.async.stake.yourReward),
                 18,
-                "Pair",
-                5
+                "YEN",
+                10
               )
             }}
           </div>
@@ -129,19 +126,17 @@ export default {
   },
   watch: {
     stakes(value) {
-      (this as any).stakesBig = BigNumber.from(value * 10 ** 9).mul(
+      (this as any).stakesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
+    },
+    withdrawStakes(value) {
+      (this as any).withdrawStakesBig = BigNumber.from(value * 10 ** 9).mul(
         10 ** 9
       );
     },
-    withdrawStakes(value) {
-      (this as any).withdrawStakesBig = BigNumber.from(
-        value * 10 ** 9
-      ).mul(10 ** 9);
-    },
     withdrawRewards(value) {
-      (this as any).withdrawRewardsBig = BigNumber.from(
-        value * 10 ** 9
-      ).mul(10 ** 9);
+      (this as any).withdrawRewardsBig = BigNumber.from(value * 10 ** 9).mul(
+        10 ** 9
+      );
     },
   },
   computed: mapState({
@@ -152,10 +147,7 @@ export default {
       await (this as any).$store.dispatch("approve");
     },
     async stake() {
-      await (this as any).$store.dispatch(
-        "stake",
-        (this as any).stakesBig
-      );
+      await (this as any).$store.dispatch("stake", (this as any).stakesBig);
     },
     async withdrawStake() {
       await (this as any).$store.dispatch(

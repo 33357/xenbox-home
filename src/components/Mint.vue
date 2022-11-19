@@ -15,7 +15,7 @@
                 Number(state.async.mint.nextBlockMint),
                 18,
                 "YEN",
-                5
+                10
               )
             }}
           </div>
@@ -34,7 +34,7 @@
                 Number(state.async.mint.yourMinted),
                 18,
                 "YEN",
-                5
+                10
               )
             }}
           </div>

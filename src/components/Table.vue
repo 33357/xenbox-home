@@ -17,9 +17,22 @@
                 Number(state.async.table.totalSupply),
                 18,
                 "YEN",
-                5
+                10
               )
             }}
+          </div>
+        </el-form-item>
+        <el-form-item label="Per Block Mint :">
+          <div>
+            {{
+              utils.format.balance(
+                Number(state.async.table.blockMints),
+                18,
+                "YEN",
+                10
+              )
+            }}
+            (50% For Miner, 50% For LP)
           </div>
         </el-form-item>
         <el-form-item label="Halving Date :">
@@ -37,7 +50,10 @@
           </div>
         </el-form-item>
         <el-form-item label="Transfer Fee :">
-          <div>{{ state.async.table.feeMul }} ‰ (Dynamic Rate: 20% Burn, 80% For LP)</div>
+          <div>
+            {{ state.async.table.feeMul }} ‰ (Dynamic Rate: 20% Burn, 80% For
+            LP)
+          </div>
         </el-form-item>
       </el-form>
     </el-card>
