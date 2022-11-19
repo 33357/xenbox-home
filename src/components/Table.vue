@@ -22,15 +22,23 @@
             }}
           </div>
         </el-form-item>
-        <el-form-item label="Halving Block :">
-          <div>{{ state.async.table.halvingBlock }}</div>
+        <el-form-item label="Halving Date :">
+          <div>
+            {{
+              new Date(
+                (Number(
+                  state.async.table.halvingBlock.sub(state.sync.thisBlock)
+                ) *
+                  12 +
+                  state.sync.thisTime) *
+                  1000
+              ).toLocaleString()
+            }}
+          </div>
         </el-form-item>
-        <!-- <el-form-item label="Mint Account :">
-          <div>10000</div>
+        <el-form-item label="Transfer Fee :">
+          <div>{{ state.async.table.feeMul }} ‰</div>
         </el-form-item>
-        <el-form-item label="Pair TVL">
-          <div>10000 ETH</div>
-        </el-form-item> -->
       </el-form>
     </el-card>
   </div>

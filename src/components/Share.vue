@@ -17,12 +17,10 @@
                 12 +
                 state.sync.thisTime) *
                 1000
-            )
+            ).toLocaleString()
           }}
         </div>
-        <div v-else>
-          End Sharing
-        </div>
+        <div v-else>End Sharing</div>
       </el-form-item>
       <el-form-item label="Total Share ETH :">
         <div>

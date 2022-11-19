@@ -40,6 +40,7 @@ export interface Async {
   table: {
     totalSupply: BigNumber;
     halvingBlock: BigNumber;
+    feeMul: BigNumber;
   };
 }
 
@@ -92,6 +93,7 @@ const state: State = {
     table: {
       totalSupply: BigNumber.from(0),
       halvingBlock: BigNumber.from(0),
+      feeMul: BigNumber.from(0),
     },
   },
 };
@@ -230,10 +232,11 @@ const actions: ActionTree<State, State> = {
 
   async getTableData({ state }) {
     if (state.sync.ether.yen) {
-      [state.async.table.totalSupply, state.async.table.halvingBlock] =
+      [state.async.table.totalSupply, state.async.table.halvingBlock,state.async.table.feeMul] =
         await Promise.all([
           toRaw(state.sync.ether.yen).totalSupply(),
           toRaw(state.sync.ether.yen).halvingBlock(),
+          toRaw(state.sync.ether.yen).getFeeMul()
         ]);
     }
   },
