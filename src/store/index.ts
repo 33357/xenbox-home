@@ -193,7 +193,7 @@ const actions: ActionTree<State, State> = {
     if (state.sync.ether.yen) {
       let nextBlockMint;
       let blockMints;
-      [nextBlockMint, state.async.mint.yourMinted,blockMints] =
+      [nextBlockMint, state.async.mint.yourMinted, blockMints] =
         await Promise.all([
           toRaw(state.sync.ether.yen).getMints(),
           toRaw(state.sync.ether.yen).getClaims(state.sync.userAddress),
@@ -311,7 +311,9 @@ const actions: ActionTree<State, State> = {
 
   async getMintBlock({ state }, blockNumber: number) {
     if (state.sync.ether.yen) {
-      state.async.mint.mintBlock = await toRaw(state.sync.ether.yen).blockMap(blockNumber);
+      state.async.mint.mintBlock = await toRaw(state.sync.ether.yen).blockMap(
+        blockNumber
+      );
     }
   },
 };
