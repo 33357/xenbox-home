@@ -98,7 +98,13 @@
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="share()">Share</el-button>
+        <el-button
+          type="primary"
+          @click="share()"
+          :disabled="state.async.share.shareEndBlock.lt(state.sync.thisBlock)"
+          :loading="shareLoad"
+          >Share</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -129,7 +135,9 @@
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="get()">Get</el-button>
+        <el-button type="primary" @click="get()" :loading="getLoad"
+          >Get</el-button
+        >
       </el-form-item>
     </el-form>
   </el-card>
@@ -138,7 +146,7 @@
 <script lang="ts">
 import { log, utils, BigNumber } from "../const";
 import { mapState } from "vuex";
-import { State } from "../store";
+import { State, YENModel } from "../store";
 
 export default {
   data() {
@@ -146,6 +154,8 @@ export default {
       shares: 0,
       sharesBig: BigNumber.from(0),
       utils: utils,
+      shareLoad: false,
+      getLoad: false,
     };
   },
   async created() {
@@ -161,10 +171,26 @@ export default {
   }),
   methods: {
     async share() {
-      await (this as any).$store.dispatch("share", (this as any).sharesBig);
+      (this as any).shareLoad = true;
+      await (this as any).$store.dispatch("share", {
+        shares: (this as any).sharesBig,
+        func: (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+          if (e.blockHash) {
+            (this as any).shareLoad = false;
+          }
+        },
+      });
     },
     async get() {
-      await (this as any).$store.dispatch("getShare");
+      (this as any).getLoad = true;
+      await (this as any).$store.dispatch(
+        "getShare",
+        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+          if (e.blockHash) {
+            (this as any).getLoad = false;
+          }
+        }
+      );
     },
   },
 };

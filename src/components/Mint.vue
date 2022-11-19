@@ -21,7 +21,9 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="mint()">Mint</el-button>
+          <el-button type="primary" @click="mint()" :loading="mintLoad"
+            >Mint</el-button
+          >
         </el-form-item>
       </el-form>
 
@@ -40,7 +42,9 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="claim()">Claim</el-button>
+          <el-button type="primary" @click="claim()" :loading="claimLoad"
+            >Claim</el-button
+          >
         </el-form-item>
       </el-form>
     </el-card>
@@ -50,12 +54,14 @@
 <script lang="ts">
 import { log, utils } from "../const";
 import { mapState } from "vuex";
-import { State } from "../store";
+import { State, YENModel } from "../store";
 
 export default {
   data() {
     return {
       utils: utils,
+      mintLoad: false,
+      claimLoad: false,
     };
   },
   async created() {
@@ -66,10 +72,26 @@ export default {
   }),
   methods: {
     async mint() {
-      await (this as any).$store.dispatch("mint");
+      (this as any).mintLoad = true;
+      await (this as any).$store.dispatch(
+        "mint",
+        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+          if (e.blockHash) {
+            (this as any).mintLoad = false;
+          }
+        }
+      );
     },
     async claim() {
-      await (this as any).$store.dispatch("claim");
+      (this as any).claimLoad = true;
+      await (this as any).$store.dispatch(
+        "claim",
+        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+          if (e.blockHash) {
+            (this as any).claimLoad = false;
+          }
+        }
+      );
     },
   },
 };

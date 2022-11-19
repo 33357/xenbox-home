@@ -32,10 +32,14 @@
           <el-input v-model="stakes" type="string" />
         </el-form-item>
         <el-form-item v-if="state.async.stake.yourPairAllowance.eq(0)">
-          <el-button type="primary" @click="approve()">Approve</el-button>
+          <el-button type="primary" @click="approve()" :loading="approveLoad"
+            >Approve</el-button
+          >
         </el-form-item>
         <el-form-item v-else>
-          <el-button type="primary" @click="stake()">Stake</el-button>
+          <el-button type="primary" @click="stake()" :loading="stakeLoad"
+            >Stake</el-button
+          >
         </el-form-item>
       </el-form>
 
@@ -69,7 +73,10 @@
           <el-input v-model="withdrawStakes" type="string" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="withdrawStake()"
+          <el-button
+            type="primary"
+            @click="withdrawStake()"
+            :loading="withdrawStakeLoad"
             >WithdrawStake</el-button
           >
         </el-form-item>
@@ -90,7 +97,10 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="withdrawReward()"
+          <el-button
+            type="primary"
+            @click="withdrawReward()"
+            :loading="withdrawRewardLoad"
             >WithdrawReward</el-button
           >
         </el-form-item>
@@ -99,7 +109,9 @@
       <el-divider />
       <el-form label-width="30%">
         <el-form-item>
-          <el-button type="primary" @click="exit()">Exit</el-button>
+          <el-button type="primary" @click="exit()" :loading="exitStakeLoad"
+            >Exit</el-button
+          >
         </el-form-item>
       </el-form>
     </el-card>
@@ -109,7 +121,7 @@
 <script lang="ts">
 import { log, utils, BigNumber } from "../const";
 import { mapState } from "vuex";
-import { State } from "../store";
+import { State, YENModel } from "../store";
 
 export default {
   data() {
@@ -119,6 +131,11 @@ export default {
       withdrawStakes: 0,
       withdrawStakesig: BigNumber.from(0),
       utils: utils,
+      approveLoad: false,
+      stakeLoad: false,
+      withdrawStakeLoad: false,
+      withdrawRewardLoad: false,
+      exitStakeLoad: false,
     };
   },
   async created() {
@@ -144,22 +161,60 @@ export default {
   }),
   methods: {
     async approve() {
-      await (this as any).$store.dispatch("approve");
-    },
-    async stake() {
-      await (this as any).$store.dispatch("stake", (this as any).stakesBig);
-    },
-    async withdrawStake() {
+      (this as any).approveLoad = true;
       await (this as any).$store.dispatch(
-        "stake",
-        (this as any).withdrawStakesBig
+        "approve",
+        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+          if (e.blockHash) {
+            (this as any).approveLoad = false;
+          }
+        }
       );
     },
+    async stake() {
+      (this as any).stakeLoad = true;
+      await (this as any).$store.dispatch("stake", {
+        stakes: (this as any).stakesBig,
+        func: (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+          if (e.blockHash) {
+            (this as any).stakeLoad = false;
+          }
+        },
+      });
+    },
+    async withdrawStake() {
+      (this as any).withdrawStakeLoad = true;
+      await (this as any).$store.dispatch("stake", {
+        withdrawStakes: (this as any).withdrawStakesBig,
+        func: (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+          if (e.blockHash) {
+            (this as any).withdrawReward = false;
+          }
+        },
+      });
+      (this as any).withdrawStakeLoad = false;
+    },
     async withdrawReward() {
-      await (this as any).$store.dispatch("withdrawReward");
+      (this as any).withdrawReward = true;
+      await (this as any).$store.dispatch(
+        "withdrawReward",
+        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+          if (e.blockHash) {
+            (this as any).withdrawReward = false;
+          }
+        }
+      );
     },
     async exit() {
-      await (this as any).$store.dispatch("exit");
+      (this as any).exitReward = true;
+      await (this as any).$store.dispatch(
+        "exit",
+        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+          if (e.blockHash) {
+            (this as any).exitReward = false;
+          }
+        }
+      );
     },
   },
 };

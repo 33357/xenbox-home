@@ -4,13 +4,14 @@ import { BigNumber, config, log, utils } from "../const";
 import { YENModel } from "yen-sdk";
 import { toRaw } from "vue";
 
+export { YENModel } from "yen-sdk";
+
 export interface Storage {}
 
 export interface Sync {
   userAddress: string;
   yenAddress: string;
   chainId: number;
-  avatarMap: { [address: string]: string };
   ether: Ether;
   appStart: boolean;
   thisBlock: number;
@@ -57,7 +58,6 @@ const state: State = {
     userAddress: config.ZERO_ADDRESS,
     yenAddress: config.ZERO_ADDRESS,
     chainId: 0,
-    avatarMap: {},
     ether: new Ether(),
     appStart: false,
     thisBlock: 0,
@@ -136,7 +136,6 @@ const actions: ActionTree<State, State> = {
     if (state.sync.ether.yen) {
       state.sync.yenAddress = toRaw(state.sync.ether.yen).address();
     }
-    await dispatch("setAvatar", { address: state.sync.userAddress });
   },
 
   async watchStorage({ state }) {
@@ -160,12 +159,6 @@ const actions: ActionTree<State, State> = {
         deep: true,
       }
     );
-  },
-
-  async setAvatar({ state }, { address }) {
-    if (!state.sync.avatarMap[address]) {
-      state.sync.avatarMap[address] = utils.get.avatar(address);
-    }
   },
 
   async getShareData({ state }) {
@@ -248,60 +241,62 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async mint({ state }) {
+  async mint({ state }, func: Function) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).mint();
+      await toRaw(state.sync.ether.yen).mint({}, func);
     }
   },
 
-  async claim({ state }) {
+  async claim({ state }, func: Function) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).claim();
+      await toRaw(state.sync.ether.yen).claim({}, func);
     }
   },
 
-  async share({ state }, shares: BigNumber) {
+  async share({ state }, { shares, func }) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).share({ value: shares });
+      await toRaw(state.sync.ether.yen).share({ value: shares }, func);
     }
   },
 
-  async getShare({ state }) {
+  async getShare({ state }, func: Function) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).getShare();
+      await toRaw(state.sync.ether.yen).getShare({}, func);
     }
   },
 
-  async approve({ state }) {
+  async approve({ state }, func: Function) {
     if (state.sync.ether.pair && state.sync.ether.yen) {
       await toRaw(state.sync.ether.pair).approve(
         toRaw(state.sync.ether.yen).address(),
-        BigNumber.from(config.MAX_UINT256)
+        BigNumber.from(config.MAX_UINT256),
+        {},
+        func
       );
     }
   },
 
-  async stake({ state }, stakes: BigNumber) {
+  async stake({ state }, { stakes, func }) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).stake(stakes);
+      await toRaw(state.sync.ether.yen).stake(stakes, {}, func);
     }
   },
 
-  async withdrawStake({ state }, withdrawStakes: BigNumber) {
+  async withdrawStake({ state }, { withdrawStakes, func }) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).withdrawStake(withdrawStakes);
+      await toRaw(state.sync.ether.yen).withdrawStake(withdrawStakes, {}, func);
     }
   },
 
-  async withdrawReward({ state }) {
+  async withdrawReward({ state }, func: Function) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).withdrawReward();
+      await toRaw(state.sync.ether.yen).withdrawReward({}, func);
     }
   },
 
-  async exit({ state }) {
+  async exit({ state }, func: Function) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).exit();
+      await toRaw(state.sync.ether.yen).exit({}, func);
     }
   },
 };
