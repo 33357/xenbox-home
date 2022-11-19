@@ -20,6 +20,9 @@
             )
           }}
         </div>
+        <div v-else>
+          End Sharing
+        </div>
       </el-form-item>
       <el-form-item label="Total Share ETH :">
         <div>
