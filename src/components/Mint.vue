@@ -73,7 +73,13 @@ export default {
     state: (state) => state as State,
   }),
   methods: {
-    ...mapActions(["getMintData", "mint", "claim", "getBlock"]),
+    ...mapActions([
+      "getMintData",
+      "getBlockMintData",
+      "mint",
+      "claim",
+      "getBlock",
+    ]),
     async doMint() {
       this.mintLoad = true;
       await this.mint(
@@ -104,7 +110,8 @@ export default {
               offset: 50,
               type: "success",
             });
-            await this.getMintData();
+            this.getMintData();
+            this.getBlockMintData();
           }
         }
       );

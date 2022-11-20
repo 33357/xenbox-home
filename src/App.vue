@@ -53,21 +53,21 @@ export default {
       log("window load");
       await this.start();
       await this.runListen();
-      setInterval(this.runListen, 12000);
+      setInterval(this.runListen, 11000);
     });
   },
   computed: mapState({
     state: (state) => state as State,
   }),
   methods: {
-    ...mapActions(["start", "listenBlock"]),
+    ...mapActions(["start", "getBlockData"]),
     handleSelect(key: string) {
       if (Number(key) > 0) {
         (this as any).activeIndex = key;
       }
     },
     async runListen() {
-      await this.listenBlock(async (blockNumber: number) => {
+      await this.getBlockData(async (blockNumber: number) => {
         if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
           ElNotification({
             title: `Block ${blockNumber} Minted`,

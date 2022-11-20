@@ -305,17 +305,23 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async listenBlock({ state, dispatch }, func: Function) {
+  async getBlockMintData({ state }) {
+    if (state.sync.ether.yen) {
+      const [nextBlockMint, blockMints] = await Promise.all([
+        toRaw(state.sync.ether.yen).getMints(),
+        toRaw(state.sync.ether.yen).blockMints(),
+      ]);
+      state.async.mint.nextBlockMint = nextBlockMint.div(2).add(blockMints);
+    }
+  },
+
+  async getBlockData({ state, dispatch }, func: Function) {
     if (state.sync.ether.provider && state.sync.ether.yen) {
       const blockNumber = await toRaw(
         state.sync.ether.provider
       ).getBlockNumber();
       if (!state.async.mint.block[blockNumber]) {
-        const [nextBlockMint, blockMints] = await Promise.all([
-          toRaw(state.sync.ether.yen).getMints(),
-          toRaw(state.sync.ether.yen).blockMints(),
-        ]);
-        state.async.mint.nextBlockMint = nextBlockMint.div(2).add(blockMints);
+        dispatch("getBlockMintData");
         for (
           let runBlockNumber = state.sync.thisBlock;
           runBlockNumber <= blockNumber;
