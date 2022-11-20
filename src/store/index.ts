@@ -191,15 +191,9 @@ const actions: ActionTree<State, State> = {
 
   async getMintData({ state }) {
     if (state.sync.ether.yen) {
-      let nextBlockMint;
-      let blockMints;
-      [nextBlockMint, state.async.mint.yourMinted, blockMints] =
-        await Promise.all([
-          toRaw(state.sync.ether.yen).getMints(),
-          toRaw(state.sync.ether.yen).getClaims(state.sync.userAddress),
-          toRaw(state.sync.ether.yen).blockMints(),
-        ]);
-      state.async.mint.nextBlockMint = nextBlockMint.div(2).add(blockMints);
+      state.async.mint.yourMinted = await toRaw(state.sync.ether.yen).getClaims(
+        state.sync.userAddress
+      );
     }
   },
 
@@ -322,13 +316,18 @@ const actions: ActionTree<State, State> = {
   },
 
   async listenBlock({ state, dispatch }) {
-    if (state.sync.ether.singer) {
+    if (state.sync.ether.singer && state.sync.ether.yen) {
       const blockNumber = await toRaw(
         state.sync.ether.singer
       ).provider?.getBlockNumber();
       if (blockNumber && !state.async.mint.block[blockNumber]) {
         await dispatch("getBlock", blockNumber);
         log(`listenBlock ${blockNumber}`);
+        const [nextBlockMint, blockMints] = await Promise.all([
+          toRaw(state.sync.ether.yen).getMints(),
+          toRaw(state.sync.ether.yen).blockMints(),
+        ]);
+        state.async.mint.nextBlockMint = nextBlockMint.div(2).add(blockMints);
         // // if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
         ElNotification({
           title: `Block ${blockNumber} Minted`,
