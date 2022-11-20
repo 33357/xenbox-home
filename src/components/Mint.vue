@@ -21,7 +21,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="mint()" :loading="mintLoad"
+          <el-button type="primary" @click="doMint()" :loading="mintLoad"
             >Mint</el-button
           >
         </el-form-item>
@@ -42,7 +42,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="claim()" :loading="claimLoad"
+          <el-button type="primary" @click="doClaim()" :loading="claimLoad"
             >Claim</el-button
           >
         </el-form-item>
@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import { log, utils } from "../const";
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import { State, YENModel } from "../store";
 
 export default {
@@ -85,22 +85,22 @@ export default {
     };
   },
   async created() {
-    await (this as any).$store.dispatch("getMintData");
+    await this.getMintData();
   },
   computed: mapState({
     state: (state) => state as State,
   }),
   methods: {
-    async mint() {
+    ...mapActions(["getMintData", "mint", "claim", "getBlock"]),
+    async doMint() {
       this.mintLoad = true;
-      await (this as any).$store.dispatch(
-        "mint",
+      await this.mint(
         async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
             this.mintLoad = false;
             const blockNumber = e.blockNumber;
             if (blockNumber) {
-              await (this as any).$store.dispatch("getBlock", blockNumber);
+              await this.getBlock(blockNumber);
               this.mintDialogText = `You Minted ${utils.format.balance(
                 Number(
                   this.state.async.mint.block[blockNumber].mints.div(
@@ -120,19 +120,18 @@ export default {
               )} !`;
               this.mintDialogVisible = true;
             }
-            await (this as any).$store.dispatch("getMintData");
+            await this.getMintData();
           }
         }
       );
     },
-    async claim() {
+    async doClaim() {
       this.claimLoad = true;
-      await (this as any).$store.dispatch(
-        "claim",
+      await this.claim(
         async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
             this.claimLoad = false;
-            await (this as any).$store.dispatch("getMintData");
+            await this.getMintData();
           }
         }
       );

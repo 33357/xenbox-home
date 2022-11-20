@@ -100,7 +100,7 @@
       <el-form-item>
         <el-button
           type="primary"
-          @click="share()"
+          @click="doShare()"
           :disabled="state.async.share.shareEndBlock.lt(state.sync.thisBlock)"
           :loading="shareLoad"
           >Share</el-button
@@ -135,7 +135,7 @@
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="get()" :loading="getLoad"
+        <el-button type="primary" @click="doGet()" :loading="getLoad"
           >Get</el-button
         >
       </el-form-item>
@@ -145,7 +145,7 @@
 
 <script lang="ts">
 import { log, utils, BigNumber } from "../const";
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import { State, YENModel } from "../store";
 
 export default {
@@ -159,7 +159,7 @@ export default {
     };
   },
   async created() {
-    await (this as any).$store.dispatch("getShareData");
+    await this.getShareData();
   },
   watch: {
     shares(value) {
@@ -170,26 +170,28 @@ export default {
     state: (state) => state as State,
   }),
   methods: {
-    async share() {
+    ...mapActions(["getShareData", "share", "getShare"]),
+    async doShare() {
       this.shareLoad = true;
-      await (this as any).$store.dispatch("share", {
+      await this.share({
         shares: this.sharesBig,
-        func: async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        func: async (
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt
+        ) => {
           if (e.blockHash) {
             this.shareLoad = false;
-            await (this as any).$store.dispatch("getShareData");
+            await this.getShareData();
           }
         },
       });
     },
-    async get() {
+    async doGet() {
       this.getLoad = true;
-      await (this as any).$store.dispatch(
-        "getShare",
+      await this.getShare(
         async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
             this.getLoad = false;
-            await (this as any).$store.dispatch("getShareData");
+            await this.getShareData();
           }
         }
       );

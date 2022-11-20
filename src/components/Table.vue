@@ -62,7 +62,7 @@
 
 <script lang="ts">
 import { log, utils } from "../const";
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import { State } from "../store";
 
 export default {
@@ -72,12 +72,14 @@ export default {
     };
   },
   async created() {
-    await (this as any).$store.dispatch("getTableData");
+    await this.getTableData();
   },
   computed: mapState({
     state: (state) => state as State,
   }),
-  methods: {},
+  methods: {
+    ...mapActions(["getTableData"]),
+  },
 };
 </script>
 

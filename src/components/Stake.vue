@@ -32,12 +32,12 @@
           <el-input v-model="stakes" type="string" />
         </el-form-item>
         <el-form-item v-if="state.async.stake.yourPairAllowance.eq(0)">
-          <el-button type="primary" @click="approve()" :loading="approveLoad"
+          <el-button type="primary" @click="doApprove()" :loading="approveLoad"
             >Approve</el-button
           >
         </el-form-item>
         <el-form-item v-else>
-          <el-button type="primary" @click="stake()" :loading="stakeLoad"
+          <el-button type="primary" @click="doStake()" :loading="stakeLoad"
             >Stake</el-button
           >
         </el-form-item>
@@ -75,7 +75,7 @@
         <el-form-item>
           <el-button
             type="primary"
-            @click="withdrawStake()"
+            @click="doWithdrawStake()"
             :loading="withdrawStakeLoad"
             >WithdrawStake</el-button
           >
@@ -99,7 +99,7 @@
         <el-form-item>
           <el-button
             type="primary"
-            @click="withdrawReward()"
+            @click="doWithdrawReward()"
             :loading="withdrawRewardLoad"
             >WithdrawReward</el-button
           >
@@ -109,7 +109,7 @@
       <el-divider />
       <el-form label-width="30%">
         <el-form-item>
-          <el-button type="primary" @click="exit()" :loading="exitLoad"
+          <el-button type="primary" @click="doExit()" :loading="exitLoad"
             >Exit</el-button
           >
         </el-form-item>
@@ -120,7 +120,7 @@
 
 <script lang="ts">
 import { log, utils, BigNumber } from "../const";
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import { State, YENModel } from "../store";
 
 export default {
@@ -139,26 +139,31 @@ export default {
     };
   },
   async created() {
-    await (this as any).$store.dispatch("getStakeData");
+    await this.getStakeData();
   },
   watch: {
     stakes(value) {
       this.stakesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
     },
     withdrawStakes(value) {
-      this.withdrawStakesBig = BigNumber.from(value * 10 ** 9).mul(
-        10 ** 9
-      );
-    }
+      this.withdrawStakesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
+    },
   },
   computed: mapState({
     state: (state) => state as State,
   }),
   methods: {
-    async approve() {
+    ...mapActions([
+      "getStakeData",
+      "approve",
+      "stake",
+      "withdrawStake",
+      "withdrawReward",
+      "exit",
+    ]),
+    async doApprove() {
       this.approveLoad = true;
-      await (this as any).$store.dispatch(
-        "approve",
+      await this.approve(
         async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
             this.approveLoad = false;
@@ -167,11 +172,13 @@ export default {
         }
       );
     },
-    async stake() {
+    async doStake() {
       this.stakeLoad = true;
-      await (this as any).$store.dispatch("stake", {
+      await this.stake({
         stakes: this.stakesBig,
-        func: async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        func: async (
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt
+        ) => {
           if (e.blockHash) {
             this.stakeLoad = false;
             await (this as any).$store.dispatch("getStakeData");
@@ -179,11 +186,13 @@ export default {
         },
       });
     },
-    async withdrawStake() {
+    async doWithdrawStake() {
       this.withdrawStakeLoad = true;
-      await (this as any).$store.dispatch("stake", {
+      await this.withdrawStake({
         withdrawStakes: this.withdrawStakesBig,
-        func: async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        func: async (
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt
+        ) => {
           if (e.blockHash) {
             this.withdrawStakeLoad = false;
             await (this as any).$store.dispatch("getStakeData");
@@ -192,10 +201,9 @@ export default {
       });
       this.withdrawStakeLoad = false;
     },
-    async withdrawReward() {
+    async doWithdrawReward() {
       this.withdrawRewardLoad = true;
-      await (this as any).$store.dispatch(
-        "withdrawReward",
+      await this.withdrawReward(
         async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
             this.withdrawRewardLoad = false;
@@ -204,10 +212,9 @@ export default {
         }
       );
     },
-    async exit() {
+    async doExit() {
       this.exitLoad = true;
-      await (this as any).$store.dispatch(
-        "exit",
+      await this.exit(
         async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
             this.exitLoad = false;

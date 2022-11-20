@@ -3,7 +3,7 @@ import { Ether } from "../network";
 import { BigNumber, config, log, utils } from "../const";
 import { YENModel } from "yen-sdk";
 import { toRaw } from "vue";
-import { ElNotification,ElMessage } from "element-plus";
+import { ElNotification, ElMessage } from "element-plus";
 
 export { YENModel } from "yen-sdk";
 
@@ -330,7 +330,7 @@ const actions: ActionTree<State, State> = {
         await dispatch("getBlock", blockNumber);
         log(`listenBlock ${blockNumber}`);
         // // if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
-          ElNotification({
+        ElNotification({
           title: `Block ${blockNumber} Minted`,
           message: `${
             this.state.async.mint.block[blockNumber].persons
@@ -341,7 +341,7 @@ const actions: ActionTree<State, State> = {
             10
           )} !`,
           duration: 12000,
-          offset:100
+          offset: 100,
         });
         // // }
       }
