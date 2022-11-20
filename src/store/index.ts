@@ -294,7 +294,7 @@ const actions: ActionTree<State, State> = {
   },
 
   async getBlock({ state }, blockNumber: number) {
-    if (state.sync.ether.yen && !state.async.mint.block[blockNumber]) {
+    if (state.sync.ether.yen) {
       state.async.mint.block[blockNumber] = {
         persons: BigNumber.from(0),
         mints: BigNumber.from(0),
@@ -310,7 +310,6 @@ const actions: ActionTree<State, State> = {
       const blockNumber = await toRaw(
         state.sync.ether.provider
       ).getBlockNumber();
-      log(`listenBlock ${blockNumber}`);
       if (!state.async.mint.block[blockNumber]) {
         const [nextBlockMint, blockMints] = await Promise.all([
           toRaw(state.sync.ether.yen).getMints(),

@@ -79,8 +79,9 @@ export default {
             "YEN",
             10
           )} !`,
-          duration: 12000,
+          duration: 36000,
           offset: 50,
+          type: 'info',
         });
         // }
       });
