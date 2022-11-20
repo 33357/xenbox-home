@@ -113,21 +113,17 @@ const actions: ActionTree<State, State> = {
 
   async setSync({ state }) {
     await toRaw(state.sync.ether).load();
-    if (state.sync.ether.singer) {
+    if (state.sync.ether.singer && state.sync.ether.provider) {
       let blockNumber;
       [state.sync.userAddress, blockNumber] = await Promise.all([
         toRaw(state.sync.ether.singer).getAddress(),
-        toRaw(state.sync.ether.singer).provider?.getBlockNumber(),
+        toRaw(state.sync.ether.provider).getBlockNumber(),
       ]);
-      if (blockNumber) {
-        state.sync.thisBlock = blockNumber;
-        const block = await toRaw(state.sync.ether.singer).provider?.getBlock(
-          state.sync.thisBlock
-        );
-        if (block) {
-          state.sync.thisTime = block.timestamp;
-        }
-      }
+      state.sync.thisBlock = blockNumber;
+      const block = await toRaw(state.sync.ether.provider).getBlock(
+        state.sync.thisBlock
+      );
+      state.sync.thisTime = block.timestamp;
     }
     if (state.sync.ether.chainId) {
       state.sync.chainId = state.sync.ether.chainId;
@@ -310,18 +306,28 @@ const actions: ActionTree<State, State> = {
   },
 
   async listenBlock({ state, dispatch }, func: Function) {
-    if (state.sync.ether.singer && state.sync.ether.yen) {
+    if (state.sync.ether.provider && state.sync.ether.yen) {
       const blockNumber = await toRaw(
-        state.sync.ether.singer
-      ).provider?.getBlockNumber();
-      if (blockNumber && !state.async.mint.block[blockNumber]) {
-        await dispatch("getBlock", blockNumber);
+        state.sync.ether.provider
+      ).getBlockNumber();
+      log(`listenBlock ${blockNumber}`);
+      if (!state.async.mint.block[blockNumber]) {
         const [nextBlockMint, blockMints] = await Promise.all([
           toRaw(state.sync.ether.yen).getMints(),
           toRaw(state.sync.ether.yen).blockMints(),
         ]);
         state.async.mint.nextBlockMint = nextBlockMint.div(2).add(blockMints);
-        func(blockNumber);
+        for (
+          let runBlockNumber = blockNumber;
+          runBlockNumber >= state.sync.thisBlock;
+          runBlockNumber--
+        ) {
+          if (state.async.mint.block[runBlockNumber]) {
+            break;
+          }
+          await dispatch("getBlock", runBlockNumber);
+          func(runBlockNumber);
+        }
       }
     }
   },

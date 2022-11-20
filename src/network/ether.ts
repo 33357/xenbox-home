@@ -1,9 +1,11 @@
 import { YENClient, ERC20Client, DeploymentInfo } from "yen-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
-import { ethers, Signer } from "ethers";
+import { ethers, Signer, providers } from "ethers";
 
 export class Ether {
   public singer: Signer | undefined;
+
+  public provider: providers.Web3Provider | undefined;
 
   public chainId: number | undefined;
 
@@ -21,8 +23,8 @@ export class Ether {
         window.location.reload();
       });
       await ethereum.request({ method: "eth_requestAccounts" });
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      this.singer = provider.getSigner();
+      this.provider = new ethers.providers.Web3Provider(ethereum);
+      this.singer = this.provider.getSigner();
       this.chainId = await this.singer.getChainId();
       if (DeploymentInfo[this.chainId]) {
         this.yen = new YENClient(

@@ -68,7 +68,7 @@ export default {
     },
     async runListen() {
       await this.listenBlock(async (blockNumber: number) => {
-        if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
+        // if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
           ElNotification({
             title: `Block ${blockNumber} Minted`,
             message: `${
@@ -82,7 +82,7 @@ export default {
             duration: 12000,
             offset: 50,
           });
-        }
+        // }
       });
     },
   },
