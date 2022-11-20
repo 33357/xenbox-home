@@ -22,6 +22,18 @@
             }}
           </div>
         </el-form-item>
+        <el-form-item label="MarketSupply :">
+          <div>
+            {{
+              utils.format.balance(
+                Number(state.async.table.totalSupply.sub(state.async.table.yenBalance)),
+                18,
+                "YEN",
+                10
+              )
+            }}
+          </div>
+        </el-form-item>
         <el-form-item label="Per Block Mint :">
           <div>
             {{

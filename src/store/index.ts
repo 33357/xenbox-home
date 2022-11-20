@@ -43,6 +43,7 @@ export interface Async {
     halvingBlock: BigNumber;
     feeMul: BigNumber;
     blockMints: BigNumber;
+    yenBalance: BigNumber;
   };
 }
 
@@ -96,6 +97,7 @@ const state: State = {
       halvingBlock: BigNumber.from(0),
       feeMul: BigNumber.from(0),
       blockMints: BigNumber.from(0),
+      yenBalance: BigNumber.from(0),
     },
   },
 };
@@ -225,11 +227,13 @@ const actions: ActionTree<State, State> = {
         state.async.table.halvingBlock,
         state.async.table.feeMul,
         state.async.table.blockMints,
+        state.async.table.yenBalance,
       ] = await Promise.all([
         toRaw(state.sync.ether.yen).totalSupply(),
         toRaw(state.sync.ether.yen).halvingBlock(),
         toRaw(state.sync.ether.yen).getFeeMul(),
         toRaw(state.sync.ether.yen).blockMints(),
+        toRaw(state.sync.ether.yen).balanceOf(state.sync.yenAddress),
       ]);
     }
   },
