@@ -53,7 +53,7 @@ export default {
       log("window load");
       await this.start();
       await this.runListen();
-      setInterval(this.runListen, 3000);
+      setInterval(this.runListen, 6000);
     });
   },
   computed: mapState({

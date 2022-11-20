@@ -317,15 +317,14 @@ const actions: ActionTree<State, State> = {
         ]);
         state.async.mint.nextBlockMint = nextBlockMint.div(2).add(blockMints);
         for (
-          let runBlockNumber = blockNumber;
-          runBlockNumber >= state.sync.thisBlock;
-          runBlockNumber--
+          let runBlockNumber = state.sync.thisBlock;
+          runBlockNumber <= blockNumber;
+          runBlockNumber++
         ) {
-          if (state.async.mint.block[runBlockNumber]) {
-            break;
+          if (!state.async.mint.block[runBlockNumber]) {
+            await dispatch("getBlock", runBlockNumber);
+            func(runBlockNumber);
           }
-          await dispatch("getBlock", runBlockNumber);
-          func(runBlockNumber);
         }
       }
     }
