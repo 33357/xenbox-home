@@ -36,9 +36,10 @@
 
 <script lang="ts">
 import { useDark, useToggle } from "@vueuse/core";
-import { log } from "./const";
-import { mapState } from "vuex";
+import { log, utils } from "./const";
+import { mapState, mapActions } from "vuex";
 import { State } from "./store";
+import { ElNotification, ElMessage } from "element-plus";
 
 export default {
   data() {
@@ -50,17 +51,39 @@ export default {
   created() {
     window.addEventListener("load", async () => {
       log("window load");
-      await (this as any).$store.dispatch("start");
+      await this.start();
+      await this.runListen();
+      setInterval(this.runListen, 6000);
     });
   },
   computed: mapState({
     state: (state) => state as State,
   }),
   methods: {
+    ...mapActions(["start", "listenBlock"]),
     handleSelect(key: string) {
       if (Number(key) > 0) {
         (this as any).activeIndex = key;
       }
+    },
+    async runListen() {
+      await this.listenBlock(async (blockNumber: number) => {
+        // if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
+        ElNotification({
+          title: `Block ${blockNumber} Minted`,
+          message: `${
+            this.state.async.mint.block[blockNumber].persons
+          } Person Share ${utils.format.balance(
+            Number(this.state.async.mint.block[blockNumber].mints),
+            18,
+            "YEN",
+            10
+          )} !`,
+          duration: 12000,
+          position: "top-right",
+        });
+        // }
+      });
     },
   },
 };

@@ -3,7 +3,6 @@ import { Ether } from "../network";
 import { BigNumber, config, log, utils } from "../const";
 import { YENModel } from "yen-sdk";
 import { toRaw } from "vue";
-import { ElNotification, ElMessage } from "element-plus";
 
 export { YENModel } from "yen-sdk";
 
@@ -14,7 +13,6 @@ export interface Sync {
   yenAddress: string;
   chainId: number;
   ether: Ether;
-  appStart: boolean;
   thisBlock: number;
   thisTime: number;
 }
@@ -61,7 +59,6 @@ const state: State = {
     yenAddress: config.ZERO_ADDRESS,
     chainId: 0,
     ether: new Ether(),
-    appStart: false,
     thisBlock: 0,
     thisTime: 0,
   },
@@ -108,14 +105,13 @@ const actions: ActionTree<State, State> = {
     try {
       await dispatch("setSync");
       await dispatch("watchStorage");
-      state.sync.appStart = true;
       log("app start success!");
     } catch (err) {
       log(err);
     }
   },
 
-  async setSync({ state, dispatch }) {
+  async setSync({ state }) {
     await toRaw(state.sync.ether).load();
     if (state.sync.ether.singer) {
       let blockNumber;
@@ -139,8 +135,6 @@ const actions: ActionTree<State, State> = {
     if (state.sync.ether.yen) {
       state.sync.yenAddress = toRaw(state.sync.ether.yen).address();
     }
-    await dispatch("listenBlock");
-    setInterval(dispatch, 6000, "listenBlock");
   },
 
   async watchStorage({ state }) {
@@ -315,7 +309,7 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async listenBlock({ state, dispatch }) {
+  async listenBlock({ state, dispatch }, func: Function) {
     if (state.sync.ether.singer && state.sync.ether.yen) {
       const blockNumber = await toRaw(
         state.sync.ether.singer
@@ -328,21 +322,7 @@ const actions: ActionTree<State, State> = {
           toRaw(state.sync.ether.yen).blockMints(),
         ]);
         state.async.mint.nextBlockMint = nextBlockMint.div(2).add(blockMints);
-        // // if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
-        ElNotification({
-          title: `Block ${blockNumber} Minted`,
-          message: `${
-            this.state.async.mint.block[blockNumber].persons
-          } Person Share ${utils.format.balance(
-            Number(this.state.async.mint.block[blockNumber].mints),
-            18,
-            "YEN",
-            10
-          )} !`,
-          duration: 12000,
-          offset: 100,
-        });
-        // // }
+        func(blockNumber);
       }
     }
   },
