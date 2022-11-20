@@ -71,8 +71,6 @@
 import { log, utils } from "../const";
 import { mapState } from "vuex";
 import { State, YENModel } from "../store";
-import { ElNotification } from "element-plus";
-import { toRaw } from "vue";
 
 export default {
   data() {
@@ -88,16 +86,16 @@ export default {
   },
   async created() {
     await (this as any).$store.dispatch("getMintData");
-    await this.listenBlock();
-    this.timeInter = setInterval(this.listenBlock, 6000) as any;
+    // await this.listenBlock();
+    // this.timeInter = setInterval(this.listenBlock, 6000) as any;
   },
   computed: mapState({
     state: (state) => state as State,
   }),
-  beforeUnmount() {
-    clearInterval(this.timeInter as any);
-    this.timeInter = null;
-  },
+  // beforeUnmount() {
+  //   clearInterval(this.timeInter as any);
+  //   this.timeInter = null;
+  // },
   methods: {
     async mint() {
       this.mintLoad = true;
@@ -142,34 +140,6 @@ export default {
           }
         }
       );
-    },
-    async listenBlock() {
-      if (this.state.sync.ether.singer) {
-        const blockNumber = await toRaw(
-          this.state.sync.ether.singer
-        ).provider?.getBlockNumber();
-        if (blockNumber && blockNumber > this.blockNumber) {
-          this.blockNumber = blockNumber;
-          await (this as any).$store.dispatch("getBlock", blockNumber);
-          log(
-            `listen ${blockNumber} ${this.state.async.mint.block[blockNumber].persons}`
-          );
-          // if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
-            ElNotification({
-              title: `Block ${blockNumber} Minted`,
-              message: `${
-                this.state.async.mint.block[blockNumber].persons
-              } Person Share ${utils.format.balance(
-                Number(this.state.async.mint.block[blockNumber].mints),
-                18,
-                "YEN",
-                10
-              )} !`,
-              duration: 12000,
-            });
-          // }
-        }
-      }
     },
   },
 };

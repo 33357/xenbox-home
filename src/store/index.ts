@@ -3,6 +3,7 @@ import { Ether } from "../network";
 import { BigNumber, config, log, utils } from "../const";
 import { YENModel } from "yen-sdk";
 import { toRaw } from "vue";
+import { ElNotification,ElMessage } from "element-plus";
 
 export { YENModel } from "yen-sdk";
 
@@ -138,6 +139,8 @@ const actions: ActionTree<State, State> = {
     if (state.sync.ether.yen) {
       state.sync.yenAddress = toRaw(state.sync.ether.yen).address();
     }
+    await dispatch("listenBlock");
+    setInterval(dispatch, 6000, "listenBlock");
   },
 
   async watchStorage({ state }) {
@@ -308,9 +311,40 @@ const actions: ActionTree<State, State> = {
 
   async getBlock({ state }, blockNumber: number) {
     if (state.sync.ether.yen && !state.async.mint.block[blockNumber]) {
+      state.async.mint.block[blockNumber] = {
+        persons: BigNumber.from(0),
+        mints: BigNumber.from(0),
+      };
       state.async.mint.block[blockNumber] = await toRaw(
         state.sync.ether.yen
       ).blockMap(blockNumber);
+    }
+  },
+
+  async listenBlock({ state, dispatch }) {
+    if (state.sync.ether.singer) {
+      const blockNumber = await toRaw(
+        state.sync.ether.singer
+      ).provider?.getBlockNumber();
+      if (blockNumber && !state.async.mint.block[blockNumber]) {
+        await dispatch("getBlock", blockNumber);
+        log(`listenBlock ${blockNumber}`);
+        // // if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
+          ElNotification({
+          title: `Block ${blockNumber} Minted`,
+          message: `${
+            this.state.async.mint.block[blockNumber].persons
+          } Person Share ${utils.format.balance(
+            Number(this.state.async.mint.block[blockNumber].mints),
+            18,
+            "YEN",
+            10
+          )} !`,
+          duration: 12000,
+          offset:100
+        });
+        // // }
+      }
     }
   },
 };
