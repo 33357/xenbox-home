@@ -68,22 +68,21 @@ export default {
     },
     async runListen() {
       await this.listenBlock(async (blockNumber: number) => {
-        // if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
-        ElNotification({
-          title:`Block ${blockNumber} Minted`,
-          message: `${
-            this.state.async.mint.block[blockNumber].persons
-          } Person Share ${utils.format.balance(
-            Number(this.state.async.mint.block[blockNumber].mints),
-            18,
-            "YEN",
-            10
-          )} !`,
-          duration: 12000,
-          offset:50
-        });
-
-        // }
+        if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
+          ElNotification({
+            title: `Block ${blockNumber} Minted`,
+            message: `${
+              this.state.async.mint.block[blockNumber].persons
+            } Person Share ${utils.format.balance(
+              Number(this.state.async.mint.block[blockNumber].mints),
+              18,
+              "YEN",
+              10
+            )} !`,
+            duration: 12000,
+            offset: 50,
+          });
+        }
       });
     },
   },
