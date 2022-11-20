@@ -48,22 +48,6 @@
         </el-form-item>
       </el-form>
     </el-card>
-
-    <el-dialog
-      v-model="mintDialogVisible"
-      title="Minted"
-      width="30%"
-      align-center
-    >
-      <span>{{ mintDialogText }}</span>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button type="primary" @click="mintDialogVisible = false">
-            Confirm
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -71,6 +55,7 @@
 import { log, utils } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State, YENModel } from "../store";
+import { ElNotification } from "element-plus";
 
 export default {
   data() {
@@ -79,9 +64,6 @@ export default {
       mintDialogText: "",
       mintLoad: false,
       claimLoad: false,
-      mintDialogVisible: false,
-      blockNumber: 0,
-      timeInter: null,
     };
   },
   async created() {
@@ -96,30 +78,32 @@ export default {
       this.mintLoad = true;
       await this.mint(
         async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
-          if (e.blockHash) {
+          if (e.blockNumber) {
             this.mintLoad = false;
-            const blockNumber = e.blockNumber;
-            if (blockNumber) {
-              await this.getBlock(blockNumber);
-              this.mintDialogText = `You Minted ${utils.format.balance(
+            await this.getBlock(e.blockNumber);
+            ElNotification({
+              title: `Block ${e.blockNumber} Minted`,
+              message: `You Minted ${utils.format.balance(
                 Number(
-                  this.state.async.mint.block[blockNumber].mints.div(
-                    this.state.async.mint.block[blockNumber].persons
+                  this.state.async.mint.block[e.blockNumber].mints.div(
+                    this.state.async.mint.block[e.blockNumber].persons
                   )
                 ),
                 18,
                 "YEN",
                 10
               )}, ${
-                this.state.async.mint.block[blockNumber].persons
+                this.state.async.mint.block[e.blockNumber].persons
               } Person Share ${utils.format.balance(
-                Number(this.state.async.mint.block[blockNumber].mints),
+                Number(this.state.async.mint.block[e.blockNumber].mints),
                 18,
                 "YEN",
                 10
-              )} !`;
-              this.mintDialogVisible = true;
-            }
+              )} !`,
+              duration: 36000,
+              offset: 50,
+              type: "success",
+            });
             await this.getMintData();
           }
         }
