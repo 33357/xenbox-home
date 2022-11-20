@@ -55,25 +55,7 @@
       width="30%"
       align-center
     >
-      <span>{{
-        `You Minted ${utils.format.balance(
-          Number(
-            state.async.mint.mintBlock.mints.div(
-              state.async.mint.mintBlock.persons
-            )
-          ),
-          18,
-          "YEN",
-          10
-        )}, ${
-          state.async.mint.mintBlock.persons
-        } Person Share ${utils.format.balance(
-          Number(state.async.mint.mintBlock.mints),
-          18,
-          "YEN",
-          10
-        )} !`
-      }}</span>
+      <span>{{ mintDialogText }}</span>
       <template #footer>
         <span class="dialog-footer">
           <el-button type="primary" @click="mintDialogVisible = false">
@@ -89,6 +71,8 @@
 import { log, utils } from "../const";
 import { mapState } from "vuex";
 import { State, YENModel } from "../store";
+import { ElNotification } from "element-plus";
+import { toRaw } from "vue";
 
 export default {
   data() {
@@ -98,43 +82,94 @@ export default {
       mintLoad: false,
       claimLoad: false,
       mintDialogVisible: false,
+      blockNumber: 0,
+      timeInter: null,
     };
   },
   async created() {
     await (this as any).$store.dispatch("getMintData");
+    await this.listenBlock();
+    this.timeInter = setInterval(this.listenBlock, 6000) as any;
   },
   computed: mapState({
     state: (state) => state as State,
   }),
+  beforeUnmount() {
+    clearInterval(this.timeInter as any);
+    this.timeInter = null;
+  },
   methods: {
     async mint() {
-      (this as any).mintLoad = true;
+      this.mintLoad = true;
       await (this as any).$store.dispatch(
         "mint",
         async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
-            (this as any).mintLoad = false;
+            this.mintLoad = false;
             const blockNumber = e.blockNumber;
             if (blockNumber) {
-              await (this as any).$store.dispatch("getMintBlock", blockNumber);
-              log((this as any).state.async.mint.mintBlock);
-              (this as any).mintDialogText = (this as any).mintDialogVisible =
-                true;
+              await (this as any).$store.dispatch("getBlock", blockNumber);
+              this.mintDialogText = `You Minted ${utils.format.balance(
+                Number(
+                  this.state.async.mint.block[blockNumber].mints.div(
+                    this.state.async.mint.block[blockNumber].persons
+                  )
+                ),
+                18,
+                "YEN",
+                10
+              )}, ${
+                this.state.async.mint.block[blockNumber].persons
+              } Person Share ${utils.format.balance(
+                Number(this.state.async.mint.block[blockNumber].mints),
+                18,
+                "YEN",
+                10
+              )} !`;
+              this.mintDialogVisible = true;
             }
           }
         }
       );
     },
     async claim() {
-      (this as any).claimLoad = true;
+      this.claimLoad = true;
       await (this as any).$store.dispatch(
         "claim",
         (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
-            (this as any).claimLoad = false;
+            this.claimLoad = false;
           }
         }
       );
+    },
+    async listenBlock() {
+      if (this.state.sync.ether.singer) {
+        const blockNumber = await toRaw(
+          this.state.sync.ether.singer
+        ).provider?.getBlockNumber();
+        if (blockNumber && blockNumber > this.blockNumber) {
+          this.blockNumber = blockNumber;
+          await (this as any).$store.dispatch("getBlock", blockNumber);
+          log(
+            `listen ${blockNumber} ${this.state.async.mint.block[blockNumber].persons}`
+          );
+          // if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
+            ElNotification({
+              title: `Block ${blockNumber} Minted`,
+              message: `${
+                this.state.async.mint.block[blockNumber].persons
+              } Person Share ${utils.format.balance(
+                Number(this.state.async.mint.block[blockNumber].mints),
+                18,
+                "YEN",
+                10
+              )} !`,
+              duration: 12000,
+            });
+          // }
+        }
+      }
     },
   },
 };
