@@ -86,16 +86,10 @@ export default {
   },
   async created() {
     await (this as any).$store.dispatch("getMintData");
-    // await this.listenBlock();
-    // this.timeInter = setInterval(this.listenBlock, 6000) as any;
   },
   computed: mapState({
     state: (state) => state as State,
   }),
-  // beforeUnmount() {
-  //   clearInterval(this.timeInter as any);
-  //   this.timeInter = null;
-  // },
   methods: {
     async mint() {
       this.mintLoad = true;
@@ -126,6 +120,7 @@ export default {
               )} !`;
               this.mintDialogVisible = true;
             }
+            await (this as any).$store.dispatch("getMintData");
           }
         }
       );
@@ -134,9 +129,10 @@ export default {
       this.claimLoad = true;
       await (this as any).$store.dispatch(
         "claim",
-        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
             this.claimLoad = false;
+            await (this as any).$store.dispatch("getMintData");
           }
         }
       );

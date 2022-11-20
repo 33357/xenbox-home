@@ -109,7 +109,7 @@
       <el-divider />
       <el-form label-width="30%">
         <el-form-item>
-          <el-button type="primary" @click="exit()" :loading="exitStakeLoad"
+          <el-button type="primary" @click="exit()" :loading="exitLoad"
             >Exit</el-button
           >
         </el-form-item>
@@ -129,13 +129,13 @@ export default {
       stakes: 0,
       stakesBig: BigNumber.from(0),
       withdrawStakes: 0,
-      withdrawStakesig: BigNumber.from(0),
+      withdrawStakesBig: BigNumber.from(0),
       utils: utils,
       approveLoad: false,
       stakeLoad: false,
       withdrawStakeLoad: false,
       withdrawRewardLoad: false,
-      exitStakeLoad: false,
+      exitLoad: false,
     };
   },
   async created() {
@@ -143,75 +143,75 @@ export default {
   },
   watch: {
     stakes(value) {
-      (this as any).stakesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
+      this.stakesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
     },
     withdrawStakes(value) {
-      (this as any).withdrawStakesBig = BigNumber.from(value * 10 ** 9).mul(
+      this.withdrawStakesBig = BigNumber.from(value * 10 ** 9).mul(
         10 ** 9
       );
-    },
-    withdrawRewards(value) {
-      (this as any).withdrawRewardsBig = BigNumber.from(value * 10 ** 9).mul(
-        10 ** 9
-      );
-    },
+    }
   },
   computed: mapState({
     state: (state) => state as State,
   }),
   methods: {
     async approve() {
-      (this as any).approveLoad = true;
+      this.approveLoad = true;
       await (this as any).$store.dispatch(
         "approve",
-        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
-            (this as any).approveLoad = false;
+            this.approveLoad = false;
+            await (this as any).$store.dispatch("getStakeData");
           }
         }
       );
     },
     async stake() {
-      (this as any).stakeLoad = true;
+      this.stakeLoad = true;
       await (this as any).$store.dispatch("stake", {
-        stakes: (this as any).stakesBig,
-        func: (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        stakes: this.stakesBig,
+        func: async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
-            (this as any).stakeLoad = false;
+            this.stakeLoad = false;
+            await (this as any).$store.dispatch("getStakeData");
           }
         },
       });
     },
     async withdrawStake() {
-      (this as any).withdrawStakeLoad = true;
+      this.withdrawStakeLoad = true;
       await (this as any).$store.dispatch("stake", {
-        withdrawStakes: (this as any).withdrawStakesBig,
-        func: (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        withdrawStakes: this.withdrawStakesBig,
+        func: async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
-            (this as any).withdrawReward = false;
+            this.withdrawStakeLoad = false;
+            await (this as any).$store.dispatch("getStakeData");
           }
         },
       });
-      (this as any).withdrawStakeLoad = false;
+      this.withdrawStakeLoad = false;
     },
     async withdrawReward() {
-      (this as any).withdrawReward = true;
+      this.withdrawRewardLoad = true;
       await (this as any).$store.dispatch(
         "withdrawReward",
-        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
-            (this as any).withdrawReward = false;
+            this.withdrawRewardLoad = false;
+            await (this as any).$store.dispatch("getStakeData");
           }
         }
       );
     },
     async exit() {
-      (this as any).exitReward = true;
+      this.exitLoad = true;
       await (this as any).$store.dispatch(
         "exit",
-        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
-            (this as any).exitReward = false;
+            this.exitLoad = false;
+            await (this as any).$store.dispatch("getStakeData");
           }
         }
       );

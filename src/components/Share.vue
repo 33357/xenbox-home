@@ -163,7 +163,7 @@ export default {
   },
   watch: {
     shares(value) {
-      (this as any).sharesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
+      this.sharesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
     },
   },
   computed: mapState({
@@ -171,23 +171,25 @@ export default {
   }),
   methods: {
     async share() {
-      (this as any).shareLoad = true;
+      this.shareLoad = true;
       await (this as any).$store.dispatch("share", {
-        shares: (this as any).sharesBig,
-        func: (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        shares: this.sharesBig,
+        func: async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
-            (this as any).shareLoad = false;
+            this.shareLoad = false;
+            await (this as any).$store.dispatch("getShareData");
           }
         },
       });
     },
     async get() {
-      (this as any).getLoad = true;
+      this.getLoad = true;
       await (this as any).$store.dispatch(
         "getShare",
-        (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
+        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
-            (this as any).getLoad = false;
+            this.getLoad = false;
+            await (this as any).$store.dispatch("getShareData");
           }
         }
       );
