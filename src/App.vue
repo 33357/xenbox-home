@@ -39,7 +39,7 @@ import { useDark, useToggle } from "@vueuse/core";
 import { log, utils } from "./const";
 import { mapState, mapActions } from "vuex";
 import { State } from "./store";
-import { ElNotification, ElMessage } from "element-plus";
+import { ElNotification } from "element-plus";
 
 export default {
   data() {
@@ -70,7 +70,7 @@ export default {
       await this.listenBlock(async (blockNumber: number) => {
         // if (this.state.async.mint.block[blockNumber].persons.gt(0)) {
         ElNotification({
-          title: `Block ${blockNumber} Minted`,
+          title:`Block ${blockNumber} Minted`,
           message: `${
             this.state.async.mint.block[blockNumber].persons
           } Person Share ${utils.format.balance(
@@ -80,8 +80,9 @@ export default {
             10
           )} !`,
           duration: 12000,
-          position: "top-right",
+          offset:50
         });
+
         // }
       });
     },

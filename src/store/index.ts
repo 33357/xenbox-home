@@ -316,7 +316,6 @@ const actions: ActionTree<State, State> = {
       ).provider?.getBlockNumber();
       if (blockNumber && !state.async.mint.block[blockNumber]) {
         await dispatch("getBlock", blockNumber);
-        log(`listenBlock ${blockNumber}`);
         const [nextBlockMint, blockMints] = await Promise.all([
           toRaw(state.sync.ether.yen).getMints(),
           toRaw(state.sync.ether.yen).blockMints(),
