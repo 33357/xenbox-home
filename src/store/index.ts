@@ -201,6 +201,7 @@ const actions: ActionTree<State, State> = {
             state.sync.userAddress
           ),
         ]);
+      state.async.mint.personBlockList = [];
       for (let i = 0; i < Number(state.async.mint.person.blockIndex); i++) {
         state.async.mint.personBlockList.push(personBlockList[i]);
       }

@@ -52,7 +52,7 @@
       <el-form label-width="30%">
         <el-table :data="mintedList" stripe height="300" style="width: 100%">
           <el-table-column prop="block" label="Block" width="150" />
-          <el-table-column prop="minted" label="Minted" width="150" />
+          <el-table-column prop="minted" label="Minted" width="200" />
           <el-table-column prop="person" label="Person" width="150" />
           <el-table-column prop="total" label="Total" />
         </el-table>
