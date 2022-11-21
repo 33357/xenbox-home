@@ -208,8 +208,8 @@ const actions: ActionTree<State, State> = {
       state.async.mint.personBlockList.forEach(async (blockNumber) => {
         if (!state.async.mint.block[blockNumber]) {
           await dispatch("getBlock", blockNumber);
-          func();
         }
+        func();
       });
     }
   },
