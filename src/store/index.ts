@@ -29,6 +29,8 @@ export interface Async {
   mint: {
     nextBlockMint: BigNumber;
     yourMinted: BigNumber;
+    person: YENModel.Person;
+    personBlockList: number[];
     block: { [blockNumber: string]: YENModel.Block };
   };
   stake: {
@@ -78,6 +80,13 @@ const state: State = {
     mint: {
       nextBlockMint: BigNumber.from(0),
       yourMinted: BigNumber.from(0),
+      person: {
+        blockIndex: BigNumber.from(0),
+        stakes: BigNumber.from(0),
+        rewards: BigNumber.from(0),
+        lastPerStakeRewards: BigNumber.from(0),
+      },
+      personBlockList: [],
       block: {},
     },
     stake: {
@@ -181,11 +190,27 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async getMintData({ state }) {
+  async getMintData({ state, dispatch }, func: Function) {
     if (state.sync.ether.yen) {
-      state.async.mint.yourMinted = await toRaw(state.sync.ether.yen).getClaims(
-        state.sync.userAddress
-      );
+      let personBlockList;
+      [state.async.mint.yourMinted, state.async.mint.person, personBlockList] =
+        await Promise.all([
+          toRaw(state.sync.ether.yen).getClaims(state.sync.userAddress),
+          toRaw(state.sync.ether.yen).personMap(state.sync.userAddress),
+          toRaw(state.sync.ether.yen).getPersonBlockList(
+            state.sync.userAddress
+          ),
+        ]);
+      for (let i = 0; i < Number(state.async.mint.person.blockIndex); i++) {
+        state.async.mint.personBlockList.push(personBlockList[i]);
+      }
+      state.async.mint.personBlockList.reverse();
+      state.async.mint.personBlockList.forEach(async (blockNumber) => {
+        if (!state.async.mint.block[blockNumber]) {
+          await dispatch("getBlock", blockNumber);
+          func();
+        }
+      });
     }
   },
 

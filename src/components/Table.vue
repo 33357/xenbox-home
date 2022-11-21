@@ -26,7 +26,11 @@
           <div>
             {{
               utils.format.balance(
-                Number(state.async.table.totalSupply.sub(state.async.table.yenBalance)),
+                Number(
+                  state.async.table.totalSupply.sub(
+                    state.async.table.yenBalance
+                  )
+                ),
                 18,
                 "YEN",
                 10

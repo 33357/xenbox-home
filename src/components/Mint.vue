@@ -47,6 +47,16 @@
           >
         </el-form-item>
       </el-form>
+
+      <el-divider />
+      <el-form label-width="30%">
+        <el-table :data="mintedList" stripe height="300" style="width: 100%">
+          <el-table-column prop="block" label="Block" width="150" />
+          <el-table-column prop="minted" label="Minted" width="150" />
+          <el-table-column prop="person" label="Person" width="150" />
+          <el-table-column prop="total" label="Total" />
+        </el-table>
+      </el-form>
     </el-card>
   </div>
 </template>
@@ -64,10 +74,11 @@ export default {
       mintDialogText: "",
       mintLoad: false,
       claimLoad: false,
+      mintedList: [],
     };
   },
   async created() {
-    await this.getMintData();
+    await this.getMintData(this.getMintedData);
   },
   computed: mapState({
     state: (state) => state as State,
@@ -80,6 +91,42 @@ export default {
       "claim",
       "getBlock",
     ]),
+    async getMintedData() {
+      const mintedList: {
+        block: number;
+        minted: string;
+        person: number;
+        total: string;
+      }[] = [];
+      this.state.async.mint.personBlockList.forEach((blockNumber) => {
+        if (
+          this.state.async.mint.block[blockNumber] &&
+          !this.state.async.mint.block[blockNumber].mints.eq(0)
+        ) {
+          mintedList.push({
+            block: blockNumber,
+            minted: utils.format.balance(
+              Number(
+                this.state.async.mint.block[blockNumber].mints.div(
+                  this.state.async.mint.block[blockNumber].persons
+                )
+              ),
+              18,
+              "YEN",
+              10
+            ),
+            person: Number(this.state.async.mint.block[blockNumber].persons),
+            total: utils.format.balance(
+              Number(this.state.async.mint.block[blockNumber].mints),
+              18,
+              "YEN",
+              10
+            ),
+          });
+        }
+      });
+      this.mintedList = mintedList as any;
+    },
     async doMint() {
       this.mintLoad = true;
       await this.mint(
@@ -110,7 +157,7 @@ export default {
               offset: 50,
               type: "success",
             });
-            this.getMintData();
+            await this.getMintData(this.getMintedData);
             this.getBlockMintData();
           }
         }
@@ -122,7 +169,7 @@ export default {
         async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
           if (e.blockHash) {
             this.claimLoad = false;
-            await this.getMintData();
+            await this.getMintData(this.getMintedData);
           }
         }
       );
@@ -142,5 +189,24 @@ export default {
   width: 480px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.infinite-list {
+  height: 300px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.infinite-list .infinite-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  background: rgb(216, 233, 253);
+  margin: 10px;
+  color: rgb(20, 122, 246);
+}
+.infinite-list .infinite-list-item + .list-item {
+  margin-top: 10px;
 }
 </style>
