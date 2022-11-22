@@ -51,7 +51,7 @@
             (50% For Miner, 50% For LP)
           </div>
         </el-form-item>
-        <el-form-item label="Halving Date :">
+        <el-form-item label="Next Halving Date :">
           <div>
             {{
               new Date(
