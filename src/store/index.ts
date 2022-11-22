@@ -3,6 +3,7 @@ import { Ether } from "../network";
 import { BigNumber, config, log, utils } from "../const";
 import { YENModel } from "yen-sdk";
 import { toRaw } from "vue";
+import { ElMessage, ElNotification } from "element-plus";
 
 export { YENModel } from "yen-sdk";
 
@@ -116,6 +117,8 @@ const actions: ActionTree<State, State> = {
     try {
       await dispatch("setSync");
       await dispatch("watchStorage");
+      await dispatch("runListen");
+      setInterval(dispatch, 11000, "runListen");
       log("app start success!");
     } catch (err) {
       log(err);
@@ -266,60 +269,145 @@ const actions: ActionTree<State, State> = {
 
   async mint({ state }, func: Function) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).mint({}, func);
+      try {
+        await toRaw(state.sync.ether.yen).mint({}, func);
+      } catch (error: any) {
+        ElMessage({
+          message: error,
+          duration: 3000,
+          type: "error",
+        });
+        func(null);
+      }
     }
   },
 
   async claim({ state }, func: Function) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).claim({}, func);
+      try {
+        await toRaw(state.sync.ether.yen).claim({}, func);
+      } catch (error: any) {
+        ElMessage({
+          message: error,
+          duration: 3000,
+          type: "error",
+        });
+        func(null);
+      }
     }
   },
 
   async share({ state }, { shares, func }) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).share({ value: shares }, func);
+      try {
+        await toRaw(state.sync.ether.yen).share({ value: shares }, func);
+      } catch (error: any) {
+        ElMessage({
+          message: error,
+          duration: 3000,
+          type: "error",
+        });
+        func(null);
+      }
     }
   },
 
   async getShare({ state }, func: Function) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).getShare({}, func);
+      try {
+        await toRaw(state.sync.ether.yen).getShare({}, func);
+      } catch (error: any) {
+        ElMessage({
+          message: error,
+          duration: 3000,
+          type: "error",
+        });
+        func(null);
+      }
     }
   },
 
   async approve({ state }, func: Function) {
     if (state.sync.ether.pair && state.sync.ether.yen) {
-      await toRaw(state.sync.ether.pair).approve(
-        toRaw(state.sync.ether.yen).address(),
-        BigNumber.from(config.MAX_UINT256),
-        {},
-        func
-      );
+      try {
+        await toRaw(state.sync.ether.pair).approve(
+          toRaw(state.sync.ether.yen).address(),
+          BigNumber.from(config.MAX_UINT256),
+          {},
+          func
+        );
+      } catch (error: any) {
+        ElMessage({
+          message: error,
+          duration: 3000,
+          type: "error",
+        });
+        func(null);
+      }
     }
   },
 
   async stake({ state }, { stakes, func }) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).stake(stakes, {}, func);
+      try {
+        await toRaw(state.sync.ether.yen).stake(stakes, {}, func);
+      } catch (error: any) {
+        ElMessage({
+          message: error,
+          duration: 3000,
+          type: "error",
+        });
+        func(null);
+      }
     }
   },
 
   async withdrawStake({ state }, { withdrawStakes, func }) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).withdrawStake(withdrawStakes, {}, func);
+      try {
+        await toRaw(state.sync.ether.yen).withdrawStake(
+          withdrawStakes,
+          {},
+          func
+        );
+      } catch (error: any) {
+        ElMessage({
+          message: error,
+          duration: 3000,
+          type: "error",
+        });
+        func(null);
+      }
     }
   },
 
   async withdrawReward({ state }, func: Function) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).withdrawReward({}, func);
+      try {
+        await toRaw(state.sync.ether.yen).withdrawReward({}, func);
+      } catch (error: any) {
+        ElMessage({
+          message: error,
+          duration: 3000,
+          type: "error",
+        });
+        func(null);
+      }
     }
   },
 
   async exit({ state }, func: Function) {
     if (state.sync.ether.yen) {
-      await toRaw(state.sync.ether.yen).exit({}, func);
+      try {
+        await toRaw(state.sync.ether.yen).exit({}, func);
+      } catch (error: any) {
+        ElMessage({
+          message: error,
+          duration: 3000,
+          type: "error",
+        });
+        func(null);
+      }
     }
   },
 
@@ -364,6 +452,27 @@ const actions: ActionTree<State, State> = {
         }
       }
     }
+  },
+
+  async runListen({ state, dispatch }) {
+    await dispatch("getBlockData", async (blockNumber: number) => {
+      if (state.async.mint.block[blockNumber].persons.gt(0)) {
+        ElNotification({
+          title: `Block ${blockNumber} Minted`,
+          message: `${
+            state.async.mint.block[blockNumber].persons
+          } Person Share ${utils.format.balance(
+            Number(state.async.mint.block[blockNumber].mints),
+            18,
+            "YEN",
+            10
+          )} !`,
+          duration: 36000,
+          offset: 50,
+          type: "info",
+        });
+      }
+    });
   },
 };
 

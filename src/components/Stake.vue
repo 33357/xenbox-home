@@ -164,10 +164,14 @@ export default {
     async doApprove() {
       this.approveLoad = true;
       await this.approve(
-        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
-          if (e.blockHash) {
+        async (
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
+        ) => {
+          if (!e) {
             this.approveLoad = false;
-            await (this as any).$store.dispatch("getStakeData");
+          } else if (e.blockNumber) {
+            this.approveLoad = false;
+            await this.getStakeData();
           }
         }
       );
@@ -177,11 +181,13 @@ export default {
       await this.stake({
         stakes: this.stakesBig,
         func: async (
-          e: YENModel.ContractTransaction | YENModel.ContractReceipt
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
         ) => {
-          if (e.blockHash) {
+          if (!e) {
             this.stakeLoad = false;
-            await (this as any).$store.dispatch("getStakeData");
+          } else if (e.blockNumber) {
+            this.stakeLoad = false;
+            await this.getStakeData();
           }
         },
       });
@@ -191,23 +197,28 @@ export default {
       await this.withdrawStake({
         withdrawStakes: this.withdrawStakesBig,
         func: async (
-          e: YENModel.ContractTransaction | YENModel.ContractReceipt
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
         ) => {
-          if (e.blockHash) {
+          if (!e) {
             this.withdrawStakeLoad = false;
-            await (this as any).$store.dispatch("getStakeData");
+          } else if (e.blockNumber) {
+            this.withdrawStakeLoad = false;
+            await this.getStakeData();
           }
         },
       });
-      this.withdrawStakeLoad = false;
     },
     async doWithdrawReward() {
       this.withdrawRewardLoad = true;
       await this.withdrawReward(
-        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
-          if (e.blockHash) {
+        async (
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
+        ) => {
+          if (!e) {
             this.withdrawRewardLoad = false;
-            await (this as any).$store.dispatch("getStakeData");
+          } else if (e.blockNumber) {
+            this.withdrawRewardLoad = false;
+            await this.getStakeData();
           }
         }
       );
@@ -215,10 +226,14 @@ export default {
     async doExit() {
       this.exitLoad = true;
       await this.exit(
-        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
-          if (e.blockHash) {
+        async (
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
+        ) => {
+          if (!e) {
             this.exitLoad = false;
-            await (this as any).$store.dispatch("getStakeData");
+          } else if (e.blockNumber) {
+            this.exitLoad = false;
+            await this.getStakeData();
           }
         }
       );

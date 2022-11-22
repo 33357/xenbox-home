@@ -130,8 +130,12 @@ export default {
     async doMint() {
       this.mintLoad = true;
       await this.mint(
-        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
-          if (e.blockNumber) {
+        async (
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
+        ) => {
+          if (!e) {
+            this.mintLoad = false;
+          } else if (e.blockNumber) {
             this.mintLoad = false;
             await this.getBlock(e.blockNumber);
             ElNotification({
@@ -166,8 +170,12 @@ export default {
     async doClaim() {
       this.claimLoad = true;
       await this.claim(
-        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
-          if (e.blockHash) {
+        async (
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
+        ) => {
+          if (!e) {
+            this.claimLoad = false;
+          } else if (e.blockNumber) {
             this.claimLoad = false;
             await this.getMintData(this.getMintedData);
           }

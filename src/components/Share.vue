@@ -176,9 +176,11 @@ export default {
       await this.share({
         shares: this.sharesBig,
         func: async (
-          e: YENModel.ContractTransaction | YENModel.ContractReceipt
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
         ) => {
-          if (e.blockHash) {
+          if (!e) {
+            this.shareLoad = false;
+          } else if (e.blockNumber) {
             this.shareLoad = false;
             await this.getShareData();
           }
@@ -188,8 +190,12 @@ export default {
     async doGet() {
       this.getLoad = true;
       await this.getShare(
-        async (e: YENModel.ContractTransaction | YENModel.ContractReceipt) => {
-          if (e.blockHash) {
+        async (
+          e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
+        ) => {
+          if (!e) {
+            this.getLoad = false;
+          } else if (e.blockNumber) {
             this.getLoad = false;
             await this.getShareData();
           }
