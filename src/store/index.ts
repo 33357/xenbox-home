@@ -1,6 +1,6 @@
 import { ActionTree, createStore } from "vuex";
 import { Ether } from "../network";
-import { utils,BigNumber} from "../const";
+import { utils, BigNumber } from "../const";
 import { YENModel } from "yen-sdk";
 import { toRaw } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
@@ -471,7 +471,7 @@ const actions: ActionTree<State, State> = {
             state.async.mint.block[blockNumber].persons
           } Person Share ${utils.format.bigToString(
             state.async.mint.block[blockNumber].mints,
-            18,
+            18
           )} YEN !`,
           duration: 36000,
           offset: 50,

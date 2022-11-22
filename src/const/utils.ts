@@ -2,7 +2,7 @@ import Identicon from "identicon.js";
 import moment from "moment";
 import { utils as etherUtils, BigNumber } from "ethers";
 
-export {BigNumber } from "ethers";
+export { BigNumber } from "ethers";
 
 let lastTime: number;
 
@@ -154,6 +154,13 @@ const format = {
       }
       str = `0.${str}`;
     }
+    while (str[str.length - 1] == "0") {
+      str = str.substring(0, str.length - 1);
+    }
+    if (str[str.length - 1] == ".") {
+      str = str.substring(0, str.length - 1);
+    }
+    return str;
   },
 
   stringToBig() {},

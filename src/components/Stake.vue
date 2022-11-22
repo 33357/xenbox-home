@@ -11,7 +11,10 @@
         <el-form-item label="Your Pairs :">
           <div>
             {{
-              `${utils.format.bigToString(state.async.stake.yourPairs, 18)} Pair`
+              `${utils.format.bigToString(
+                state.async.stake.yourPairs,
+                18
+              )} Pair`
             }}
           </div>
         </el-form-item>
@@ -50,7 +53,10 @@
         <el-form-item label="Your Stake :">
           <div>
             {{
-              `${utils.format.bigToString(state.async.stake.person.stakes, 18)} Pair`
+              `${utils.format.bigToString(
+                state.async.stake.person.stakes,
+                18
+              )} Pair`
             }}
           </div>
         </el-form-item>
@@ -72,7 +78,10 @@
         <el-form-item label="Your Reward :">
           <div>
             {{
-              `${utils.format.bigToString(state.async.stake.yourReward, 18)} Pair`
+              `${utils.format.bigToString(
+                state.async.stake.yourReward,
+                18
+              )} Pair`
             }}
           </div>
         </el-form-item>

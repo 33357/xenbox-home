@@ -49,7 +49,7 @@ export default {
   },
   created() {
     window.addEventListener("load", async () => {
-      log("window load");
+      utils.func.log("window load");
       await this.start();
     });
   },
