@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { log } from "../const";
+import { utils } from "../const";
 import { mapState } from "vuex";
 import { State } from "../store";
 

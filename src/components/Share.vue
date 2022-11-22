@@ -25,54 +25,46 @@
       <el-form-item label="Total Share ETH :">
         <div>
           {{
-            utils.format.balance(
-              Number(state.async.share.totalShareETH),
-              18,
-              "ETH",
-              10
-            )
+            `${utils.format.bigToString(
+              state.async.share.totalShareETH,
+              18
+            )} ETH`
           }}
         </div>
       </el-form-item>
       <el-form-item label="Your Share ETH :">
         <div>
           {{
-            utils.format.balance(
-              Number(state.async.share.sharer.shares),
-              18,
-              "ETH",
-              10
-            )
+            `${utils.format.bigToString(
+              state.async.share.sharer.shares,
+              18
+            )} ETH`
           }}
         </div>
       </el-form-item>
       <el-form-item label="Total Share YEN :">
         <div>
           {{
-            utils.format.balance(
-              Number(state.async.share.totalShareYEN),
-              18,
-              "YEN",
-              10
-            )
+            `${utils.format.bigToString(
+              state.async.share.totalShareYEN,
+              18
+            )} YEN`
           }}
         </div>
       </el-form-item>
       <el-form-item label="Your Share YEN :">
         <div>
           {{
-            utils.format.balance(
+            `${
               state.async.share.totalShareETH.eq(0)
-                ? 0
-                : Number(
+                ? "0"
+                : utils.format.bigToString(
                     state.async.share.totalShareYEN
                       .mul(state.async.share.sharer.shares)
-                      .div(state.async.share.totalShareETH)
-                  ),
-              18,
-              "YEN",
-              10
-            )
+                      .div(state.async.share.totalShareETH),
+                    18
+                  )
+            } YEN`
           }}
         </div>
       </el-form-item>
@@ -82,18 +74,16 @@
       <el-form-item label="Estimate Get :">
         <div>
           {{
-            utils.format.balance(
+            `${
               state.async.share.totalShareETH.add(sharesBig).eq(0)
-                ? 0
-                : Number(
+                ? "0"
+                : utils.format.bigToString(
                     state.async.share.totalShareYEN
                       .mul(sharesBig)
-                      .div(state.async.share.totalShareETH.add(sharesBig))
-                  ),
-              18,
-              "YEN",
-              10
-            )
+                      .div(state.async.share.totalShareETH.add(sharesBig)),
+                    18
+                  )
+            } YEN`
           }}
         </div>
       </el-form-item>
@@ -113,24 +103,20 @@
       <el-form-item label="Total Locked Pair :">
         <div>
           {{
-            utils.format.balance(
-              Number(state.async.share.totalLockedPair),
-              18,
-              "Pair",
-              10
-            )
+            `${utils.format.bigToString(
+              state.async.share.totalLockedPair,
+              18
+            )} Pair`
           }}
         </div>
       </el-form-item>
       <el-form-item label="Your Claimable Pair :">
         <div>
           {{
-            utils.format.balance(
-              Number(state.async.share.yourClaimablePair),
-              18,
-              "Pair",
-              10
-            )
+            `${utils.format.bigToString(
+              state.async.share.yourClaimablePair,
+              18
+            )} Pair`
           }}
         </div>
       </el-form-item>
@@ -144,7 +130,7 @@
 </template>
 
 <script lang="ts">
-import { log, utils, BigNumber } from "../const";
+import { utils, BigNumber } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State, YENModel } from "../store";
 

@@ -11,12 +11,7 @@
         <el-form-item label="Your Pairs :">
           <div>
             {{
-              utils.format.balance(
-                Number(state.async.stake.yourPairs),
-                18,
-                "Pair",
-                10
-              )
+              `${utils.format.bigToString(state.async.stake.yourPairs, 18)} Pair`
             }}
           </div>
         </el-form-item>
@@ -48,24 +43,14 @@
         <el-form-item label="Total Stake :">
           <div>
             {{
-              utils.format.balance(
-                Number(state.async.stake.stakes),
-                18,
-                "Pair",
-                10
-              )
+              `${utils.format.bigToString(state.async.stake.stakes, 18)} Pair`
             }}
           </div>
         </el-form-item>
         <el-form-item label="Your Stake :">
           <div>
             {{
-              utils.format.balance(
-                Number(state.async.stake.person.stakes),
-                18,
-                "Pair",
-                10
-              )
+              `${utils.format.bigToString(state.async.stake.person.stakes, 18)} Pair`
             }}
           </div>
         </el-form-item>
@@ -87,12 +72,7 @@
         <el-form-item label="Your Reward :">
           <div>
             {{
-              utils.format.balance(
-                Number(state.async.stake.yourReward),
-                18,
-                "YEN",
-                10
-              )
+              `${utils.format.bigToString(state.async.stake.yourReward, 18)} Pair`
             }}
           </div>
         </el-form-item>
@@ -119,7 +99,7 @@
 </template>
 
 <script lang="ts">
-import { log, utils, BigNumber } from "../const";
+import { utils, BigNumber } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State, YENModel } from "../store";
 

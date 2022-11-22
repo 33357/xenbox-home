@@ -1,8 +1,15 @@
 import Identicon from "identicon.js";
 import moment from "moment";
-import { utils as etherUtils } from "ethers";
+import { utils as etherUtils, BigNumber } from "ethers";
+
+export {BigNumber } from "ethers";
 
 let lastTime: number;
+
+const num = {
+  ZERO_ADDRESS: "0x0000000000000000000000000000000000000000",
+  MAX_UINT256: "0xffffffffffffffffffffffffffffffffffffffff",
+};
 
 const have = {
   value(obj: any) {
@@ -19,51 +26,53 @@ const convert = {
   },
 };
 
-export function sleep(time: number) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
+const func = {
+  sleep: (time: number) => {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  },
 
-export function log(...args: any) {
-  if (!lastTime) {
-    console.log(new Date().toLocaleString(), ...args);
-  } else {
-    console.log(
-      new Date().toLocaleString(),
-      new Date().getTime() - lastTime,
-      ...args
-    );
-  }
-  lastTime = new Date().getTime();
-}
+  log: (...args: any) => {
+    if (!lastTime) {
+      console.log(new Date().toLocaleString(), ...args);
+    } else {
+      console.log(
+        new Date().toLocaleString(),
+        new Date().getTime() - lastTime,
+        ...args
+      );
+    }
+    lastTime = new Date().getTime();
+  },
 
-export async function retry(
-  func: Function,
-  time: number,
-  args?: Array<any>,
-  callback?: Function
-): Promise<any> {
-  try {
-    let res;
-    if (args) {
-      res = await func(...args);
-    } else {
-      res = await func();
+  retry: async (
+    _func: Function,
+    time: number,
+    args?: Array<any>,
+    callback?: Function
+  ): Promise<any> => {
+    try {
+      let res;
+      if (args) {
+        res = await _func(...args);
+      } else {
+        res = await _func();
+      }
+      if (callback) {
+        await callback(res);
+      }
+      return res;
+    } catch (error: any) {
+      time--;
+      if (time > 0) {
+        func.log(`retry ${time}, ${error.toString()}`);
+        await func.sleep(1000);
+        return await func.retry(_func, time, args, callback);
+      } else {
+        throw error;
+      }
     }
-    if (callback) {
-      await callback(res);
-    }
-    return res;
-  } catch (error: any) {
-    time--;
-    if (time > 0) {
-      log(`retry ${time}, ${error.toString()}`);
-      await sleep(1000);
-      return await retry(func, time, args, callback);
-    } else {
-      throw error;
-    }
-  }
-}
+  },
+};
 
 const deep = {
   clone(toObj: any, fromObj: any) {
@@ -85,17 +94,6 @@ const deep = {
 const get = {
   last(arr: Array<any>) {
     return arr[arr.length - 1];
-  },
-  effectiveNumber(number: number, effNum: number) {
-    if (number > Math.pow(10, effNum)) {
-      return Math.floor(number);
-    } else {
-      if (number.toString().length > effNum) {
-        return number.toFixed(effNum);
-      } else {
-        return number;
-      }
-    }
   },
   avatar(address: string) {
     return "data:image/png;base64," + new Identicon(address, 120).toString();
@@ -145,16 +143,26 @@ const format = {
     }
   },
 
-  balance(balance: number, decimals: number, symbol: string, effNum: number) {
-    if (balance === undefined) {
-      return "..." + " " + symbol;
+  bigToString(big: BigNumber, decimals: number) {
+    let str = big.toString();
+    const change = str.length - decimals;
+    if (change >= 0) {
+      str = `${str.substring(0, change)}.${str.substring(change)}`;
     } else {
-      return (
-        get.effectiveNumber(balance / Math.pow(10, decimals), effNum) +
-        " " +
-        symbol
-      );
+      for (let i = 0; i > change; i--) {
+        str = `0${str}`;
+      }
+      str = `0.${str}`;
     }
+  },
+
+  stringToBig() {},
+
+  string1(str: string, length: number) {
+    if (str.length > length) {
+      str = str.substring(0, length) + "...";
+    }
+    return str;
   },
 
   string2(str: string, halfLength: number) {
@@ -166,42 +174,55 @@ const format = {
     }
     return str;
   },
+};
 
-  string1(str: string, length: number) {
-    if (str.length > length) {
-      str = str.substring(0, length) + "...";
-    }
-    return str;
+const go = {
+  address(chainId: number, address: string) {
+    window.open(`${chain[chainId].scan}address/${address}`);
+  },
+
+  token(chainId: number, address: string) {
+    window.open(`${chain[chainId].scan}token/${address}`);
+  },
+
+  tx(chainId: number, tx: string) {
+    window.open(`${chain[chainId].scan}tx/${tx}`);
+  },
+
+  accounts(chainId: number) {
+    window.open(`${chain[chainId].scan}/accounts`);
   },
 };
 
-// const go = {
-//   address(chainId: number, address: string) {
-//     window.open(config.CHAIN[chainId].SCAN_URL + "address/" + address);
-//   },
+const chain: { [CHAIN_ID: string]: Chain } = {
+  1: {
+    scan: "https://etherscan.io/",
+    name: "ETH",
+    node: "https://mainnet.infura.io/v3/",
+  },
+  5: {
+    scan: "https://goerli.etherscan.io/",
+    name: "Goerli",
+    node: "https://goerli.infura.io/v3/",
+  },
+};
 
-//   token(chainId: number, address: string) {
-//     window.open(COMMON.CHAIN[chainId].SCAN_URL + "token/" + address);
-//   },
-
-//   tx(chainId: number, tx: string) {
-//     window.open(COMMON.CHAIN[chainId].SCAN_URL + "tx/" + tx);
-//   },
-
-//   accounts(chainId: number) {
-//     window.open(COMMON.CHAIN[chainId].SCAN_URL + "accounts");
-//   },
-// };
+export interface Chain {
+  scan: string;
+  name: string;
+  node: string;
+}
 
 export const utils = {
+  num,
+  func,
   deep,
   get,
   is,
   have,
   format,
-  // go,
+  go,
   convert,
   etherUtils,
+  chain,
 };
-
-export { BigNumber } from "ethers";

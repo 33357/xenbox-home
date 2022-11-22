@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { useDark, useToggle } from "@vueuse/core";
-import { log } from "./const";
+import { utils } from "./const";
 import { mapState, mapActions } from "vuex";
 import { State } from "./store";
 

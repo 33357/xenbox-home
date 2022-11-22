@@ -13,54 +13,37 @@
         <el-form-item label="Burned :">
           <div>
             {{
-              utils.format.balance(
-                Number(
-                  state.async.table.burned
-                ),
-                18,
-                "YEN",
-                10
-              )
+              `${utils.format.bigToString(state.async.table.burned, 18)} YEN`
             }}
           </div>
         </el-form-item>
         <el-form-item label="TotalSupply :">
           <div>
             {{
-              utils.format.balance(
-                Number(state.async.table.totalSupply),
-                18,
-                "YEN",
-                10
-              )
+              `${utils.format.bigToString(
+                state.async.table.totalSupply,
+                18
+              )} YEN`
             }}
           </div>
         </el-form-item>
         <el-form-item label="MarketSupply :">
           <div>
             {{
-              utils.format.balance(
-                Number(
-                  state.async.table.totalSupply.sub(
-                    state.async.table.yenBalance
-                  )
-                ),
-                18,
-                "YEN",
-                10
-              )
+              `${utils.format.bigToString(
+                state.async.table.totalSupply.sub(state.async.table.yenBalance),
+                18
+              )} YEN`
             }}
           </div>
         </el-form-item>
         <el-form-item label="Per Block Mint :">
           <div>
             {{
-              utils.format.balance(
-                Number(state.async.table.blockMints),
-                18,
-                "YEN",
-                10
-              )
+              `${utils.format.bigToString(
+                state.async.table.blockMints,
+                18
+              )} YEN`
             }}
             (50% For Miner, 50% For LP)
           </div>
@@ -91,7 +74,7 @@
 </template>
 
 <script lang="ts">
-import { log, utils } from "../const";
+import { utils } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
 

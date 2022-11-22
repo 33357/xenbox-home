@@ -11,12 +11,10 @@
         <el-form-item label="Next Block Mint (Block Miners Share Rewards) :">
           <div>
             {{
-              utils.format.balance(
-                Number(state.async.mint.nextBlockMint),
-                18,
-                "YEN",
-                10
-              )
+              `${utils.format.bigToString(
+                state.async.mint.nextBlockMint,
+                18
+              )} YEN`
             }}
           </div>
         </el-form-item>
@@ -32,12 +30,7 @@
         <el-form-item label="Minted :">
           <div>
             {{
-              utils.format.balance(
-                Number(state.async.mint.yourMinted),
-                18,
-                "YEN",
-                10
-              )
+              `${utils.format.bigToString(state.async.mint.yourMinted, 18)} YEN`
             }}
           </div>
         </el-form-item>
@@ -62,7 +55,7 @@
 </template>
 
 <script lang="ts">
-import { log, utils } from "../const";
+import { utils } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State, YENModel } from "../store";
 import { ElNotification } from "element-plus";
@@ -105,23 +98,17 @@ export default {
         ) {
           mintedList.push({
             block: blockNumber,
-            minted: utils.format.balance(
-              Number(
-                this.state.async.mint.block[blockNumber].mints.div(
-                  this.state.async.mint.block[blockNumber].persons
-                )
+            minted: `${utils.format.bigToString(
+              this.state.async.mint.block[blockNumber].mints.div(
+                this.state.async.mint.block[blockNumber].persons
               ),
-              18,
-              "YEN",
-              10
-            ),
+              18
+            )} YEN`,
             person: Number(this.state.async.mint.block[blockNumber].persons),
-            total: utils.format.balance(
-              Number(this.state.async.mint.block[blockNumber].mints),
-              18,
-              "YEN",
-              10
-            ),
+            total: `${utils.format.bigToString(
+              this.state.async.mint.block[blockNumber].mints,
+              18
+            )} YEN`,
           });
         }
       });
@@ -140,23 +127,17 @@ export default {
             await this.getBlock(e.blockNumber);
             ElNotification({
               title: `Block ${e.blockNumber} Minted`,
-              message: `You Minted ${utils.format.balance(
-                Number(
-                  this.state.async.mint.block[e.blockNumber].mints.div(
-                    this.state.async.mint.block[e.blockNumber].persons
-                  )
+              message: `You Minted ${utils.format.bigToString(
+                this.state.async.mint.block[e.blockNumber].mints.div(
+                  this.state.async.mint.block[e.blockNumber].persons
                 ),
-                18,
-                "YEN",
-                10
-              )}, ${
+                18
+              )} YEN, ${
                 this.state.async.mint.block[e.blockNumber].persons
-              } Person Share ${utils.format.balance(
-                Number(this.state.async.mint.block[e.blockNumber].mints),
-                18,
-                "YEN",
-                10
-              )} !`,
+              } Person Share ${utils.format.bigToString(
+                this.state.async.mint.block[e.blockNumber].mints,
+                18
+              )} YEN !`,
               duration: 36000,
               offset: 50,
               type: "success",
