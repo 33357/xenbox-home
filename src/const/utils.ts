@@ -166,16 +166,20 @@ const format = {
   },
 
   stringToBig(str: string, decimals: number) {
-    const strArr = str.split(".");
-    const big1 = BigNumber.from((10 ** decimals).toString()).mul(strArr[0]);
-    if (strArr.length > 1) {
-      while (strArr[1].length < decimals) {
-        strArr[1] = `${strArr[1]}0`;
+    try {
+      const strArr = str.split(".");
+      const big1 = BigNumber.from((10 ** decimals).toString()).mul(strArr[0]);
+      if (strArr.length > 1) {
+        while (strArr[1].length < decimals) {
+          strArr[1] = `${strArr[1]}0`;
+        }
+        const big2 = BigNumber.from(strArr[1]);
+        return big1.add(big2);
       }
-      const big2 = BigNumber.from(strArr[1]);
-      return big1.add(big2);
+      return big1;
+    } catch (error) {
+      return BigNumber.from(0);
     }
-    return big1;
   },
 
   string1(str: string, length: number) {
