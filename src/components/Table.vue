@@ -10,6 +10,20 @@
         <el-form-item label="Max TotalSupply :">
           <div>50000000 YEN</div>
         </el-form-item>
+        <el-form-item label="Burned :">
+          <div>
+            {{
+              utils.format.balance(
+                Number(
+                  state.async.table.burned
+                ),
+                18,
+                "YEN",
+                10
+              )
+            }}
+          </div>
+        </el-form-item>
         <el-form-item label="TotalSupply :">
           <div>
             {{

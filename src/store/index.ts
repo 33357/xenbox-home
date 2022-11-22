@@ -47,6 +47,7 @@ export interface Async {
     feeMul: BigNumber;
     blockMints: BigNumber;
     yenBalance: BigNumber;
+    burned: BigNumber;
   };
 }
 
@@ -108,6 +109,7 @@ const state: State = {
       feeMul: BigNumber.from(0),
       blockMints: BigNumber.from(0),
       yenBalance: BigNumber.from(0),
+      burned: BigNumber.from(0),
     },
   },
 };
@@ -209,12 +211,16 @@ const actions: ActionTree<State, State> = {
         state.async.mint.personBlockList.push(personBlockList[i]);
       }
       state.async.mint.personBlockList.reverse();
-      state.async.mint.personBlockList.forEach(async (blockNumber) => {
-        if (!state.async.mint.block[blockNumber]) {
-          await dispatch("getBlock", blockNumber);
-        }
+      if (state.async.mint.personBlockList.length == 0) {
         func();
-      });
+      } else {
+        state.async.mint.personBlockList.forEach(async (blockNumber) => {
+          if (!state.async.mint.block[blockNumber]) {
+            await dispatch("getBlock", blockNumber);
+          }
+          func();
+        });
+      }
     }
   },
 
@@ -257,14 +263,17 @@ const actions: ActionTree<State, State> = {
         state.async.table.feeMul,
         state.async.table.blockMints,
         state.async.table.yenBalance,
+        state.async.table.burned,
       ] = await Promise.all([
         toRaw(state.sync.ether.yen).totalSupply(),
         toRaw(state.sync.ether.yen).halvingBlock(),
         toRaw(state.sync.ether.yen).getFeeMul(),
         toRaw(state.sync.ether.yen).blockMints(),
         toRaw(state.sync.ether.yen).balanceOf(state.sync.yenAddress),
+        toRaw(state.sync.ether.yen).balanceOf(config.ZERO_ADDRESS),
       ]);
     }
+    log(state.async.table.burned)
   },
 
   async mint({ state }, func: Function) {
@@ -273,7 +282,7 @@ const actions: ActionTree<State, State> = {
         await toRaw(state.sync.ether.yen).mint({}, func);
       } catch (error: any) {
         ElMessage({
-          message: error.toString().split('(')[0],
+          message: error.toString().split("(")[0],
           duration: 3000,
           type: "error",
         });
@@ -288,7 +297,7 @@ const actions: ActionTree<State, State> = {
         await toRaw(state.sync.ether.yen).claim({}, func);
       } catch (error: any) {
         ElMessage({
-          message: error.toString().split('(')[0],
+          message: error.toString().split("(")[0],
           duration: 3000,
           type: "error",
         });
@@ -303,7 +312,7 @@ const actions: ActionTree<State, State> = {
         await toRaw(state.sync.ether.yen).share({ value: shares }, func);
       } catch (error: any) {
         ElMessage({
-          message: error.toString().split('(')[0],
+          message: error.toString().split("(")[0],
           duration: 3000,
           type: "error",
         });
@@ -318,7 +327,7 @@ const actions: ActionTree<State, State> = {
         await toRaw(state.sync.ether.yen).getShare({}, func);
       } catch (error: any) {
         ElMessage({
-          message: error.toString().split('(')[0],
+          message: error.toString().split("(")[0],
           duration: 3000,
           type: "error",
         });
@@ -338,7 +347,7 @@ const actions: ActionTree<State, State> = {
         );
       } catch (error: any) {
         ElMessage({
-          message: error.toString().split('(')[0],
+          message: error.toString().split("(")[0],
           duration: 3000,
           type: "error",
         });
@@ -353,7 +362,7 @@ const actions: ActionTree<State, State> = {
         await toRaw(state.sync.ether.yen).stake(stakes, {}, func);
       } catch (error: any) {
         ElMessage({
-          message: error.toString().split('(')[0],
+          message: error.toString().split("(")[0],
           duration: 3000,
           type: "error",
         });
@@ -372,7 +381,7 @@ const actions: ActionTree<State, State> = {
         );
       } catch (error: any) {
         ElMessage({
-          message: error.toString().split('(')[0],
+          message: error.toString().split("(")[0],
           duration: 3000,
           type: "error",
         });
@@ -387,7 +396,7 @@ const actions: ActionTree<State, State> = {
         await toRaw(state.sync.ether.yen).withdrawReward({}, func);
       } catch (error: any) {
         ElMessage({
-          message: error.toString().split('(')[0],
+          message: error.toString().split("(")[0],
           duration: 3000,
           type: "error",
         });
@@ -402,7 +411,7 @@ const actions: ActionTree<State, State> = {
         await toRaw(state.sync.ether.yen).exit({}, func);
       } catch (error: any) {
         ElMessage({
-          message: error.toString().split('(')[0],
+          message: error.toString().split("(")[0],
           duration: 3000,
           type: "error",
         });
