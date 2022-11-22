@@ -36,10 +36,9 @@
 
 <script lang="ts">
 import { useDark, useToggle } from "@vueuse/core";
-import { log, utils } from "./const";
+import { log } from "./const";
 import { mapState, mapActions } from "vuex";
 import { State } from "./store";
-import { ElNotification } from "element-plus";
 
 export default {
   data() {
@@ -58,7 +57,7 @@ export default {
     state: (state) => state as State,
   }),
   methods: {
-    ...mapActions(["start", "getBlockData"]),
+    ...mapActions(["start"]),
     handleSelect(key: string) {
       if (Number(key) > 0) {
         (this as any).activeIndex = key;
