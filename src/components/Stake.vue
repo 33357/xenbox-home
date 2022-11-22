@@ -27,7 +27,20 @@
           </a>
         </el-form-item>
         <el-form-item label="stake :">
-          <el-input v-model="stakes" type="string" />
+          <el-input v-model="stakes" type="string">
+            <template #append
+              ><el-button
+                type="primary"
+                @click="
+                  stakes = utils.format.bigToString(
+                    state.async.stake.yourPairs,
+                    18
+                  )
+                "
+                >max</el-button
+              ></template
+            >
+          </el-input>
         </el-form-item>
         <el-form-item v-if="state.async.stake.yourPairAllowance.eq(0)">
           <el-button type="primary" @click="doApprove()" :loading="approveLoad"
@@ -61,7 +74,20 @@
           </div>
         </el-form-item>
         <el-form-item label="withdrawStake :">
-          <el-input v-model="withdrawStakes" type="string" />
+          <el-input v-model="withdrawStakes" type="string">
+            <template #append
+              ><el-button
+                type="primary"
+                @click="
+                  withdrawStakes = utils.format.bigToString(
+                    state.async.stake.person.stakes,
+                    18
+                  )
+                "
+                >max</el-button
+              ></template
+            >
+          </el-input>
         </el-form-item>
         <el-form-item>
           <el-button
@@ -115,8 +141,8 @@ import { State, YENModel } from "../store";
 export default {
   data() {
     return {
-      stakes: '0',
-      withdrawStakes: '0',
+      stakes: "0",
+      withdrawStakes: "0",
       utils: utils,
       approveLoad: false,
       stakeLoad: false,

@@ -69,7 +69,20 @@
         </div>
       </el-form-item>
       <el-form-item label="Share ETH :">
-        <el-input v-model="shares" type="string" />
+        <el-input v-model="shares" type="string">
+          <template #append
+            ><el-button
+              type="primary"
+              @click="
+                shares = utils.format.bigToString(
+                  state.async.share.yourBalance,
+                  18
+                )
+              "
+              >max</el-button
+            ></template
+          >
+        </el-input>
       </el-form-item>
       <el-form-item label="Estimate Get :">
         <div>
@@ -130,7 +143,7 @@
 </template>
 
 <script lang="ts">
-import { utils,BigNumber } from "../const";
+import { utils, BigNumber } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State, YENModel } from "../store";
 
@@ -138,7 +151,7 @@ export default {
   data() {
     return {
       shares: "0",
-      sharesBig:BigNumber.from(0),
+      sharesBig: BigNumber.from(0),
       utils: utils,
       shareLoad: false,
       getLoad: false,

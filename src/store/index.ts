@@ -25,6 +25,7 @@ export interface Async {
     totalShareYEN: BigNumber;
     totalLockedPair: BigNumber;
     yourClaimablePair: BigNumber;
+    yourBalance: BigNumber;
     sharer: YENModel.Sharer;
   };
   mint: {
@@ -74,6 +75,7 @@ const state: State = {
       totalShareYEN: BigNumber.from(0),
       totalLockedPair: BigNumber.from(0),
       yourClaimablePair: BigNumber.from(0),
+      yourBalance: BigNumber.from(0),
       sharer: {
         shares: BigNumber.from(0),
         getteds: BigNumber.from(0),
@@ -173,19 +175,21 @@ const actions: ActionTree<State, State> = {
   },
 
   async getShareData({ state }) {
-    if (state.sync.ether.yen) {
+    if (state.sync.ether.yen && state.sync.ether.singer) {
       [
         state.async.share.shareEndBlock,
         state.async.share.totalShareETH,
         state.async.share.totalShareYEN,
         state.async.share.totalLockedPair,
         state.async.share.sharer,
+        state.async.share.yourBalance,
       ] = await Promise.all([
         toRaw(state.sync.ether.yen).shareEndBlock(),
         toRaw(state.sync.ether.yen).shareEths(),
         toRaw(state.sync.ether.yen).shareTokens(),
         toRaw(state.sync.ether.yen).sharePairs(),
         toRaw(state.sync.ether.yen).sharerMap(state.sync.userAddress),
+        toRaw(state.sync.ether.singer).getBalance(),
       ]);
       if (state.async.share.totalShareETH.gt(0)) {
         state.async.share.yourClaimablePair = await toRaw(
