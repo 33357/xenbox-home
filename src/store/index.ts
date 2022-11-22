@@ -273,7 +273,6 @@ const actions: ActionTree<State, State> = {
         toRaw(state.sync.ether.yen).balanceOf(config.ZERO_ADDRESS),
       ]);
     }
-    log(state.async.table.burned)
   },
 
   async mint({ state }, func: Function) {
