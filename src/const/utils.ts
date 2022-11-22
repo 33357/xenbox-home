@@ -7,8 +7,10 @@ export { BigNumber } from "ethers";
 let lastTime: number;
 
 const num = {
-  ZERO_ADDRESS: "0x0000000000000000000000000000000000000000",
-  MAX_UINT256: "0xffffffffffffffffffffffffffffffffffffffff",
+  min: "0x0000000000000000000000000000000000000000",
+  max: "0xffffffffffffffffffffffffffffffffffffffff",
+  gwei: BigNumber.from(10 ** 9),
+  ether: BigNumber.from(10 ** 9).mul(BigNumber.from(10 ** 9)),
 };
 
 const have = {
@@ -163,7 +165,18 @@ const format = {
     return str;
   },
 
-  stringToBig() {},
+  stringToBig(str: string, decimals: number) {
+    const strArr = str.split(".");
+    const big1 = BigNumber.from((10 ** decimals).toString()).mul(strArr[0]);
+    if (strArr.length > 1) {
+      while (strArr[1].length < decimals) {
+        strArr[1] = `${strArr[1]}0`;
+      }
+      const big2 = BigNumber.from(strArr[1]);
+      return big1.add(big2);
+    }
+    return big1;
+  },
 
   string1(str: string, length: number) {
     if (str.length > length) {

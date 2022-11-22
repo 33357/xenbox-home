@@ -115,10 +115,8 @@ import { State, YENModel } from "../store";
 export default {
   data() {
     return {
-      stakes: 0,
-      stakesBig: BigNumber.from(0),
-      withdrawStakes: 0,
-      withdrawStakesBig: BigNumber.from(0),
+      stakes: '0',
+      withdrawStakes: '0',
       utils: utils,
       approveLoad: false,
       stakeLoad: false,
@@ -129,14 +127,6 @@ export default {
   },
   async created() {
     await this.getStakeData();
-  },
-  watch: {
-    stakes(value) {
-      this.stakesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
-    },
-    withdrawStakes(value) {
-      this.withdrawStakesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
-    },
   },
   computed: mapState({
     state: (state) => state as State,
@@ -168,7 +158,7 @@ export default {
     async doStake() {
       this.stakeLoad = true;
       await this.stake({
-        stakes: this.stakesBig,
+        stakes: utils.format.stringToBig(this.stakes, 18),
         func: async (
           e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
         ) => {
@@ -184,7 +174,7 @@ export default {
     async doWithdrawStake() {
       this.withdrawStakeLoad = true;
       await this.withdrawStake({
-        withdrawStakes: this.withdrawStakesBig,
+        withdrawStakes: utils.format.stringToBig(this.withdrawStakes, 18),
         func: async (
           e: YENModel.ContractTransaction | YENModel.ContractReceipt | null
         ) => {

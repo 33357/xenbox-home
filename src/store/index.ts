@@ -60,8 +60,8 @@ export interface State {
 const state: State = {
   storage: {},
   sync: {
-    userAddress: utils.num.ZERO_ADDRESS,
-    yenAddress: utils.num.ZERO_ADDRESS,
+    userAddress: utils.num.min,
+    yenAddress: utils.num.min,
     chainId: 0,
     ether: new Ether(),
     thisBlock: 0,
@@ -238,7 +238,7 @@ const actions: ActionTree<State, State> = {
         toRaw(state.sync.ether.yen).pair(),
         toRaw(state.sync.ether.yen).stakes(),
       ]);
-      if (!state.sync.ether.pair && pairAddress != utils.num.ZERO_ADDRESS) {
+      if (!state.sync.ether.pair && pairAddress != utils.num.min) {
         toRaw(state.sync.ether).loadPair(pairAddress);
       }
       if (state.sync.ether.pair) {
@@ -270,7 +270,7 @@ const actions: ActionTree<State, State> = {
         toRaw(state.sync.ether.yen).getFeeMul(),
         toRaw(state.sync.ether.yen).blockMints(),
         toRaw(state.sync.ether.yen).balanceOf(state.sync.yenAddress),
-        toRaw(state.sync.ether.yen).balanceOf(utils.num.ZERO_ADDRESS),
+        toRaw(state.sync.ether.yen).balanceOf(utils.num.min),
       ]);
     }
   },
@@ -340,7 +340,7 @@ const actions: ActionTree<State, State> = {
       try {
         await toRaw(state.sync.ether.pair).approve(
           toRaw(state.sync.ether.yen).address(),
-          BigNumber.from(utils.num.MAX_UINT256),
+          BigNumber.from(utils.num.max),
           {},
           func
         );

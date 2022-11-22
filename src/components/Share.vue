@@ -130,15 +130,15 @@
 </template>
 
 <script lang="ts">
-import { utils, BigNumber } from "../const";
+import { utils,BigNumber } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State, YENModel } from "../store";
 
 export default {
   data() {
     return {
-      shares: 0,
-      sharesBig: BigNumber.from(0),
+      shares: "0",
+      sharesBig:BigNumber.from(0),
       utils: utils,
       shareLoad: false,
       getLoad: false,
@@ -147,14 +147,14 @@ export default {
   async created() {
     await this.getShareData();
   },
-  watch: {
-    shares(value) {
-      this.sharesBig = BigNumber.from(value * 10 ** 9).mul(10 ** 9);
-    },
-  },
   computed: mapState({
     state: (state) => state as State,
   }),
+  watch: {
+    shares(value) {
+      this.sharesBig = utils.format.stringToBig(value, 18);
+    },
+  },
   methods: {
     ...mapActions(["getShareData", "share", "getShare"]),
     async doShare() {
