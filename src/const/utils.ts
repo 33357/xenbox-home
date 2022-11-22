@@ -148,7 +148,7 @@ const format = {
   bigToString(big: BigNumber, decimals: number) {
     let str = big.toString();
     const change = str.length - decimals;
-    if (change >= 0) {
+    if (change > 0) {
       str = `${str.substring(0, change)}.${str.substring(change)}`;
     } else {
       for (let i = 0; i > change; i--) {
