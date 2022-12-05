@@ -8,7 +8,7 @@
       </template>
       <el-form label-width="30%">
         <el-form-item label="Max TotalSupply :">
-          <div>50000000 YEN</div>
+          <div>43200000 YEN</div>
         </el-form-item>
         <el-form-item label="Burned :">
           <div>
@@ -64,7 +64,7 @@
         </el-form-item>
         <el-form-item label="Transfer Fee :">
           <div>
-            {{ state.async.table.feeMul }} ‰ (Dynamic Rate: 20% Burn, 80% For
+            {{ state.async.table.fee }} ‰ (Dynamic Rate: 20% Burn, 80% For
             LP)
           </div>
         </el-form-item>

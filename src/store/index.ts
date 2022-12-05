@@ -36,7 +36,7 @@ export interface Async {
   table: {
     totalSupply: BigNumber;
     halvingBlock: BigNumber;
-    feeMul: BigNumber;
+    fee: BigNumber;
     blockMints: BigNumber;
     yenBalance: BigNumber;
     burned: BigNumber;
@@ -87,7 +87,7 @@ const state: State = {
     table: {
       totalSupply: BigNumber.from(0),
       halvingBlock: BigNumber.from(0),
-      feeMul: BigNumber.from(0),
+      fee: BigNumber.from(0),
       blockMints: BigNumber.from(0),
       yenBalance: BigNumber.from(0),
       burned: BigNumber.from(0),
@@ -218,14 +218,14 @@ const actions: ActionTree<State, State> = {
       [
         state.async.table.totalSupply,
         state.async.table.halvingBlock,
-        state.async.table.feeMul,
+        state.async.table.fee,
         state.async.table.blockMints,
         state.async.table.yenBalance,
         state.async.table.burned,
       ] = await Promise.all([
         toRaw(state.sync.ether.yen).totalSupply(),
         toRaw(state.sync.ether.yen).halvingBlock(),
-        toRaw(state.sync.ether.yen).getFeeMul(),
+        toRaw(state.sync.ether.yen).fee(),
         toRaw(state.sync.ether.yen).blockMints(),
         toRaw(state.sync.ether.yen).balanceOf(state.sync.yenAddress),
         toRaw(state.sync.ether.yen).balanceOf(utils.num.min),
