@@ -7,10 +7,9 @@
       @select="handleSelect"
     >
       <el-menu-item index="1" class="item"> YEN </el-menu-item>
-      <el-menu-item index="2" class="item"> Share </el-menu-item>
-      <el-menu-item index="3" class="item"> Mint </el-menu-item>
-      <el-menu-item index="4" class="item"> Stake </el-menu-item>
-      <el-menu-item index="5" class="item"> Table </el-menu-item>
+      <el-menu-item index="2" class="item"> Mint </el-menu-item>
+      <el-menu-item index="3" class="item"> Stake </el-menu-item>
+      <el-menu-item index="4" class="item"> Table </el-menu-item>
       <el-menu-item index="-1" class="item" @click="toggleDark()">
         <button
           class="border-none w-full bg-transparent cursor-pointer"
@@ -26,10 +25,9 @@
     </el-menu>
     <div>
       <Home v-if="activeIndex == '1'"></Home>
-      <Share v-if="activeIndex == '2'"></Share>
-      <Mint v-if="activeIndex == '3'"></Mint>
-      <Stake v-if="activeIndex == '4'"></Stake>
-      <Table v-if="activeIndex == '5'"></Table>
+      <Mint v-if="activeIndex == '2'"></Mint>
+      <Stake v-if="activeIndex == '3'"></Stake>
+      <Table v-if="activeIndex == '4'"></Table>
     </div>
   </el-config-provider>
 </template>

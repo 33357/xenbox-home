@@ -18,7 +18,6 @@ declare module '@vue/runtime-core' {
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     Home: typeof import('./components/Home.vue')['default']
     Mint: typeof import('./components/Mint.vue')['default']
-    Share: typeof import('./components/Share.vue')['default']
     Stake: typeof import('./components/Stake.vue')['default']
     Table: typeof import('./components/Table.vue')['default']
   }
