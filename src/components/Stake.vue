@@ -107,7 +107,7 @@
               `${utils.format.bigToString(
                 state.async.stake.yourReward,
                 18
-              )} Pair`
+              )} YEN`
             }}
           </div>
         </el-form-item>
