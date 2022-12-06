@@ -55,7 +55,7 @@ export class Ether {
             address: address,
             symbol: "YEN",
             decimals: 18,
-            image: "https://yen.cool/public/favicon.png",
+            image: "https://yen.cool/favicon.png",
           },
         },
       });
