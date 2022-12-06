@@ -3,6 +3,8 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers, Signer, providers } from "ethers";
 
 export class Ether {
+  public ethereum: any;
+
   public singer: Signer | undefined;
 
   public provider: providers.Web3Provider | undefined;
@@ -14,16 +16,16 @@ export class Ether {
   public pair: ERC20Client | undefined;
 
   async load() {
-    const ethereum = (await detectEthereumProvider()) as any;
-    if (ethereum) {
-      ethereum.on("accountsChanged", () => {
+    this.ethereum = (await detectEthereumProvider()) as any;
+    if (this.ethereum) {
+      this.ethereum.on("accountsChanged", () => {
         window.location.reload();
       });
-      ethereum.on("chainChanged", () => {
+      this.ethereum.on("chainChanged", () => {
         window.location.reload();
       });
-      await ethereum.request({ method: "eth_requestAccounts" });
-      this.provider = new ethers.providers.Web3Provider(ethereum);
+      await this.ethereum.request({ method: "eth_requestAccounts" });
+      this.provider = new ethers.providers.Web3Provider(this.ethereum);
       this.singer = this.provider.getSigner();
       this.chainId = await this.singer.getChainId();
       if (DeploymentInfo[this.chainId]) {
@@ -40,6 +42,23 @@ export class Ether {
   loadPair(address: string) {
     if (this.singer) {
       this.pair = new ERC20Client(this.singer, address);
+    }
+  }
+
+  async addToken(address: string) {
+    if (this.ethereum) {
+      await this.ethereum.request({
+        method: "wallet_watchAsset",
+        params: {
+          type: "ERC20",
+          options: {
+            address: address,
+            symbol: "YEN",
+            decimals: 18,
+            image: "https://yen.cool/public/favicon.png",
+          },
+        },
+      });
     }
   }
 }

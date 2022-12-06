@@ -27,16 +27,6 @@
             }}
           </div>
         </el-form-item>
-        <el-form-item label="MarketSupply :">
-          <div>
-            {{
-              `${utils.format.bigToString(
-                state.async.table.totalSupply.sub(state.async.table.yenBalance),
-                18
-              )} YEN`
-            }}
-          </div>
-        </el-form-item>
         <el-form-item label="Per Block Mint :">
           <div>
             {{
@@ -45,10 +35,10 @@
                 18
               )} YEN`
             }}
-            (50% For Miner, 50% For LP)
+            (50% To Miner, 50% To LP)
           </div>
         </el-form-item>
-        <el-form-item label="Next Halving Date :">
+        <el-form-item label="Next Halving Date :(30 days to halve)">
           <div>
             {{
               new Date(
@@ -64,7 +54,7 @@
         </el-form-item>
         <el-form-item label="Transfer Fee :">
           <div>
-            1 ‰ (50% Burn, 50% For LP)
+            1 ‰ (50% To Burn, 50% To LP)
           </div>
         </el-form-item>
       </el-form>
