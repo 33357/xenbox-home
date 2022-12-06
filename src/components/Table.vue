@@ -64,8 +64,7 @@
         </el-form-item>
         <el-form-item label="Transfer Fee :">
           <div>
-            {{ state.async.table.fee }} ‰ (Dynamic Rate: 20% Burn, 80% For
-            LP)
+            1 ‰ (50% Burn, 50% For LP)
           </div>
         </el-form-item>
       </el-form>
