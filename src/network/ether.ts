@@ -33,6 +33,15 @@ export class Ether {
           this.singer,
           DeploymentInfo[this.chainId]["YEN"].proxyAddress
         );
+      } else {
+        await this.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [
+            {
+              chainId: "0x1",
+            },
+          ],
+        });
       }
     } else {
       throw "Please use a browser that supports web3 to open";

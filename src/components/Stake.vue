@@ -1,12 +1,6 @@
 <template>
   <div>
     <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span>Stake Explanation</span>
-        </div>
-      </template>
-
       <el-form label-width="30%">
         <el-form-item label="Your Pairs :">
           <div>

@@ -1,11 +1,6 @@
 <template>
   <div>
     <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span>Table Explanation</span>
-        </div>
-      </template>
       <el-form label-width="30%">
         <el-form-item label="Max TotalSupply :">
           <div>43200000 YEN</div>
@@ -38,7 +33,7 @@
             (50% To Miner, 50% To LP)
           </div>
         </el-form-item>
-        <el-form-item label="Next Halving Date :(30 days to halve)">
+        <el-form-item label="Next Halving Date :">
           <div>
             {{
               new Date(
@@ -49,7 +44,7 @@
                   state.sync.thisTime) *
                   1000
               ).toLocaleString()
-            }}
+            }} (30 Days Halving)
           </div>
         </el-form-item>
         <el-form-item label="Transfer Fee :">

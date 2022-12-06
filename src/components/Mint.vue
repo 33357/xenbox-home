@@ -1,20 +1,14 @@
 <template>
   <div>
     <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span>Mint Explanation</span>
-        </div>
-      </template>
-
       <el-form label-width="30%">
-        <el-form-item label="Next Block Mint (Block Miners Share Rewards) :">
+        <el-form-item label="Next Block Mint:">
           <div>
             {{
               `${utils.format.bigToString(
                 state.async.mint.nextBlockMint,
                 18
-              )} YEN`
+              )} YEN (Block Miners Share) `
             }}
           </div>
         </el-form-item>
