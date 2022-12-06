@@ -393,7 +393,7 @@ const actions: ActionTree<State, State> = {
             state.async.mint.block[blockNumber].mints,
             18
           )} YEN !`,
-          duration: 36000,
+          duration: 60000,
           offset: 50,
           type: "info",
         });
