@@ -6,10 +6,8 @@
       :ellipsis="false"
       @select="handleSelect"
     >
-      <el-menu-item index="1" class="item"> YEN </el-menu-item>
-      <el-menu-item index="2" class="item"> Mint </el-menu-item>
-      <el-menu-item index="3" class="item"> Stake </el-menu-item>
-      <el-menu-item index="4" class="item"> Table </el-menu-item>
+      <el-menu-item index="1" class="item"> Mint </el-menu-item>
+      <el-menu-item index="2" class="item"> Box </el-menu-item>
       <el-menu-item index="-1" class="item" @click="toggleDark()">
         <button
           class="border-none w-full bg-transparent cursor-pointer"
@@ -25,9 +23,7 @@
     </el-menu>
     <div>
       <Home v-if="activeIndex == '1'"></Home>
-      <Mint v-if="activeIndex == '2'"></Mint>
-      <Stake v-if="activeIndex == '3'"></Stake>
-      <Table v-if="activeIndex == '4'"></Table>
+      <Box v-if="activeIndex == '2'"></Box>
     </div>
   </el-config-provider>
 </template>
@@ -52,7 +48,7 @@ export default {
     });
   },
   computed: mapState({
-    state: (state) => state as State,
+    state: (state:any) => state as State,
   }),
   methods: {
     ...mapActions(["start"]),
