@@ -1,4 +1,4 @@
-import { YENClient, ERC20Client, DeploymentInfo } from "yen-sdk";
+import { XenBoxClient, DeploymentInfo } from "xenbox-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers, Signer, providers } from "ethers";
 
@@ -11,9 +11,7 @@ export class Ether {
 
   public chainId: number | undefined;
 
-  public yen: YENClient | undefined;
-
-  public pair: ERC20Client | undefined;
+  public xenBox: XenBoxClient | undefined;
 
   async load() {
     this.ethereum = (await detectEthereumProvider()) as any;
@@ -29,9 +27,9 @@ export class Ether {
       this.singer = this.provider.getSigner();
       this.chainId = await this.singer.getChainId();
       if (DeploymentInfo[this.chainId]) {
-        this.yen = new YENClient(
+        this.xenBox = new XenBoxClient(
           this.singer,
-          DeploymentInfo[this.chainId]["YEN"].proxyAddress
+          DeploymentInfo[this.chainId]["XenBox"].proxyAddress
         );
       } else {
         await this.ethereum.request({
@@ -45,29 +43,6 @@ export class Ether {
       }
     } else {
       throw "Please use a browser that supports web3 to open";
-    }
-  }
-
-  loadPair(address: string) {
-    if (this.singer) {
-      this.pair = new ERC20Client(this.singer, address);
-    }
-  }
-
-  async addToken(address: string) {
-    if (this.ethereum) {
-      await this.ethereum.request({
-        method: "wallet_watchAsset",
-        params: {
-          type: "ERC20",
-          options: {
-            address: address,
-            symbol: "YEN",
-            decimals: 18,
-            image: "https://yen.cool/favicon.png",
-          },
-        },
-      });
     }
   }
 }

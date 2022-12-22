@@ -18,7 +18,7 @@
       </el-menu-item>
       <div class="flex-grow" />
       <el-menu-item index="-2" class="item2">
-        {{ state.sync.userAddress }}
+        {{ state.app.userAddress }}
       </el-menu-item>
     </el-menu>
     <div>
