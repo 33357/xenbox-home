@@ -5,25 +5,25 @@
         <el-image
           v-if="account == 10"
           style="width: 300px; height: 300px"
-          src="/public/1.png"
+          src="../../public/1.png"
           fit="fill"
         />
         <el-image
           v-if="account == 20"
           style="width: 300px; height: 300px"
-          src="/public/2.png"
+          src="../../public/2.png"
           fit="fill"
         />
         <el-image
           v-if="account == 50"
           style="width: 300px; height: 300px"
-          src="/public/3.png"
+          src="../../public/3.png"
           fit="fill"
         />
         <el-image
           v-if="account == 100"
           style="width: 300px; height: 300px"
-          src="/public/4.png"
+          src="../../public/4.png"
           fit="fill"
         />
       </el-form-item>
