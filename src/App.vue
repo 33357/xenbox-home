@@ -22,7 +22,7 @@
       </el-menu-item>
     </el-menu>
     <div>
-      <Home v-if="activeIndex == '1'"></Home>
+      <Mint v-if="activeIndex == '1'"></Mint>
       <Box v-if="activeIndex == '2'"></Box>
     </div>
   </el-config-provider>

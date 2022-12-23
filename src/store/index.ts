@@ -1,11 +1,8 @@
 import { ActionTree, createStore } from "vuex";
 import { Ether } from "../network";
 import { utils, BigNumber } from "../const";
-import { XenBoxModel } from "xenbox-sdk";
 import { toRaw } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
-
-export { XenBoxModel } from "xenbox-sdk";
 
 export interface App {
   userAddress: string;
@@ -45,6 +42,9 @@ const actions: ActionTree<State, State> = {
 
   async setApp({ state }) {
     await toRaw(state.app.ether).load();
+    if(state.app.ether.singer){
+      state.app.userAddress = await toRaw(state.app.ether.singer).getAddress()
+    }
     if (state.app.ether.chainId) {
       state.app.chainId = state.app.ether.chainId;
     }
