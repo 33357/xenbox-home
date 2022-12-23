@@ -30,7 +30,7 @@
     "moment": "^2.29.4",
     "vue": "^3.2.36",
     "vuex": "^4.1.0",
-    "xenbox-sdk": "^0.0.7"
+    "xenbox-sdk": "^0.0.8"
   },
   "license": "MIT"
 }

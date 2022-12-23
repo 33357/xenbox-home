@@ -36,7 +36,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="锁定时间">
-        <el-input-number v-model="term" :min="1" @change="termChange" />
+        <el-input-number v-model="term" :min="1" @change="termChange" /> 天
       </el-form-item>
       <el-form-item label="预期获得">
         {{ `100 XEN` }}

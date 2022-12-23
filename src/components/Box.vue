@@ -45,19 +45,30 @@
       </el-card>
     </el-scrollbar>
   </el-card>
+  <el-dialog v-model="dialogVisible" title="重新锁定时间" width="30%">
+    <el-input-number v-model="term" :min="1" @change="termChange" /> 天
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false"> 取消 </el-button>
+        <el-button type="primary" @click="confirm"> 确认 </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script lang="ts">
 import { utils } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
-import { BigNumberish } from "ethers";
+import { BigNumber } from "ethers";
 
 export default {
   data() {
     return {
       utils: utils,
+      dialogVisible: false,
       term: 30,
+      tokenId: BigNumber.from(0),
     };
   },
   created() {
@@ -68,8 +79,18 @@ export default {
   }),
   methods: {
     ...mapActions(["getBoxData", "claim"]),
-    doClaim(tokenId: BigNumberish) {
-      this.claim({ tokenId, term: this.term });
+    confirm() {
+      this.dialogVisible = false;
+      this.claim({ tokenId: this.tokenId, term: this.term });
+    },
+    doClaim(tokenId: BigNumber) {
+      this.tokenId = tokenId;
+      this.dialogVisible = true;
+    },
+    termChange(num: number | undefined) {
+      if (num) {
+        this.term = num;
+      }
     },
   },
 };
