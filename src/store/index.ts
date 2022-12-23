@@ -42,11 +42,17 @@ const actions: ActionTree<State, State> = {
 
   async setApp({ state }) {
     await toRaw(state.app.ether).load();
-    if(state.app.ether.singer){
-      state.app.userAddress = await toRaw(state.app.ether.singer).getAddress()
+    if (state.app.ether.singer) {
+      state.app.userAddress = await toRaw(state.app.ether.singer).getAddress();
     }
     if (state.app.ether.chainId) {
       state.app.chainId = state.app.ether.chainId;
+    }
+  },
+
+  async mint({ state }, { amount, term }) {
+    if (state.app.ether.xenBox) {
+      await toRaw(state.app.ether.xenBox).mint(amount, term);
     }
   },
 };
