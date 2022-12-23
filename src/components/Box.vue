@@ -19,18 +19,25 @@
                 .toString()
             }}</span
           >
-          <div class="bottom card-header">
-            <div
-              class="time"
-              v-if="state.box.tokenMap[tokenId.toString()].time"
-            >
+          <div
+            class="bottom card-header"
+            v-if="state.box.tokenMap[tokenId.toString()].time"
+          >
+            <div class="time">
               到期时间：{{
                 new Date(
                   state.box.tokenMap[tokenId.toString()].time * 1000
                 ).toLocaleString()
               }}
             </div>
-            <el-button class="button" @click="doClaim(tokenId)">
+            <el-button
+              class="button"
+              @click="doClaim(tokenId)"
+              :disabled="
+                new Date().getTime() / 1000 <
+                state.box.tokenMap[tokenId.toString()].time
+              "
+            >
               提取
             </el-button>
           </div>
