@@ -4,6 +4,7 @@ import { utils, log, BigNumber } from "../const";
 import { toRaw } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
 import { XenBoxModel } from "xenbox-sdk";
+import { BigNumberish } from "ethers";
 
 export interface App {
   userAddress: string;
@@ -67,6 +68,12 @@ const actions: ActionTree<State, State> = {
     }
   },
 
+  async claim({ state }, { tokenId, term }) {
+    if (state.app.ether.xenBox) {
+      await toRaw(state.app.ether.xenBox).claim(tokenId, term);
+    }
+  },
+
   async getBoxData({ state, dispatch }) {
     if (state.app.ether.xenBox && state.app.ether.xenBoxHelper) {
       const totalToken = await toRaw(state.app.ether.xenBox).totalToken();
@@ -96,15 +103,15 @@ const actions: ActionTree<State, State> = {
         ).tokenMap(tokenId);
         const proxyAddress = await toRaw(
           state.app.ether.xenBox
-        ).getProxyAddress(state.box.tokenMap[tokenId.toString()].start)
-        const time = (await toRaw(
-          state.app.ether.xen
-        ).userMints(proxyAddress)).maturityTs.toNumber()
+        ).getProxyAddress(state.box.tokenMap[tokenId.toString()].start);
+        const time = (
+          await toRaw(state.app.ether.xen).userMints(proxyAddress)
+        ).maturityTs.toNumber();
         state.box.tokenMap[tokenId.toString()] = {
-          start:  state.box.tokenMap[tokenId.toString()].start,
+          start: state.box.tokenMap[tokenId.toString()].start,
           end: state.box.tokenMap[tokenId.toString()].end,
-          time 
-        }
+          time,
+        };
       }
     }
   },

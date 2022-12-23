@@ -30,7 +30,9 @@
                 ).toLocaleString()
               }}
             </div>
-            <el-button text class="button"> 提取 </el-button>
+            <el-button class="button" @click="doClaim(tokenId)">
+              提取
+            </el-button>
           </div>
         </div>
       </el-card>
@@ -42,11 +44,13 @@
 import { utils } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
+import { BigNumberish } from "ethers";
 
 export default {
   data() {
     return {
       utils: utils,
+      term: 30,
     };
   },
   created() {
@@ -56,7 +60,10 @@ export default {
     state: (state: any) => state as State,
   }),
   methods: {
-    ...mapActions(["getBoxData"]),
+    ...mapActions(["getBoxData", "claim"]),
+    doClaim(tokenId: BigNumberish) {
+      this.claim(tokenId, this.term);
+    },
   },
 };
 </script>
