@@ -13,9 +13,13 @@ export interface App {
 
 export interface Mint {}
 
+export interface Token extends XenBoxModel.Token {
+  time?: number;
+}
+
 export interface Box {
   tokenIdList: BigNumber[];
-  tokenMap: { [tokenId: string]: XenBoxModel.Token };
+  tokenMap: { [tokenId: string]: Token };
 }
 
 export interface State {
@@ -81,11 +85,26 @@ const actions: ActionTree<State, State> = {
   },
 
   async getTokenData({ state }, tokenId: BigNumber) {
-    if (state.app.ether.xenBox) {
+    if (state.app.ether.xenBox && state.app.ether.xen) {
       if (!state.box.tokenMap[tokenId.toString()]) {
+        state.box.tokenMap[tokenId.toString()] = {
+          start: BigNumber.from(0),
+          end: BigNumber.from(0),
+        };
         state.box.tokenMap[tokenId.toString()] = await toRaw(
           state.app.ether.xenBox
         ).tokenMap(tokenId);
+        const proxyAddress = await toRaw(
+          state.app.ether.xenBox
+        ).getProxyAddress(state.box.tokenMap[tokenId.toString()].start)
+        const time = (await toRaw(
+          state.app.ether.xen
+        ).userMints(proxyAddress)).maturityTs.toNumber()
+        state.box.tokenMap[tokenId.toString()] = {
+          start:  state.box.tokenMap[tokenId.toString()].start,
+          end: state.box.tokenMap[tokenId.toString()].end,
+          time 
+        }
       }
     }
   },

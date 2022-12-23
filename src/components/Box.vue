@@ -6,17 +6,30 @@
         :key="tokenId.toString()"
         :body-style="{ padding: '0px', marginBottom: '1px' }"
       >
-        <!-- <img :src="item.imgUrl" class="image multi-content" /> -->
         <el-image
-          style="width: 300px; height: 300px"
+          style="width: 100px; height: 100px"
           src="/public/1.png"
           fit="fill"
-          class="image multi-content"
         />
         <div style="padding: 14px">
-          <span>{{ tokenId }}</span>
+          <span
+            >账号数量：{{
+              state.box.tokenMap[tokenId.toString()].end
+                .sub(state.box.tokenMap[tokenId.toString()].start)
+                .toString()
+            }}</span
+          >
           <div class="bottom card-header">
-            <div class="time">{{ 123 }}</div>
+            <div
+              class="time"
+              v-if="state.box.tokenMap[tokenId.toString()].time"
+            >
+              到期时间：{{
+                new Date(
+                  state.box.tokenMap[tokenId.toString()].time * 1000
+                ).toLocaleString()
+              }}
+            </div>
             <el-button text class="button"> 提取 </el-button>
           </div>
         </div>
@@ -34,23 +47,6 @@ export default {
   data() {
     return {
       utils: utils,
-      lists: [
-        {
-          imgUrl:
-            "https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg",
-          name: "Deer",
-        },
-        {
-          imgUrl:
-            "https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg",
-          name: "Horse",
-        },
-        {
-          imgUrl:
-            "https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg",
-          name: "Mountain Lion",
-        },
-      ],
     };
   },
   created() {

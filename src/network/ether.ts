@@ -1,4 +1,9 @@
-import { XenBoxClient, XenBoxHelperClient, DeploymentInfo } from "xenbox-sdk";
+import {
+  XenClient,
+  XenBoxClient,
+  XenBoxHelperClient,
+  DeploymentInfo,
+} from "xenbox-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers, Signer, providers } from "ethers";
 
@@ -10,6 +15,8 @@ export class Ether {
   public provider: providers.Web3Provider | undefined;
 
   public chainId: number | undefined;
+
+  public xen: XenClient | undefined;
 
   public xenBox: XenBoxClient | undefined;
 
@@ -37,6 +44,7 @@ export class Ether {
           this.singer,
           DeploymentInfo[this.chainId]["XenBoxHelper"].proxyAddress
         );
+        this.xen = new XenClient(this.singer);
       } else {
         await this.ethereum.request({
           method: "wallet_switchEthereumChain",
