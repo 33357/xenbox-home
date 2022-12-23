@@ -62,7 +62,7 @@ export default {
   methods: {
     ...mapActions(["getBoxData", "claim"]),
     doClaim(tokenId: BigNumberish) {
-      this.claim(tokenId, this.term);
+      this.claim({ tokenId, term: this.term });
     },
   },
 };
