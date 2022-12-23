@@ -6,6 +6,19 @@ export { BigNumber } from "ethers";
 
 let lastTime: number;
 
+export function log(...args: any) {
+  if (!lastTime) {
+    console.log(new Date().toLocaleString(), ...args);
+  } else {
+    console.log(
+      new Date().toLocaleString(),
+      new Date().getTime() - lastTime,
+      ...args
+    );
+  }
+  lastTime = new Date().getTime();
+}
+
 const num = {
   min: "0x0000000000000000000000000000000000000000",
   max: "0xffffffffffffffffffffffffffffffffffffffff",
@@ -33,19 +46,6 @@ const func = {
     return new Promise((resolve) => setTimeout(resolve, time));
   },
 
-  log: (...args: any) => {
-    if (!lastTime) {
-      console.log(new Date().toLocaleString(), ...args);
-    } else {
-      console.log(
-        new Date().toLocaleString(),
-        new Date().getTime() - lastTime,
-        ...args
-      );
-    }
-    lastTime = new Date().getTime();
-  },
-
   retry: async (
     _func: Function,
     time: number,
@@ -66,7 +66,7 @@ const func = {
     } catch (error: any) {
       time--;
       if (time > 0) {
-        func.log(`retry ${time}, ${error.toString()}`);
+        log(`retry ${time}, ${error.toString()}`);
         await func.sleep(1000);
         return await func.retry(_func, time, args, callback);
       } else {

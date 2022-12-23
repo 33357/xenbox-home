@@ -1,4 +1,4 @@
-import { XenBoxClient, DeploymentInfo } from "xenbox-sdk";
+import { XenBoxClient,XenBoxHelperClient, DeploymentInfo } from "xenbox-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers, Signer, providers } from "ethers";
 
@@ -12,6 +12,8 @@ export class Ether {
   public chainId: number | undefined;
 
   public xenBox: XenBoxClient | undefined;
+
+  public xenBoxHelper: XenBoxHelperClient | undefined;
 
   async load() {
     this.ethereum = (await detectEthereumProvider()) as any;
@@ -30,6 +32,10 @@ export class Ether {
         this.xenBox = new XenBoxClient(
           this.singer,
           DeploymentInfo[this.chainId]["XenBox"].proxyAddress
+        );
+        this.xenBoxHelper = new XenBoxHelperClient(
+          this.singer,
+          DeploymentInfo[this.chainId]["XenBoxHelper"].proxyAddress
         );
       } else {
         await this.ethereum.request({

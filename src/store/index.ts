@@ -1,6 +1,6 @@
 import { ActionTree, createStore } from "vuex";
 import { Ether } from "../network";
-import { utils, BigNumber } from "../const";
+import { utils, log, BigNumber } from "../const";
 import { toRaw } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
 
@@ -12,7 +12,9 @@ export interface App {
 
 export interface Mint {}
 
-export interface Box {}
+export interface Box {
+  tokenIdList: BigNumber[];
+}
 
 export interface State {
   app: App;
@@ -27,16 +29,18 @@ const state: State = {
     ether: new Ether(),
   },
   mint: {},
-  box: {},
+  box: {
+    tokenIdList: [],
+  },
 };
 
 const actions: ActionTree<State, State> = {
   async start({ dispatch }) {
     try {
       await dispatch("setApp");
-      utils.func.log("app start success!");
+      log("app start success!");
     } catch (err) {
-      utils.func.log(err);
+      log(err);
     }
   },
 
@@ -53,6 +57,20 @@ const actions: ActionTree<State, State> = {
   async mint({ state }, { amount, term }) {
     if (state.app.ether.xenBox) {
       await toRaw(state.app.ether.xenBox).mint(amount, term);
+    }
+  },
+
+  async getBoxData({ state }) {
+    if (state.app.ether.xenBox && state.app.ether.xenBoxHelper) {
+      const totalToken = await toRaw(state.app.ether.xenBox).totalToken();
+      state.box.tokenIdList = await toRaw(
+        state.app.ether.xenBoxHelper
+      ).getOwnedTokenIdList(
+        toRaw(state.app.ether.xenBox).address(),
+        state.app.userAddress,
+        0,
+        totalToken
+      );
     }
   },
 };

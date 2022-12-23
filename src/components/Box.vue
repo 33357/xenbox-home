@@ -48,11 +48,15 @@ export default {
   ]
     };
   },
-  created() {},
+  created() {
+    this.getBoxData();
+  },
   computed: mapState({
     state: (state: any) => state as State,
   }),
-  methods: {},
+  methods: {
+    ...mapActions(["getBoxData"]),
+  },
 };
 </script>
 
