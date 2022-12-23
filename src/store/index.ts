@@ -3,6 +3,7 @@ import { Ether } from "../network";
 import { utils, log, BigNumber } from "../const";
 import { toRaw } from "vue";
 import { ElMessage, ElNotification } from "element-plus";
+import { XenBoxModel } from "xenbox-sdk";
 
 export interface App {
   userAddress: string;
@@ -14,6 +15,7 @@ export interface Mint {}
 
 export interface Box {
   tokenIdList: BigNumber[];
+  tokenMap: { [tokenId: string]: XenBoxModel.Token };
 }
 
 export interface State {
@@ -31,6 +33,7 @@ const state: State = {
   mint: {},
   box: {
     tokenIdList: [],
+    tokenMap: {},
   },
 };
 
@@ -60,7 +63,7 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async getBoxData({ state }) {
+  async getBoxData({ state, dispatch }) {
     if (state.app.ether.xenBox && state.app.ether.xenBoxHelper) {
       const totalToken = await toRaw(state.app.ether.xenBox).totalToken();
       state.box.tokenIdList = await toRaw(
@@ -71,6 +74,19 @@ const actions: ActionTree<State, State> = {
         0,
         totalToken
       );
+      state.box.tokenIdList.forEach(async (tokenId) => {
+        dispatch("getTokenData", tokenId);
+      });
+    }
+  },
+
+  async getTokenData({ state }, tokenId: BigNumber) {
+    if (state.app.ether.xenBox) {
+      if (!state.box.tokenMap[tokenId.toString()]) {
+        state.box.tokenMap[tokenId.toString()] = await toRaw(
+          state.app.ether.xenBox
+        ).tokenMap(tokenId);
+      }
     }
   },
 };

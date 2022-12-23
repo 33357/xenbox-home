@@ -1,4 +1,4 @@
-import { XenBoxClient,XenBoxHelperClient, DeploymentInfo } from "xenbox-sdk";
+import { XenBoxClient, XenBoxHelperClient, DeploymentInfo } from "xenbox-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers, Signer, providers } from "ethers";
 
