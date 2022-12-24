@@ -55,7 +55,6 @@
 </template>
 
 <script lang="ts">
-import { Edit, View as IconView } from "@element-plus/icons-vue";
 import { utils } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
