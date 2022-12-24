@@ -1,6 +1,11 @@
 <template>
   <el-card class="box-card">
     <el-form label-width="30%">
+      <el-form-item label="交易">
+        <a href="https://opensea.io/zh-CN/collection/xenbox" target="_blank">
+          Opensea
+        </a>
+      </el-form-item>
       <el-form-item label="XEN 宝箱">
         <img
           v-if="account == 10"
@@ -38,15 +43,19 @@
       <el-form-item label="锁定时间">
         <el-input-number v-model="term" :min="1" @change="termChange" /> 天
       </el-form-item>
-      <el-form-item label="预期获得" v-if="state.mint.fee != 0">
+      <el-form-item label="预计获得" v-if="state.mint.fee != 0">
         {{ (amount * term * account * (10000 - state.mint.fee)) / 10000 }} XEN
       </el-form-item>
-      <el-button type="primary" round @click="doMint"> 铸造 </el-button>
+      <el-form-item>
+        <el-button type="primary" round @click="doMint"> 铸造 </el-button>
+      </el-form-item>
+      <el-form-item> </el-form-item>
     </el-form>
   </el-card>
 </template>
 
 <script lang="ts">
+import { Edit, View as IconView } from "@element-plus/icons-vue";
 import { utils } from "../const";
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
