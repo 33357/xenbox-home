@@ -12,7 +12,9 @@ export interface App {
   ether: Ether;
 }
 
-export interface Mint {}
+export interface Mint {
+  fee:number,
+}
 
 export interface Token extends XenBoxModel.Token {
   time?: number;
@@ -35,7 +37,9 @@ const state: State = {
     chainId: 0,
     ether: new Ether(),
   },
-  mint: {},
+  mint: {
+    fee:0,
+  },
   box: {
     tokenIdList: [],
     tokenMap: {},
@@ -46,6 +50,7 @@ const actions: ActionTree<State, State> = {
   async start({ dispatch }) {
     try {
       await dispatch("setApp");
+      await dispatch("getMintData");
       log("app start success!");
     } catch (err) {
       log(err);
@@ -71,6 +76,13 @@ const actions: ActionTree<State, State> = {
   async claim({ state }, { tokenId, term }) {
     if (state.app.ether.xenBox) {
       await toRaw(state.app.ether.xenBox).claim(tokenId, term);
+    }
+  },
+
+  async getMintData({ state }) {
+    if (state.app.ether.xenBox) {
+      state.mint.fee = (await toRaw(state.app.ether.xenBox).fee()).toNumber();
+      log(state.mint.fee)
     }
   },
 

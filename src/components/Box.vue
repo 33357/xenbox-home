@@ -107,7 +107,7 @@ export default {
     };
   },
   created() {
-    this.getBoxData();
+    this.getBoxData()
   },
   computed: mapState({
     state: (state: any) => state as State,
