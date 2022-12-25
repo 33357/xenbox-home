@@ -19,6 +19,7 @@ export interface Mint {
 
 export interface Token extends XenBoxModel.Token {
   time?: number;
+  term?: number;
 }
 
 export interface Box {
@@ -117,13 +118,12 @@ const actions: ActionTree<State, State> = {
         const proxyAddress = await toRaw(
           state.app.ether.xenBox
         ).getProxyAddress(state.box.tokenMap[tokenId.toString()].start);
-        const time = (
-          await toRaw(state.app.ether.xen).userMints(proxyAddress)
-        ).maturityTs.toNumber();
+        const token = await toRaw(state.app.ether.xen).userMints(proxyAddress);
         state.box.tokenMap[tokenId.toString()] = {
           start: state.box.tokenMap[tokenId.toString()].start,
           end: state.box.tokenMap[tokenId.toString()].end,
-          time,
+          time:token.maturityTs.toNumber(),
+          term:token.term.toNumber(),
         };
       }
     }

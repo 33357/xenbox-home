@@ -58,7 +58,24 @@
                   .toString()
               }}</span
             >
-
+            <span
+              >锁定时间：
+              {{ state.box.tokenMap[tokenId.toString()].term }}
+              天</span
+            >
+            <span
+              >预计获得：
+              {{
+                (state.box.tokenMap[tokenId.toString()].end
+                  .sub(state.box.tokenMap[tokenId.toString()].start)
+                  .toNumber() *
+                  state.box.tokenMap[tokenId.toString()].term *
+                  state.app.amount *
+                  (10000 - state.mint.fee)) /
+                10000
+              }}
+              XEN</span
+            >
             <div class="time">
               到期时间：{{
                 new Date(
