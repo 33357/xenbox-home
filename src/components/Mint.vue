@@ -65,7 +65,7 @@ export default {
       utils: utils,
       account: 100,
       term: 30,
-      amount: 60000,
+      amount: 55000,
     };
   },
   created() {},

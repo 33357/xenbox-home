@@ -82,7 +82,6 @@ const actions: ActionTree<State, State> = {
   async getMintData({ state }) {
     if (state.app.ether.xenBox) {
       state.mint.fee = (await toRaw(state.app.ether.xenBox).fee()).toNumber();
-      log(state.mint.fee)
     }
   },
 
