@@ -114,9 +114,10 @@ export default {
   }),
   methods: {
     ...mapActions(["getBoxData", "claim"]),
-    confirm() {
+    async confirm() {
+      await this.claim({ tokenId: this.tokenId, term: this.term });
       this.dialogVisible = false;
-      this.claim({ tokenId: this.tokenId, term: this.term });
+      this.getBoxData()
     },
     doClaim(tokenId: BigNumber) {
       this.tokenId = tokenId;
