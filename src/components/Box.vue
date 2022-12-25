@@ -46,18 +46,19 @@
           src="/public/4.png"
           fit="fill"
         />
-        <div style="padding: 14px">
-          <span
-            >账号数量：{{
-              state.box.tokenMap[tokenId.toString()].end
-                .sub(state.box.tokenMap[tokenId.toString()].start)
-                .toString()
-            }}</span
-          >
+        <div style="padding: 5px">
           <div
             class="bottom card-header"
             v-if="state.box.tokenMap[tokenId.toString()].time"
           >
+            <span
+              >账号数量：{{
+                state.box.tokenMap[tokenId.toString()].end
+                  .sub(state.box.tokenMap[tokenId.toString()].start)
+                  .toString()
+              }}</span
+            >
+
             <div class="time">
               到期时间：{{
                 new Date(
@@ -73,17 +74,33 @@
                 state.box.tokenMap[tokenId.toString()].time
               "
             >
-              提取
+              开启
             </el-button>
           </div>
         </div>
       </el-card>
     </el-scrollbar>
   </el-card>
-  <el-dialog v-model="dialogVisible" title="重新锁定时间" width="30%">
-    <el-input-number v-model="term" :min="1" @change="termChange" /> 天
+  <el-dialog v-model="dialogVisible" title="开启宝箱" width="30%">
+    <el-form label-width="30%">
+      <el-form-item label="重新锁定时间">
+        <el-input-number v-model="term" :min="1" @change="termChange" /> 天
+      </el-form-item>
+      <el-form-item label="预计获得" v-if="state.mint.fee != 0">
+        {{
+          (state.box.tokenMap[tokenId.toString()].end
+            .sub(state.box.tokenMap[tokenId.toString()].start)
+            .toNumber() *
+            term *
+            state.app.amount *
+            (10000 - state.mint.fee)) /
+          10000
+        }}
+        XEN
+      </el-form-item>
+    </el-form>
     <template #footer>
-      <span class="dialog-footer">
+      <span>
         <el-button @click="dialogVisible = false"> 取消 </el-button>
         <el-button type="primary" @click="confirm"> 确认 </el-button>
       </span>
@@ -107,7 +124,7 @@ export default {
     };
   },
   created() {
-    this.getBoxData()
+    this.getBoxData();
   },
   computed: mapState({
     state: (state: any) => state as State,
@@ -117,7 +134,7 @@ export default {
     async confirm() {
       await this.claim({ tokenId: this.tokenId, term: this.term });
       this.dialogVisible = false;
-      this.getBoxData()
+      this.getBoxData();
     },
     doClaim(tokenId: BigNumber) {
       this.tokenId = tokenId;

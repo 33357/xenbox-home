@@ -10,10 +10,11 @@ export interface App {
   userAddress: string;
   chainId: number;
   ether: Ether;
+  amount: number;
 }
 
 export interface Mint {
-  fee:number,
+  fee: number;
 }
 
 export interface Token extends XenBoxModel.Token {
@@ -36,9 +37,10 @@ const state: State = {
     userAddress: utils.num.min,
     chainId: 0,
     ether: new Ether(),
+    amount: 55000,
   },
   mint: {
-    fee:0,
+    fee: 0,
   },
   box: {
     tokenIdList: [],

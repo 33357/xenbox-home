@@ -44,7 +44,10 @@
         <el-input-number v-model="term" :min="1" @change="termChange" /> 天
       </el-form-item>
       <el-form-item label="预计获得" v-if="state.mint.fee != 0">
-        {{ (amount * term * account * (10000 - state.mint.fee)) / 10000 }} XEN
+        {{
+          (account * term * state.app.amount * (10000 - state.mint.fee)) / 10000
+        }}
+        XEN
       </el-form-item>
       <el-form-item>
         <el-button type="primary" round @click="doMint"> 铸造 </el-button>
@@ -65,7 +68,6 @@ export default {
       utils: utils,
       account: 100,
       term: 30,
-      amount: 55000,
     };
   },
   created() {},
