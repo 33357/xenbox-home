@@ -9,7 +9,7 @@
       <el-form-item label="XEN 宝箱">
         <img
           style="width: 300px; height: 300px"
-          :src="`/public/box${account}.png`"
+          :src="`/box${account}.png`"
           fit="fill"
         />
       </el-form-item>

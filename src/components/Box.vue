@@ -8,7 +8,7 @@
       >
         <img
           style="width: 100px; height: 100px"
-          :src="`/public/box${state.box.tokenMap[tokenId.toString()].end
+          :src="`/box${state.box.tokenMap[tokenId.toString()].end
               .sub(state.box.tokenMap[tokenId.toString()].start).toNumber()}.png`"
           fit="fill"
         />
