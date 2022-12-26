@@ -1,9 +1,14 @@
 <template>
   <el-card class="box-card">
     <el-form label-width="30%">
-      <el-form-item label="交易">
+      <el-form-item label="交易：">
         <a href="https://opensea.io/zh-CN/collection/xenbox" target="_blank">
           Opensea
+        </a>
+      </el-form-item>
+      <el-form-item label="社群：">
+        <a href="https://t.me/xenboxstore" target="_blank">
+          Telegram
         </a>
       </el-form-item>
       <el-form-item label="XEN 宝箱">
@@ -13,7 +18,7 @@
           fit="fill"
         />
       </el-form-item>
-      <el-form-item label="账号数量">
+      <el-form-item label="账号数量：">
         <el-radio-group v-model="account" label="label position">
           <el-radio-button label="100">100</el-radio-button>
           <el-radio-button label="50">50</el-radio-button>
@@ -21,10 +26,10 @@
           <el-radio-button label="10">10</el-radio-button>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="锁定时间">
+      <el-form-item label="锁定时间：">
         <el-input-number v-model="term" :min="1" @change="termChange" /> 天
       </el-form-item>
-      <el-form-item label="预计获得" v-if="state.mint.fee != 0">
+      <el-form-item label="预计获得：" v-if="state.mint.fee != 0">
         {{
           (account * term * state.app.amount * (10000 - state.mint.fee)) / 10000
         }}
