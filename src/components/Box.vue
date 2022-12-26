@@ -7,43 +7,9 @@
         :body-style="{ padding: '0px', marginBottom: '1px' }"
       >
         <img
-          v-if="
-            state.box.tokenMap[tokenId.toString()].end
-              .sub(state.box.tokenMap[tokenId.toString()].start)
-              .eq(10)
-          "
           style="width: 100px; height: 100px"
-          src="/public/1.png"
-          fit="fill"
-        />
-        <img
-          v-if="
-            state.box.tokenMap[tokenId.toString()].end
-              .sub(state.box.tokenMap[tokenId.toString()].start)
-              .eq(20)
-          "
-          style="width: 100px; height: 100px"
-          src="/public/2.png"
-          fit="fill"
-        />
-        <img
-          v-if="
-            state.box.tokenMap[tokenId.toString()].end
-              .sub(state.box.tokenMap[tokenId.toString()].start)
-              .eq(50)
-          "
-          style="width: 100px; height: 100px"
-          src="/public/3.png"
-          fit="fill"
-        />
-        <img
-          v-if="
-            state.box.tokenMap[tokenId.toString()].end
-              .sub(state.box.tokenMap[tokenId.toString()].start)
-              .eq(100)
-          "
-          style="width: 100px; height: 100px"
-          src="/public/4.png"
+          :src="`/public/box${state.box.tokenMap[tokenId.toString()].end
+              .sub(state.box.tokenMap[tokenId.toString()].start).toNumber()}.png`"
           fit="fill"
         />
         <div style="padding: 5px">

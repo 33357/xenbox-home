@@ -8,27 +8,8 @@
       </el-form-item>
       <el-form-item label="XEN 宝箱">
         <img
-          v-if="account == 10"
           style="width: 300px; height: 300px"
-          src="/public/1.png"
-          fit="fill"
-        />
-        <img
-          v-if="account == 20"
-          style="width: 300px; height: 300px"
-          src="/public/2.png"
-          fit="fill"
-        />
-        <img
-          v-if="account == 50"
-          style="width: 300px; height: 300px"
-          src="/public/3.png"
-          fit="fill"
-        />
-        <img
-          v-if="account == 100"
-          style="width: 300px; height: 300px"
-          src="/public/4.png"
+          :src="`/public/box${account}.png`"
           fit="fill"
         />
       </el-form-item>
