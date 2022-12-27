@@ -1,6 +1,6 @@
 import Identicon from "identicon.js";
 import moment from "moment";
-import { utils as etherUtils, BigNumber } from "ethers";
+import { utils as ether, BigNumber } from "ethers";
 
 export { BigNumber } from "ethers";
 
@@ -247,6 +247,6 @@ export const utils = {
   format,
   go,
   convert,
-  etherUtils,
+  ether,
   chain,
 };

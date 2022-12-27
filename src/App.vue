@@ -8,6 +8,7 @@
     >
       <el-menu-item index="1" class="item"> Mint </el-menu-item>
       <el-menu-item index="2" class="item"> Box </el-menu-item>
+      <el-menu-item index="3" class="item"> Search </el-menu-item>
       <el-menu-item index="-1" class="item" @click="toggleDark()">
         <button
           class="border-none w-full bg-transparent cursor-pointer"
@@ -21,16 +22,17 @@
         {{ state.app.userAddress }}
       </el-menu-item>
     </el-menu>
-    <div>
+    <el-card class="box-card">
       <Mint v-if="activeIndex == '1'"></Mint>
       <Box v-if="activeIndex == '2'"></Box>
-    </div>
+      <Search v-if="activeIndex == '3'"></Search>
+    </el-card>
   </el-config-provider>
 </template>
 
 <script lang="ts">
 import { useDark, useToggle } from "@vueuse/core";
-import { utils, log } from "./const";
+import { log } from "./const";
 import { mapState, mapActions } from "vuex";
 import { State } from "./store";
 
@@ -77,5 +79,17 @@ export default {
 
 .flex-grow {
   flex-grow: 1;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.box-card {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
