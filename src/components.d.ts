@@ -19,6 +19,7 @@ declare module '@vue/runtime-core' {
     ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
+    ElSwitch: typeof import('element-plus/es')['ElSwitch']
     Mint: typeof import('./components/Mint.vue')['default']
     Search: typeof import('./components/Search.vue')['default']
   }

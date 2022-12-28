@@ -10,7 +10,7 @@
     </el-form-item>
     <el-form-item label="XEN 宝箱">
       <img
-        style="width: 300px; height: 300px"
+        style="width: 250px; height: 250px"
         :src="`/box${account}.png`"
         fit="fill"
       />
@@ -32,6 +32,31 @@
       }}
       XEN
     </el-form-item>
+    <el-form-item label="高级设置：">
+      <el-switch v-model="advanced" />
+    </el-form-item>
+    <el-form-item label="最大费用：" v-if="advanced">
+      <el-input v-model="maxFeePerGas" placeholder="maxFeePerGas"
+        ><template #append> Gwei </template>
+      </el-input>
+    </el-form-item>
+    <el-form-item label="最大优先费用:" v-if="advanced">
+      <el-input
+        v-model="maxPriorityFeePerGas"
+        placeholder="maxPriorityFeePerGas"
+      >
+        <template #append> Gwei </template>
+      </el-input>
+    </el-form-item>
+    <el-form-item label="预计 Gas 费用:" v-if="advanced && maxFeePerGas != ''">
+      {{
+        utils.format.bigToString(
+          utils.format.stringToBig(maxFeePerGas, 9).mul((gas / 100) * account),
+          18
+        )
+      }}
+      ETH
+    </el-form-item>
     <el-form-item>
       <el-button type="primary" round @click="doMint"> 铸造 </el-button>
     </el-form-item>
@@ -41,18 +66,32 @@
 <script lang="ts">
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
+import { utils } from "../const";
 
 export default {
   data() {
     return {
+      utils: utils,
       account: 100,
       term: 30,
+      advanced: false,
+      maxFeePerGas: "",
+      maxPriorityFeePerGas: "",
+      gas: 19000000,
     };
   },
   created() {},
   computed: mapState({
     state: (state: any) => state as State,
   }),
+  watch: {
+    advanced(value) {
+      if (value == false) {
+        this.maxFeePerGas = "";
+        this.maxPriorityFeePerGas = "";
+      }
+    },
+  },
   methods: {
     ...mapActions(["getMintData", "mint"]),
     termChange(num: number | undefined) {
@@ -61,7 +100,18 @@ export default {
       }
     },
     doMint() {
-      this.mint({ amount: this.account, term: this.term });
+      this.mint({
+        amount: this.account,
+        term: this.term,
+        maxFeePerGas:
+          this.maxFeePerGas == ""
+            ? undefined
+            : utils.format.stringToBig(this.maxFeePerGas, 9),
+        maxPriorityFeePerGas:
+          this.maxPriorityFeePerGas == ""
+            ? undefined
+            : utils.format.stringToBig(this.maxPriorityFeePerGas, 9),
+      });
     },
   },
 };

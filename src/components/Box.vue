@@ -72,6 +72,40 @@
         }}
         XEN
       </el-form-item>
+      <el-form-item label="高级设置：">
+        <el-switch v-model="advanced" />
+      </el-form-item>
+      <el-form-item label="最大费用：" v-if="advanced">
+        <el-input v-model="maxFeePerGas" placeholder="maxFeePerGas"
+          ><template #append> Gwei </template>
+        </el-input>
+      </el-form-item>
+      <el-form-item label="最大优先费用:" v-if="advanced">
+        <el-input
+          v-model="maxPriorityFeePerGas"
+          placeholder="maxPriorityFeePerGas"
+        >
+          <template #append> Gwei </template>
+        </el-input>
+      </el-form-item>
+      <el-form-item
+        label="预计 Gas 费用:"
+        v-if="advanced && maxFeePerGas != ''"
+      >
+        {{
+          utils.format.bigToString(
+            utils.format
+              .stringToBig(maxFeePerGas, 9)
+              .mul(
+                (gas / 100) *
+                  (state.app.tokenMap[tokenId].end -
+                    state.app.tokenMap[tokenId].start)
+              ),
+            18
+          )
+        }}
+        ETH
+      </el-form-item>
     </el-form>
     <template #footer>
       <span>
@@ -85,13 +119,19 @@
 <script lang="ts">
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
+import { utils } from "../const";
 
 export default {
   data() {
     return {
+      utils: utils,
       dialogVisible: false,
       term: 30,
       tokenId: 0,
+      advanced: false,
+      maxFeePerGas: "",
+      maxPriorityFeePerGas: "",
+      gas: 7000000,
     };
   },
   created() {
@@ -100,10 +140,29 @@ export default {
   computed: mapState({
     state: (state: any) => state as State,
   }),
+  watch: {
+    advanced(value) {
+      if (value == false) {
+        this.maxFeePerGas = "";
+        this.maxPriorityFeePerGas = "";
+      }
+    },
+  },
   methods: {
     ...mapActions(["getBoxData", "claim"]),
     async confirm() {
-      await this.claim({ tokenId: this.tokenId, term: this.term });
+      await this.claim({
+        tokenId: this.tokenId,
+        term: this.term,
+        maxFeePerGas:
+          this.maxFeePerGas == ""
+            ? undefined
+            : utils.format.stringToBig(this.maxFeePerGas, 9),
+        maxPriorityFeePerGas:
+          this.maxPriorityFeePerGas == ""
+            ? undefined
+            : utils.format.stringToBig(this.maxPriorityFeePerGas, 9),
+      });
       this.dialogVisible = false;
       this.getBoxData();
     },

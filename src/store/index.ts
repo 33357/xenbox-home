@@ -77,15 +77,24 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async mint({ state }, { amount, term }) {
+  async mint({ state }, { amount, term, maxFeePerGas, maxPriorityFeePerGas }) {
     if (state.app.ether.xenBox) {
-      await toRaw(state.app.ether.xenBox).mint(amount, term);
+      await toRaw(state.app.ether.xenBox).mint(amount, term, {
+        maxFeePerGas,
+        maxPriorityFeePerGas,
+      });
     }
   },
 
-  async claim({ state }, { tokenId, term }) {
+  async claim(
+    { state },
+    { tokenId, term, maxFeePerGas, maxPriorityFeePerGas }
+  ) {
     if (state.app.ether.xenBox) {
-      await toRaw(state.app.ether.xenBox).claim(tokenId, term);
+      await toRaw(state.app.ether.xenBox).claim(tokenId, term, {
+        maxFeePerGas,
+        maxPriorityFeePerGas,
+      });
     }
   },
 
