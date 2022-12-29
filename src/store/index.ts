@@ -1,6 +1,6 @@
 import { ActionTree, createStore } from "vuex";
 import { Ether } from "../network";
-import { utils, log } from "../const";
+import { utils, log, BigNumber } from "../const";
 import { toRaw } from "vue";
 
 export interface App {
@@ -20,6 +20,7 @@ export interface Token {
   end: number;
   time: number;
   term: number;
+  mint: BigNumber;
 }
 
 export interface Box {
@@ -145,22 +146,31 @@ const actions: ActionTree<State, State> = {
   },
 
   async getTokenData({ state }, tokenId: number) {
-    if (state.app.ether.xenBox && state.app.ether.xen) {
+    if (
+      state.app.ether.xenBox &&
+      state.app.ether.xen &&
+      state.app.ether.xenBoxHelper
+    ) {
       if (!state.app.tokenMap[tokenId]) {
         state.app.tokenMap[tokenId] = {
           start: 0,
           end: 0,
           time: 0,
           term: 0,
+          mint: BigNumber.from(0),
         };
         const token = await toRaw(state.app.ether.xenBox).tokenMap(tokenId);
         state.app.tokenMap[tokenId].end = token.end.toNumber();
         state.app.tokenMap[tokenId].start = token.start.toNumber();
-        const userMints = await toRaw(state.app.ether.xen).userMints(
-          await toRaw(state.app.ether.xenBox).getProxyAddress(token.start)
+        const proxy = await toRaw(state.app.ether.xenBox).getProxyAddress(
+          token.start
         );
+        const userMints = await toRaw(state.app.ether.xen).userMints(proxy);
         state.app.tokenMap[tokenId].time = userMints.maturityTs.toNumber();
         state.app.tokenMap[tokenId].term = userMints.term.toNumber();
+        const mint =
+          await state.app.ether.xenBoxHelper.calculateMintReward(proxy);
+        state.app.tokenMap[tokenId].mint = mint.mul(state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start)
       }
     }
   },

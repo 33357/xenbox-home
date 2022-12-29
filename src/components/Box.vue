@@ -26,18 +26,22 @@
             {{ state.app.tokenMap[tokenId].term }}
             天</span
           >
-          <span v-if="state.mint.fee != 0"
-            >预计获得：
-            {{
-              ((state.app.tokenMap[tokenId].end -
-                state.app.tokenMap[tokenId].start) *
-                state.app.tokenMap[tokenId].term *
-                state.app.amount *
-                (10000 - state.mint.fee)) /
-              10000
-            }}
-            XEN</span
+          <span
+            v-if="
+              !state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee != 0
+            "
           >
+            实计获得:
+            {{
+              utils.format.bigToString(
+                state.app.tokenMap[tokenId].mint
+                  .mul(10000 - state.mint.fee)
+                  .div(10000),
+                18
+              )
+            }}
+            XEN
+          </span>
           <div v-if="state.app.tokenMap[tokenId].time != 0">
             到期时间：{{
               new Date(state.app.tokenMap[tokenId].time * 1000).toLocaleString()
@@ -61,15 +65,11 @@
       <el-form-item label="重新锁定时间">
         <el-input-number v-model="term" :min="1" @change="termChange" /> 天
       </el-form-item>
-      <el-form-item label="预计获得" v-if="state.mint.fee != 0">
-        {{
-          ((state.app.tokenMap[tokenId].end -
-            state.app.tokenMap[tokenId].start) *
-            term *
-            state.app.amount *
-            (10000 - state.mint.fee)) /
-          10000
-        }}
+      <el-form-item
+        label="预计获得"
+        v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee != 0"
+      >
+        {{ utils.format.bigToString(state.app.tokenMap[tokenId].mint,18) }}
         XEN
       </el-form-item>
       <el-form-item label="高级设置：">
