@@ -88,7 +88,7 @@ export default {
 }
 
 .box-card {
-  width: 60%;
+  width: 80%;
   margin-left: auto;
   margin-right: auto;
 }

@@ -22,8 +22,7 @@
             }}</span
           >
           <span v-if="state.app.tokenMap[tokenId].term != 0"
-            >锁定时间：
-            {{ state.app.tokenMap[tokenId].term }}
+            >锁定时间：{{ state.app.tokenMap[tokenId].term }}
             天</span
           >
           <span
@@ -31,8 +30,7 @@
               !state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee != 0
             "
           >
-            实计获得:
-            {{
+            实计获得：{{
               utils.format.bigToString(
                 state.app.tokenMap[tokenId].mint
                   .mul(10000 - state.mint.fee)
@@ -67,7 +65,7 @@
       </el-form-item>
       <el-form-item
         label="预计获得"
-        v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee != 0"
+        v-if="state.mint.fee != 0"
       >
         {{ utils.format.bigToString(state.app.tokenMap[tokenId].mint,18) }}
         XEN
