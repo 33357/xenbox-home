@@ -31,18 +31,21 @@
             {{ state.app.tokenMap[tokenId].term }}
             天</span
           >
-          <span v-if="state.mint.fee != 0"
-            >预计获得：
-            {{
-              ((state.app.tokenMap[tokenId].end -
-                state.app.tokenMap[tokenId].start) *
-                state.app.tokenMap[tokenId].term *
-                state.app.amount *
-                (10000 - state.mint.fee)) /
-              10000
-            }}
-            XEN</span
+          <span
+            v-if="
+              !state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee != 0
+            "
           >
+            实计获得：{{
+              utils.format.bigToString(
+                state.app.tokenMap[tokenId].mint
+                  .mul(10000 - state.mint.fee)
+                  .div(10000),
+                18
+              )
+            }}
+            XEN
+          </span>
           <div v-if="state.app.tokenMap[tokenId].time != 0">
             到期时间：{{
               new Date(state.app.tokenMap[tokenId].time * 1000).toLocaleString()
@@ -58,10 +61,12 @@
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
 import { Search as SearchIcon } from "@element-plus/icons-vue";
+import { utils } from "../const";
 
 export default {
   data() {
     return {
+      utils: utils,
       SearchIcon: SearchIcon,
       searchInput: "",
     };
