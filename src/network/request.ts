@@ -7,7 +7,7 @@ export class Request {
     this.url = url;
   }
 
-  getRank(day: number) {
-    return axios.get(`${this.url}/api/rank/${day}`);
+  getRank30() {
+    return axios.get(`${this.url}/api/rank/30`);
   }
 }

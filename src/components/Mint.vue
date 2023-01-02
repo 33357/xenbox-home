@@ -29,7 +29,10 @@
     <el-form-item label="预计获得：" v-if="state.mint.fee != 0">
       {{
         utils.format.bigToString(
-          state.app.mint.mul(10000 - state.mint.fee).div(10000),
+          calculateMint
+            .mul(account)
+            .mul(10000 - state.mint.fee)
+            .div(10000),
           18
         )
       }}
@@ -69,7 +72,7 @@
 <script lang="ts">
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
-import { utils } from "../const";
+import { BigNumber, utils, log } from "../const";
 
 export default {
   data() {
@@ -77,13 +80,16 @@ export default {
       utils: utils,
       account: 100,
       term: 30,
+      calculateMint: BigNumber.from(0),
       advanced: false,
       maxFeePerGas: "",
       maxPriorityFeePerGas: "",
       gas: 19000000,
     };
   },
-  created() {},
+  created() {
+    this.getCalculateMint();
+  },
   computed: mapState({
     state: (state: any) => state as State,
   }),
@@ -94,15 +100,24 @@ export default {
         this.maxPriorityFeePerGas = "";
       }
     },
-    account() {
-      this.getRankData({ term: this.term, account: this.account });
-    },
     term() {
-      this.getRankData({ term: this.term, account: this.account });
+      this.getCalculateMint();
+    },
+    "state.app.start"() {
+      this.getCalculateMint();
     },
   },
   methods: {
-    ...mapActions(["getMintData", "mint", "getRankData"]),
+    ...mapActions(["getMintData", "mint"]),
+    async getCalculateMint() {
+      if (this.state.app.ether.xenBoxHelper) {
+        this.calculateMint =
+          await this.state.app.ether.xenBoxHelper.calculateMintRewardNew(
+            Math.ceil((this.state.app.rankMap[30] * this.term) / 30),
+            this.term
+          );
+      }
+    },
     termChange(num: number | undefined) {
       if (num) {
         this.term = num;

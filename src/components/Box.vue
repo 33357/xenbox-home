@@ -65,7 +65,13 @@
       <el-form-item label="预计获得" v-if="state.mint.fee != 0">
         {{
           utils.format.bigToString(
-            state.app.mint.mul(10000 - state.mint.fee).div(10000),
+            calculateMint
+              .mul(
+                state.app.tokenMap[tokenId].end -
+                  state.app.tokenMap[tokenId].start
+              )
+              .mul(10000 - state.mint.fee)
+              .div(10000),
             18
           )
         }}
@@ -118,7 +124,7 @@
 <script lang="ts">
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
-import { utils } from "../const";
+import { BigNumber, utils } from "../const";
 
 export default {
   data() {
@@ -127,6 +133,7 @@ export default {
       dialogVisible: false,
       term: 30,
       tokenId: 0,
+      calculateMint: BigNumber.from(0),
       advanced: false,
       maxFeePerGas: "",
       maxPriorityFeePerGas: "",
@@ -147,16 +154,20 @@ export default {
       }
     },
     term() {
-      this.getRankData({
-        term: this.term,
-        account:
-          this.state.app.tokenMap[this.tokenId].end -
-          this.state.app.tokenMap[this.tokenId].start,
-      });
+      this.getCalculateMint();
     },
   },
   methods: {
     ...mapActions(["getBoxData", "claim", "getRankData"]),
+    async getCalculateMint() {
+      if (this.state.app.ether.xenBoxHelper) {
+        this.calculateMint =
+          await this.state.app.ether.xenBoxHelper.calculateMintRewardNew(
+            Math.ceil((this.state.app.rankMap[30] * this.term) / 30),
+            this.term
+          );
+      }
+    },
     async confirm() {
       await this.claim({
         tokenId: this.tokenId,
@@ -176,6 +187,7 @@ export default {
     doClaim(tokenId: number) {
       this.tokenId = tokenId;
       this.dialogVisible = true;
+      this.getCalculateMint();
     },
     termChange(num: number | undefined) {
       if (num) {

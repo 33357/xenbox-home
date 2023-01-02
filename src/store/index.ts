@@ -8,10 +8,9 @@ export interface App {
   chainId: number;
   ether: Ether;
   request: Request;
-  amount: number;
   tokenMap: { [tokenId: number]: Token };
   rankMap: { [day: number]: number };
-  mint: BigNumber;
+  start: boolean;
 }
 
 export interface Mint {
@@ -47,10 +46,9 @@ const state: State = {
     chainId: 0,
     ether: new Ether(),
     request: new Request("https://xenbox.store"),
-    amount: 55000,
     tokenMap: {},
     rankMap: {},
-    mint: BigNumber.from(0),
+    start: false,
   },
   mint: {
     fee: 0,
@@ -64,11 +62,11 @@ const state: State = {
 };
 
 const actions: ActionTree<State, State> = {
-  async start({ dispatch }) {
+  async start({ state, dispatch }) {
     try {
       await dispatch("setApp");
       await dispatch("getMintData");
-      await dispatch("getRankData", { term: 30, account: 100 });
+      state.app.start = true;
       log("app start success!");
     } catch (err) {
       log(err);
@@ -83,6 +81,8 @@ const actions: ActionTree<State, State> = {
     if (state.app.ether.chainId) {
       state.app.chainId = state.app.ether.chainId;
     }
+    const res = await toRaw(state.app.request).getRank30();
+    state.app.rankMap[30] = res.data.rank;
   },
 
   async mint({ state }, { amount, term, maxFeePerGas, maxPriorityFeePerGas }) {
@@ -182,22 +182,6 @@ const actions: ActionTree<State, State> = {
           state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start
         );
       }
-    }
-  },
-
-  async getRankData({ state }, { term, account }) {
-    if (state.app.ether.xenBoxHelper) {
-      if (!state.app.rankMap[term]) {
-        state.app.rankMap[term] = 0;
-        const res = await toRaw(state.app.request).getRank(term);
-        state.app.rankMap[term] = res.data.rank;
-      }
-      state.app.mint = (
-        await toRaw(state.app.ether.xenBoxHelper).calculateMintRewardNew(
-          state.app.rankMap[term],
-          term
-        )
-      ).mul(account);
     }
   },
 };
