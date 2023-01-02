@@ -1,4 +1,4 @@
-# yen-home
+# xenbox-home
 
 Second Generation XEN Mode
 

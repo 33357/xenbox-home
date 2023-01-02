@@ -1,5 +1,5 @@
 import { ActionTree, createStore } from "vuex";
-import { Ether } from "../network";
+import { Ether, Request } from "../network";
 import { utils, log, BigNumber } from "../const";
 import { toRaw } from "vue";
 
@@ -7,8 +7,11 @@ export interface App {
   userAddress: string;
   chainId: number;
   ether: Ether;
+  request: Request;
   amount: number;
   tokenMap: { [tokenId: number]: Token };
+  rankMap: { [day: number]: number };
+  mint: BigNumber;
 }
 
 export interface Mint {
@@ -43,8 +46,11 @@ const state: State = {
     userAddress: utils.num.min,
     chainId: 0,
     ether: new Ether(),
+    request: new Request("https://xenbox.store"),
     amount: 55000,
     tokenMap: {},
+    rankMap: {},
+    mint: BigNumber.from(0),
   },
   mint: {
     fee: 0,
@@ -62,6 +68,7 @@ const actions: ActionTree<State, State> = {
     try {
       await dispatch("setApp");
       await dispatch("getMintData");
+      await dispatch("getRankData", { term: 30, account: 100 });
       log("app start success!");
     } catch (err) {
       log(err);
@@ -168,10 +175,29 @@ const actions: ActionTree<State, State> = {
         const userMints = await toRaw(state.app.ether.xen).userMints(proxy);
         state.app.tokenMap[tokenId].time = userMints.maturityTs.toNumber();
         state.app.tokenMap[tokenId].term = userMints.term.toNumber();
-        const mint =
-          await state.app.ether.xenBoxHelper.calculateMintReward(proxy);
-        state.app.tokenMap[tokenId].mint = mint.mul(state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start)
+        const mint = await state.app.ether.xenBoxHelper.calculateMintReward(
+          proxy
+        );
+        state.app.tokenMap[tokenId].mint = mint.mul(
+          state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start
+        );
       }
+    }
+  },
+
+  async getRankData({ state }, { term, account }) {
+    if (state.app.ether.xenBoxHelper) {
+      if (!state.app.rankMap[term]) {
+        state.app.rankMap[term] = 0;
+        const res = await toRaw(state.app.request).getRank(term);
+        state.app.rankMap[term] = res.data.rank;
+      }
+      state.app.mint = (
+        await toRaw(state.app.ether.xenBoxHelper).calculateMintRewardNew(
+          state.app.rankMap[term],
+          term
+        )
+      ).mul(account);
     }
   },
 };

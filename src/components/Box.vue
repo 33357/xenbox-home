@@ -22,8 +22,7 @@
             }}</span
           >
           <span v-if="state.app.tokenMap[tokenId].term != 0"
-            >锁定时间：{{ state.app.tokenMap[tokenId].term }}
-            天</span
+            >锁定时间：{{ state.app.tokenMap[tokenId].term }} 天</span
           >
           <span
             v-if="
@@ -63,11 +62,13 @@
       <el-form-item label="重新锁定时间">
         <el-input-number v-model="term" :min="1" @change="termChange" /> 天
       </el-form-item>
-      <el-form-item
-        label="预计获得"
-        v-if="state.mint.fee != 0"
-      >
-        {{ utils.format.bigToString(state.app.tokenMap[tokenId].mint,18) }}
+      <el-form-item label="预计获得" v-if="state.mint.fee != 0">
+        {{
+          utils.format.bigToString(
+            state.app.mint.mul(10000 - state.mint.fee).div(10000),
+            18
+          )
+        }}
         XEN
       </el-form-item>
       <el-form-item label="高级设置：">
@@ -145,9 +146,17 @@ export default {
         this.maxPriorityFeePerGas = "";
       }
     },
+    term() {
+      this.getRankData({
+        term: this.term,
+        account:
+          this.state.app.tokenMap[this.tokenId].end -
+          this.state.app.tokenMap[this.tokenId].start,
+      });
+    },
   },
   methods: {
-    ...mapActions(["getBoxData", "claim"]),
+    ...mapActions(["getBoxData", "claim", "getRankData"]),
     async confirm() {
       await this.claim({
         tokenId: this.tokenId,

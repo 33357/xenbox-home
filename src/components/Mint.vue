@@ -28,7 +28,10 @@
     </el-form-item>
     <el-form-item label="预计获得：" v-if="state.mint.fee != 0">
       {{
-        (account * term * state.app.amount * (10000 - state.mint.fee)) / 10000
+        utils.format.bigToString(
+          state.app.mint.mul(10000 - state.mint.fee).div(10000),
+          18
+        )
       }}
       XEN
     </el-form-item>
@@ -91,9 +94,15 @@ export default {
         this.maxPriorityFeePerGas = "";
       }
     },
+    account() {
+      this.getRankData({ term: this.term, account: this.account });
+    },
+    term() {
+      this.getRankData({ term: this.term, account: this.account });
+    },
   },
   methods: {
-    ...mapActions(["getMintData", "mint"]),
+    ...mapActions(["getMintData", "mint", "getRankData"]),
     termChange(num: number | undefined) {
       if (num) {
         this.term = num;
