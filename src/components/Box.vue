@@ -131,7 +131,7 @@ export default {
     return {
       utils: utils,
       dialogVisible: false,
-      term: 30,
+      term: 100,
       tokenId: 0,
       calculateMint: BigNumber.from(0),
       advanced: false,

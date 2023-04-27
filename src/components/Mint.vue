@@ -79,7 +79,7 @@ export default {
     return {
       utils: utils,
       account: 100,
-      term: 30,
+      term: 100,
       calculateMint: BigNumber.from(0),
       advanced: false,
       maxFeePerGas: "",
