@@ -15,7 +15,6 @@ export interface App {
 }
 
 export interface Mint {
-  fee: number;
   fee10: number;
   fee20: number;
   fee50: number;
@@ -62,7 +61,6 @@ const state: State = {
     start: false,
   },
   mint: {
-    fee: 0,
     fee10: 0,
     fee20: 0,
     fee50: 0,
@@ -127,9 +125,6 @@ const actions: ActionTree<State, State> = {
   },
 
   async getMintData({ state }) {
-    if (state.app.ether.xenBox) {
-      state.mint.fee = (await toRaw(state.app.ether.xenBox).fee()).toNumber();
-    }
     if (state.app.ether.xenBoxUpgradeable) {
       [state.mint.fee10, state.mint.fee20, state.mint.fee50, state.mint.fee100] = await Promise.all([
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee10()).toNumber(),

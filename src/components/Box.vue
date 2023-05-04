@@ -12,12 +12,12 @@
             state.app.tokenMap[tokenId].start
           }}</span>
           <span v-if="state.app.tokenMap[tokenId].term != 0">锁定时间：{{ state.app.tokenMap[tokenId].term }} 天</span>
-          <span v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee != 0
+          <span v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee100 != 0
             ">
             实计获得：{{
               utils.format.bigToString(
                 state.app.tokenMap[tokenId].mint
-                  .mul(10000 - state.mint.fee)
+                  .mul(10000 - state.mint.fee100)
                   .div(10000),
                 18
               )
@@ -43,7 +43,7 @@
       <el-form-item label="重新锁定时间">
         <el-input-number v-model="term" :min="1" @change="termChange" /> 天
       </el-form-item>
-      <el-form-item label="预计获得" v-if="state.mint.fee != 0">
+      <el-form-item label="预计获得" v-if="state.mint.fee100 != 0">
         {{
           utils.format.bigToString(
             calculateMint
@@ -51,7 +51,7 @@
                 state.app.tokenMap[tokenId].end -
                 state.app.tokenMap[tokenId].start
               )
-              .mul(10000 - state.mint.fee)
+              .mul(10000 - state.mint.fee100)
               .div(10000),
             18
           )
