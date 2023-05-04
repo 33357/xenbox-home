@@ -1,9 +1,13 @@
 import {
   XenClient,
   XenBoxClient,
-  XenBoxHelperClient,
   DeploymentInfo,
 } from "xenbox-sdk";
+import {
+  XenBoxUpgradeableClient,
+  XenBoxHelperClient,
+  DeploymentInfo as DeploymentInfo2,
+} from "xenbox2-contract-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers, Signer, providers } from "ethers";
 
@@ -20,6 +24,8 @@ export class Ether {
 
   public xenBox: XenBoxClient | undefined;
 
+  public xenBoxUpgradeable: XenBoxUpgradeableClient | undefined;
+
   public xenBoxHelper: XenBoxHelperClient | undefined;
 
   async load() {
@@ -35,14 +41,20 @@ export class Ether {
       this.provider = new ethers.providers.Web3Provider(this.ethereum);
       this.singer = this.provider.getSigner();
       this.chainId = await this.singer.getChainId();
-      if (DeploymentInfo[this.chainId]) {
-        this.xenBox = new XenBoxClient(
+      if (DeploymentInfo2[this.chainId]) {
+        if(this.chainId == 1){
+          this.xenBox = new XenBoxClient(
+            this.singer,
+            DeploymentInfo[this.chainId]["XenBox"].proxyAddress
+          );
+        }
+        this.xenBoxUpgradeable = new XenBoxUpgradeableClient(
           this.singer,
-          DeploymentInfo[this.chainId]["XenBox"].proxyAddress
+          DeploymentInfo2[this.chainId]["XenBoxUpgradeable"].proxyAddress
         );
         this.xenBoxHelper = new XenBoxHelperClient(
           this.singer,
-          DeploymentInfo[this.chainId]["XenBoxHelper"].proxyAddress
+          DeploymentInfo2[this.chainId]["XenBoxHelper"].proxyAddress
         );
         this.xen = new XenClient(this.singer);
       } else {

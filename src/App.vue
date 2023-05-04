@@ -8,7 +8,8 @@
     >
       <el-menu-item index="1" class="item"> Mint </el-menu-item>
       <el-menu-item index="2" class="item"> Box </el-menu-item>
-      <el-menu-item index="3" class="item"> Search </el-menu-item>
+      <el-menu-item index="3" class="item"> Share </el-menu-item>
+      <el-menu-item index="4" class="item"> Search </el-menu-item>
       <el-menu-item index="-1" class="item" @click="toggleDark()">
         <button
           class="border-none w-full bg-transparent cursor-pointer"
@@ -25,7 +26,8 @@
     <el-card class="box-card">
       <Mint v-if="activeIndex == '1'"></Mint>
       <Box v-if="activeIndex == '2'"></Box>
-      <Search v-if="activeIndex == '3'"></Search>
+      <Share v-if="activeIndex == '3'"></Share>
+      <Search v-if="activeIndex == '4'"></Search>
     </el-card>
   </el-config-provider>
 </template>

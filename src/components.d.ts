@@ -22,6 +22,7 @@ declare module '@vue/runtime-core' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     Mint: typeof import('./components/Mint.vue')['default']
     Search: typeof import('./components/Search.vue')['default']
+    Share: typeof import('./components/Share.vue')['default']
   }
 }
 

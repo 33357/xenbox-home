@@ -9,12 +9,17 @@ export interface App {
   ether: Ether;
   request: Request;
   tokenMap: { [tokenId: number]: Token };
+  token2Map: { [tokenId: number]: Token };
   rankMap: { [day: number]: number };
   start: boolean;
 }
 
 export interface Mint {
   fee: number;
+  fee10: number;
+  fee20: number;
+  fee50: number;
+  fee100: number;
 }
 
 export interface Token {
@@ -27,9 +32,14 @@ export interface Token {
 
 export interface Box {
   tokenIdList: number[];
+  token2IdList: number[];
 }
 
 export interface Search {
+  tokenIdList: number[];
+}
+
+export interface Share {
   tokenIdList: number[];
 }
 
@@ -38,6 +48,7 @@ export interface State {
   mint: Mint;
   box: Box;
   search: Search;
+  share: Share;
 }
 
 const state: State = {
@@ -47,16 +58,25 @@ const state: State = {
     ether: new Ether(),
     request: new Request("https://xenbox.store"),
     tokenMap: {},
+    token2Map: {},
     rankMap: {},
     start: false,
   },
   mint: {
     fee: 0,
+    fee10: 0,
+    fee20: 0,
+    fee50: 0,
+    fee100: 0,
   },
   box: {
     tokenIdList: [],
+    token2IdList: [],
   },
   search: {
+    tokenIdList: [],
+  },
+  share: {
     tokenIdList: [],
   },
 };
@@ -85,23 +105,25 @@ const actions: ActionTree<State, State> = {
     state.app.rankMap[30] = res.data.rank;
   },
 
-  async mint({ state }, { amount, term, maxFeePerGas, maxPriorityFeePerGas }) {
-    if (state.app.ether.xenBox) {
-      await toRaw(state.app.ether.xenBox).mint(amount, term, {
-        maxFeePerGas,
-        maxPriorityFeePerGas,
+  async mint({ state }, { amount, term, refer, gasPrice }) {
+    if (state.app.ether.xenBoxUpgradeable) {
+      await toRaw(state.app.ether.xenBoxUpgradeable).mint(amount, term, refer, {
+        gasPrice,
       });
     }
   },
 
   async claim(
     { state },
-    { tokenId, term, maxFeePerGas, maxPriorityFeePerGas }
+    { isUpgradeable, tokenId, term, gasPrice }
   ) {
-    if (state.app.ether.xenBox) {
+    if (state.app.ether.xenBoxUpgradeable && isUpgradeable) {
+      await toRaw(state.app.ether.xenBoxUpgradeable).claim(tokenId, term, {
+        gasPrice,
+      });
+    } else if (state.app.ether.xenBox) {
       await toRaw(state.app.ether.xenBox).claim(tokenId, term, {
-        maxFeePerGas,
-        maxPriorityFeePerGas,
+        gasPrice,
       });
     }
   },
@@ -110,17 +132,24 @@ const actions: ActionTree<State, State> = {
     if (state.app.ether.xenBox) {
       state.mint.fee = (await toRaw(state.app.ether.xenBox).fee()).toNumber();
     }
+    if (state.app.ether.xenBoxUpgradeable) {
+      [state.mint.fee10, state.mint.fee20, state.mint.fee50, state.mint.fee100] = await Promise.all([
+        (await toRaw(state.app.ether.xenBoxUpgradeable).fee10()).toNumber(),
+        (await toRaw(state.app.ether.xenBoxUpgradeable).fee20()).toNumber(),
+        (await toRaw(state.app.ether.xenBoxUpgradeable).fee50()).toNumber(),
+        (await toRaw(state.app.ether.xenBoxUpgradeable).fee100()).toNumber()]);
+    }
   },
 
   async getSearchData({ state, dispatch }, addressOrId: string) {
-    if (state.app.ether.xenBox && state.app.ether.xenBoxHelper) {
+    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
       if (utils.ether.isAddress(addressOrId)) {
         state.search.tokenIdList = (
           await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
-            toRaw(state.app.ether.xenBox).address(),
+            toRaw(state.app.ether.xenBoxUpgradeable).address(),
             addressOrId,
             0,
-            await toRaw(state.app.ether.xenBox).totalToken()
+            await toRaw(state.app.ether.xenBoxUpgradeable).totalToken()
           )
         ).map((tokenId) => {
           return tokenId.toNumber();
@@ -135,13 +164,13 @@ const actions: ActionTree<State, State> = {
   },
 
   async getBoxData({ state, dispatch }) {
-    if (state.app.ether.xenBox && state.app.ether.xenBoxHelper) {
+    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
       state.box.tokenIdList = (
         await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
-          toRaw(state.app.ether.xenBox).address(),
+          toRaw(state.app.ether.xenBoxUpgradeable).address(),
           state.app.userAddress,
           0,
-          await toRaw(state.app.ether.xenBox).totalToken()
+          await toRaw(state.app.ether.xenBoxUpgradeable).totalToken()
         )
       ).map((tokenId) => {
         return tokenId.toNumber();
@@ -154,8 +183,7 @@ const actions: ActionTree<State, State> = {
 
   async getTokenData({ state }, tokenId: number) {
     if (
-      state.app.ether.xenBox &&
-      state.app.ether.xen &&
+      state.app.ether.xenBoxUpgradeable &&
       state.app.ether.xenBoxHelper
     ) {
       if (!state.app.tokenMap[tokenId]) {
@@ -166,13 +194,13 @@ const actions: ActionTree<State, State> = {
           term: 0,
           mint: BigNumber.from(0),
         };
-        const token = await toRaw(state.app.ether.xenBox).tokenMap(tokenId);
-        state.app.tokenMap[tokenId].end = token.end.toNumber();
-        state.app.tokenMap[tokenId].start = token.start.toNumber();
-        const proxy = await toRaw(state.app.ether.xenBox).getProxyAddress(
+        const token = await toRaw(state.app.ether.xenBoxUpgradeable).tokenMap(tokenId);
+        state.app.tokenMap[tokenId].end = token.end;
+        state.app.tokenMap[tokenId].start = token.start;
+        const proxy = await toRaw(state.app.ether.xenBoxUpgradeable).proxyAddress(
           token.start
         );
-        const userMints = await toRaw(state.app.ether.xen).userMints(proxy);
+        const userMints = await toRaw(state.app.ether.xenBoxUpgradeable).userMints(tokenId);
         state.app.tokenMap[tokenId].time = userMints.maturityTs.toNumber();
         state.app.tokenMap[tokenId].term = userMints.term.toNumber();
         const mint = await state.app.ether.xenBoxHelper.calculateMintReward(
