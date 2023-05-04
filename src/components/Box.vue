@@ -80,27 +80,19 @@
       <el-form-item label="高级设置：">
         <el-switch v-model="advanced" />
       </el-form-item>
-      <el-form-item label="最大费用：" v-if="advanced">
-        <el-input v-model="maxFeePerGas" placeholder="maxFeePerGas"
+      <el-form-item label="Gas 价格：" v-if="advanced">
+        <el-input v-model="gasPrice" placeholder="gasPrice"
           ><template #append> Gwei </template>
-        </el-input>
-      </el-form-item>
-      <el-form-item label="最大优先费用:" v-if="advanced">
-        <el-input
-          v-model="maxPriorityFeePerGas"
-          placeholder="maxPriorityFeePerGas"
-        >
-          <template #append> Gwei </template>
         </el-input>
       </el-form-item>
       <el-form-item
         label="预计 Gas 费用:"
-        v-if="advanced && maxFeePerGas != ''"
+        v-if="advanced && gasPrice != ''"
       >
         {{
           utils.format.bigToString(
             utils.format
-              .stringToBig(maxFeePerGas, 9)
+              .stringToBig(gasPrice, 9)
               .mul(
                 (gas / 100) *
                   (state.app.tokenMap[tokenId].end -
@@ -135,8 +127,7 @@ export default {
       tokenId: 0,
       calculateMint: BigNumber.from(0),
       advanced: false,
-      maxFeePerGas: "",
-      maxPriorityFeePerGas: "",
+      gasPrice: "",
       gas: 7000000,
     };
   },
@@ -149,8 +140,7 @@ export default {
   watch: {
     advanced(value) {
       if (value == false) {
-        this.maxFeePerGas = "";
-        this.maxPriorityFeePerGas = "";
+        this.gasPrice = "";
       }
     },
     term() {
@@ -172,14 +162,10 @@ export default {
       await this.claim({
         tokenId: this.tokenId,
         term: this.term,
-        maxFeePerGas:
-          this.maxFeePerGas == ""
+        gasPrice:
+          this.gasPrice == ""
             ? undefined
-            : utils.format.stringToBig(this.maxFeePerGas, 9),
-        maxPriorityFeePerGas:
-          this.maxPriorityFeePerGas == ""
-            ? undefined
-            : utils.format.stringToBig(this.maxPriorityFeePerGas, 9),
+            : utils.format.stringToBig(this.gasPrice, 9)
       });
       this.dialogVisible = false;
       this.getBoxData();

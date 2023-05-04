@@ -5,6 +5,7 @@ import { toRaw } from "vue";
 
 export interface App {
   userAddress: string;
+  refer:{[chainId:number]:string},
   chainId: number;
   ether: Ether;
   request: Request;
@@ -54,6 +55,7 @@ export interface State {
 const state: State = {
   app: {
     userAddress: utils.num.min,
+    refer:{},
     chainId: 0,
     ether: new Ether(),
     request: new Request("https://xenbox.store"),

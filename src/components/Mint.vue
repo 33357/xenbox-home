@@ -9,11 +9,7 @@
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
     <el-form-item label="XEN 宝箱">
-      <img
-        style="width: 250px; height: 250px"
-        :src="`/box${account}.png`"
-        fit="fill"
-      />
+      <img style="width: 250px; height: 250px" :src="`/box${account}.png`" fit="fill" />
     </el-form-item>
     <el-form-item label="账号数量：">
       <el-radio-group v-model="account" label="label position">
@@ -41,23 +37,14 @@
     <el-form-item label="高级设置：">
       <el-switch v-model="advanced" />
     </el-form-item>
-    <el-form-item label="最大费用：" v-if="advanced">
-      <el-input v-model="maxFeePerGas" placeholder="maxFeePerGas"
-        ><template #append> Gwei </template>
+    <el-form-item label="Gas 价格：" v-if="advanced">
+      <el-input v-model="gasPrice" placeholder="gasPrice"><template #append> Gwei </template>
       </el-input>
     </el-form-item>
-    <el-form-item label="最大优先费用:" v-if="advanced">
-      <el-input
-        v-model="maxPriorityFeePerGas"
-        placeholder="maxPriorityFeePerGas"
-      >
-        <template #append> Gwei </template>
-      </el-input>
-    </el-form-item>
-    <el-form-item label="预计 Gas 费用:" v-if="advanced && maxFeePerGas != ''">
+    <el-form-item label="预计 Gas 费用:" v-if="advanced && gasPrice != ''">
       {{
         utils.format.bigToString(
-          utils.format.stringToBig(maxFeePerGas, 9).mul((gas / 100) * account),
+          utils.format.stringToBig(gasPrice, 9).mul((gas / 100) * account),
           18
         )
       }}
@@ -82,8 +69,7 @@ export default {
       term: 100,
       calculateMint: BigNumber.from(0),
       advanced: false,
-      maxFeePerGas: "",
-      maxPriorityFeePerGas: "",
+      gasPrice: "",
       gas: 19000000,
     };
   },
@@ -96,8 +82,7 @@ export default {
   watch: {
     advanced(value) {
       if (value == false) {
-        this.maxFeePerGas = "";
-        this.maxPriorityFeePerGas = "";
+        this.gasPrice = "";
       }
     },
     term() {
@@ -127,14 +112,11 @@ export default {
       this.mint({
         amount: this.account,
         term: this.term,
-        maxFeePerGas:
-          this.maxFeePerGas == ""
+        refer: this.state.app.refer[this.state.app.chainId] ? this.state.app.refer[this.state.app.chainId] : utils.num.min,
+        gasPrice:
+          this.gasPrice == ""
             ? undefined
-            : utils.format.stringToBig(this.maxFeePerGas, 9),
-        maxPriorityFeePerGas:
-          this.maxPriorityFeePerGas == ""
-            ? undefined
-            : utils.format.stringToBig(this.maxPriorityFeePerGas, 9),
+            : utils.format.stringToBig(this.gasPrice, 9),
       });
     },
   },
