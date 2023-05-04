@@ -5,12 +5,11 @@ import { toRaw } from "vue";
 
 export interface App {
   userAddress: string;
-  refer:{[chainId:number]:string},
+  refer: { [chainId: number]: string },
   chainId: number;
   ether: Ether;
   request: Request;
   tokenMap: { [tokenId: number]: Token };
-  token2Map: { [tokenId: number]: Token };
   rankMap: { [day: number]: number };
   start: boolean;
 }
@@ -33,7 +32,6 @@ export interface Token {
 
 export interface Box {
   tokenIdList: number[];
-  token2IdList: number[];
 }
 
 export interface Search {
@@ -55,12 +53,11 @@ export interface State {
 const state: State = {
   app: {
     userAddress: utils.num.min,
-    refer:{},
+    refer: {},
     chainId: 0,
     ether: new Ether(),
     request: new Request("https://xenbox.store"),
     tokenMap: {},
-    token2Map: {},
     rankMap: {},
     start: false,
   },
@@ -73,7 +70,6 @@ const state: State = {
   },
   box: {
     tokenIdList: [],
-    token2IdList: [],
   },
   search: {
     tokenIdList: [],
@@ -117,13 +113,13 @@ const actions: ActionTree<State, State> = {
 
   async claim(
     { state },
-    { isUpgradeable, tokenId, term, gasPrice }
+    { tokenId, term, gasPrice }
   ) {
-    if (state.app.ether.xenBoxUpgradeable && isUpgradeable) {
+    if (state.app.ether.xenBoxUpgradeable && tokenId) {
       await toRaw(state.app.ether.xenBoxUpgradeable).claim(tokenId, term, {
         gasPrice,
       });
-    } else if (state.app.ether.xenBox) {
+    } else if (state.app.ether.xenBox && tokenId) {
       await toRaw(state.app.ether.xenBox).claim(tokenId, term, {
         gasPrice,
       });

@@ -1,34 +1,19 @@
 <template>
   <el-scrollbar height="600px">
-    <el-card
-      v-for="tokenId in state.box.tokenIdList"
-      :key="tokenId"
-      :body-style="{ padding: '0px', marginBottom: '1px' }"
-    >
+    <el-card v-for="tokenId in state.box.tokenIdList" :key="tokenId"
+      :body-style="{ padding: '0px', marginBottom: '1px' }">
       <block v-if="state.app.tokenMap[tokenId].end != 0">
-        <img
-          style="width: 100px; height: 100px"
-          :src="`/box${
-            state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start
-          }.png`"
-          fit="fill"
-        />
+        <img style="width: 100px; height: 100px" :src="`/box${state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start
+          }.png`" fit="fill" />
         <div class="card-header" style="padding: 5px">
           <span>ID：{{ tokenId }}</span>
-          <span
-            >账号数量：{{
-              state.app.tokenMap[tokenId].end -
-              state.app.tokenMap[tokenId].start
-            }}</span
-          >
-          <span v-if="state.app.tokenMap[tokenId].term != 0"
-            >锁定时间：{{ state.app.tokenMap[tokenId].term }} 天</span
-          >
-          <span
-            v-if="
-              !state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee != 0
-            "
-          >
+          <span>账号数量：{{
+            state.app.tokenMap[tokenId].end -
+            state.app.tokenMap[tokenId].start
+          }}</span>
+          <span v-if="state.app.tokenMap[tokenId].term != 0">锁定时间：{{ state.app.tokenMap[tokenId].term }} 天</span>
+          <span v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee != 0
+            ">
             实计获得：{{
               utils.format.bigToString(
                 state.app.tokenMap[tokenId].mint
@@ -44,13 +29,9 @@
               new Date(state.app.tokenMap[tokenId].time * 1000).toLocaleString()
             }}
           </div>
-          <el-button
-            @click="doClaim(tokenId)"
-            :disabled="
-              new Date().getTime() / 1000 < state.app.tokenMap[tokenId].time ||
+          <el-button @click="doClaim(tokenId)" :disabled="new Date().getTime() / 1000 < state.app.tokenMap[tokenId].time ||
               state.app.tokenMap[tokenId].time == 0
-            "
-          >
+              ">
             开启
           </el-button>
         </div>
@@ -68,7 +49,7 @@
             calculateMint
               .mul(
                 state.app.tokenMap[tokenId].end -
-                  state.app.tokenMap[tokenId].start
+                state.app.tokenMap[tokenId].start
               )
               .mul(10000 - state.mint.fee)
               .div(10000),
@@ -81,22 +62,18 @@
         <el-switch v-model="advanced" />
       </el-form-item>
       <el-form-item label="Gas 价格：" v-if="advanced">
-        <el-input v-model="gasPrice" placeholder="gasPrice"
-          ><template #append> Gwei </template>
+        <el-input v-model="gasPrice" placeholder="gasPrice"><template #append> Gwei </template>
         </el-input>
       </el-form-item>
-      <el-form-item
-        label="预计 Gas 费用:"
-        v-if="advanced && gasPrice != ''"
-      >
+      <el-form-item label="预计 Gas 费用:" v-if="advanced && gasPrice != ''">
         {{
           utils.format.bigToString(
             utils.format
               .stringToBig(gasPrice, 9)
               .mul(
                 (gas / 100) *
-                  (state.app.tokenMap[tokenId].end -
-                    state.app.tokenMap[tokenId].start)
+                (state.app.tokenMap[tokenId].end -
+                  state.app.tokenMap[tokenId].start)
               ),
             18
           )

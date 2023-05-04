@@ -5,37 +5,22 @@
     </template>
   </el-input>
   <el-scrollbar height="600px">
-    <el-card
-      v-for="tokenId in state.search.tokenIdList"
-      :key="tokenId"
-      :body-style="{ padding: '0px', marginBottom: '1px' }"
-    >
-      <block v-if="state.app.tokenMap[tokenId].end != 0">
-        <img
-          style="width: 100px; height: 100px"
-          :src="`/box${
-            state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start
-          }.png`"
-          fit="fill"
-        />
+    <el-card v-for="tokenId in state.search.tokenIdList" :key="tokenId"
+      :body-style="{ padding: '0px', marginBottom: '1px' }">
+      <div v-if="state.app.tokenMap[tokenId].end != 0">
+        <img style="width: 100px; height: 100px" :src="`/box${state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start
+          }.png`" fit="fill" />
         <div class="bottom card-header" style="padding: 5px">
           <span>ID：{{ tokenId }}</span>
-          <span
-            >账号数量：{{
-              state.app.tokenMap[tokenId].end -
-              state.app.tokenMap[tokenId].start
-            }}</span
-          >
-          <span v-if="state.app.tokenMap[tokenId].term != 0"
-            >锁定时间：
+          <span>账号数量：{{
+            state.app.tokenMap[tokenId].end -
+            state.app.tokenMap[tokenId].start
+          }}</span>
+          <span v-if="state.app.tokenMap[tokenId].term != 0">锁定时间：
             {{ state.app.tokenMap[tokenId].term }}
-            天</span
-          >
-          <span
-            v-if="
-              !state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee != 0
-            "
-          >
+            天</span>
+          <span v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee != 0
+            ">
             实计获得：{{
               utils.format.bigToString(
                 state.app.tokenMap[tokenId].mint
@@ -52,7 +37,7 @@
             }}
           </div>
         </div>
-      </block>
+      </div>
     </el-card>
   </el-scrollbar>
 </template>
