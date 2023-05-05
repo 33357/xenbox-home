@@ -9,7 +9,6 @@ export interface App {
   ether: Ether;
   request: Request;
   tokenMap: { [version: number]: { [tokenId: number]: Token } };
-
   rankMap: { [day: number]: number };
   start: boolean;
 }
