@@ -113,16 +113,12 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async claim({ state }, { tokenId, term, gasPrice }) {
-    if (state.app.ether.xenBoxUpgradeable) {
+  async claim({ state }, { version, tokenId, term, gasPrice }) {
+    if (version == 1 && state.app.ether.xenBoxUpgradeable) {
       await toRaw(state.app.ether.xenBoxUpgradeable).claim(tokenId, term, {
         gasPrice
       });
-    }
-  },
-
-  async claim0({ state }, { tokenId, term, gasPrice }) {
-    if (state.app.ether.xenBox) {
+    } else if (version == 0 && state.app.ether.xenBox) {
       await toRaw(state.app.ether.xenBox).claim(tokenId, term, {
         gasPrice
       });
@@ -130,20 +126,23 @@ const actions: ActionTree<State, State> = {
   },
 
   async getMintData({ state }) {
-    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBox) {
+    if (state.app.ether.xenBoxUpgradeable) {
       [
-        state.mint.fee[0],
         state.mint.fee[10],
         state.mint.fee[20],
         state.mint.fee[50],
         state.mint.fee[100]
       ] = await Promise.all([
-        (await toRaw(state.app.ether.xenBox).fee()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee10()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee20()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee50()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee100()).toNumber()
       ]);
+    }
+    if (state.app.ether.xenBox) {
+      state.mint.fee[0] = (
+        await toRaw(state.app.ether.xenBox).fee()
+      ).toNumber();
     }
   },
 
@@ -203,10 +202,7 @@ const actions: ActionTree<State, State> = {
   },
 
   async getTokenData({ state }, { version, tokenId }) {
-    if (
-      state.app.ether.xenBoxHelper &&
-      state.app.ether.xenBoxUpgradeable
-    ) {
+    if (state.app.ether.xenBoxHelper) {
       if (!state.app.tokenMap[version][tokenId]) {
         state.app.tokenMap[version][tokenId] = {
           start: 0,
@@ -217,7 +213,7 @@ const actions: ActionTree<State, State> = {
         };
         let proxy: any;
         let userMints: any;
-        if (version == 1) {
+        if (version == 1 && state.app.ether.xenBoxUpgradeable) {
           const token = await toRaw(state.app.ether.xenBoxUpgradeable).tokenMap(
             tokenId
           );
@@ -229,7 +225,11 @@ const actions: ActionTree<State, State> = {
           userMints = await toRaw(state.app.ether.xenBoxUpgradeable).userMints(
             tokenId
           );
-        } else if (state.app.ether.xenBox && state.app.ether.xen) {
+        } else if (
+          version == 0 &&
+          state.app.ether.xenBox &&
+          state.app.ether.xen
+        ) {
           const token = await toRaw(state.app.ether.xenBox).tokenMap(tokenId);
           state.app.tokenMap[version][tokenId].end = token.end.toNumber();
           state.app.tokenMap[version][tokenId].start = token.start.toNumber();
@@ -247,7 +247,7 @@ const actions: ActionTree<State, State> = {
         );
         state.app.tokenMap[version][tokenId].mint = mint.mul(
           state.app.tokenMap[version][tokenId].end -
-          state.app.tokenMap[version][tokenId].start
+            state.app.tokenMap[version][tokenId].start
         );
       }
     }
