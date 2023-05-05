@@ -10,6 +10,8 @@ export interface App {
   ether: Ether;
   request: Request;
   tokenMap: { [tokenId: number]: Token };
+  token0Map: { [tokenId: number]: Token };
+  referMap: { [tokenId: number]: string };
   rankMap: { [day: number]: number };
   start: boolean;
 }
@@ -56,7 +58,9 @@ const state: State = {
     ether: new Ether(),
     request: new Request("https://xenbox.store"),
     tokenMap: {},
+    token0Map: {},
     rankMap: {},
+    referMap: {},
     start: false
   },
   mint: {
