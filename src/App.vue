@@ -42,7 +42,7 @@ export default {
   data() {
     return {
       activeIndex: "1",
-      toggleDark: useToggle(useDark()),
+      toggleDark: useToggle(useDark())
     };
   },
   created() {
@@ -52,7 +52,7 @@ export default {
     });
   },
   computed: mapState({
-    state: (state: any) => state as State,
+    state: (state: any) => state as State
   }),
   methods: {
     ...mapActions(["start"]),
@@ -60,8 +60,8 @@ export default {
       if (Number(key) > 0) {
         (this as any).activeIndex = key;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

@@ -9,7 +9,11 @@
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
     <el-form-item label="XEN 宝箱">
-      <img style="width: 250px; height: 250px" :src="`/box${amount}.png`" fit="fill" />
+      <img
+        style="width: 250px; height: 250px"
+        :src="`/box${amount}.png`"
+        fit="fill"
+      />
     </el-form-item>
     <el-form-item label="账号数量：">
       <el-radio-group v-model="amount" label="label position">
@@ -41,7 +45,8 @@
       <el-switch v-model="advanced" />
     </el-form-item>
     <el-form-item label="Gas 价格：" v-if="advanced">
-      <el-input v-model="gasPrice" placeholder="gasPrice"><template #append> Gwei </template>
+      <el-input v-model="gasPrice" placeholder="gasPrice"
+        ><template #append> Gwei </template>
       </el-input>
     </el-form-item>
     <el-form-item label="预计 Gas 费用:" v-if="advanced && gasPrice != ''">
@@ -73,14 +78,14 @@ export default {
       calculateMint: BigNumber.from(0),
       advanced: false,
       gasPrice: "",
-      gas: 19000000,
+      gas: 19000000
     };
   },
   created() {
     this.getCalculateMint();
   },
   computed: mapState({
-    state: (state: any) => state as State,
+    state: (state: any) => state as State
   }),
   watch: {
     advanced(value) {
@@ -93,17 +98,16 @@ export default {
     },
     "state.app.start"() {
       this.getCalculateMint();
-    },
+    }
   },
   methods: {
     ...mapActions(["getMintData", "mint"]),
     async getCalculateMint() {
       if (this.state.app.ether.xenBoxHelper) {
-        this.calculateMint =
-          await this.state.app.ether.xenBoxHelper.calculateMintRewardNew(
-            Math.ceil((this.state.app.rankMap[30] * this.term) / 30),
-            this.term
-          );
+        this.calculateMint = await this.state.app.ether.xenBoxHelper.calculateMintRewardNew(
+          Math.ceil((this.state.app.rankMap[30] * this.term) / 30),
+          this.term
+        );
       }
     },
     termChange(num: number | undefined) {
@@ -115,14 +119,16 @@ export default {
       this.mint({
         amount: this.amount,
         term: this.term,
-        refer: this.state.app.refer[this.state.app.chainId] ? this.state.app.refer[this.state.app.chainId] : utils.num.min,
+        refer: this.state.app.refer[this.state.app.chainId]
+          ? this.state.app.refer[this.state.app.chainId]
+          : utils.num.min,
         gasPrice:
           this.gasPrice == ""
             ? undefined
-            : utils.format.stringToBig(this.gasPrice, 9),
+            : utils.format.stringToBig(this.gasPrice, 9)
       });
-    },
-  },
+    }
+  }
 };
 </script>
 

@@ -1,12 +1,8 @@
-import {
-  XenClient,
-  XenBoxClient,
-  DeploymentInfo,
-} from "xenbox-sdk";
+import { XenClient, XenBoxClient, DeploymentInfo } from "xenbox-sdk";
 import {
   XenBoxUpgradeableClient,
   XenBoxHelperClient,
-  DeploymentInfo as DeploymentInfo2,
+  DeploymentInfo as DeploymentInfo2
 } from "xenbox2-contract-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers, Signer, providers } from "ethers";
@@ -42,7 +38,7 @@ export class Ether {
       this.singer = this.provider.getSigner();
       this.chainId = await this.singer.getChainId();
       if (DeploymentInfo2[this.chainId]) {
-        if(this.chainId == 1){
+        if (this.chainId == 1) {
           this.xenBox = new XenBoxClient(
             this.singer,
             DeploymentInfo[this.chainId]["XenBox"].proxyAddress
@@ -62,9 +58,9 @@ export class Ether {
           method: "wallet_switchEthereumChain",
           params: [
             {
-              chainId: "0x1",
-            },
-          ],
+              chainId: "0x1"
+            }
+          ]
         });
       }
     } else {

@@ -23,13 +23,13 @@ const num = {
   min: "0x0000000000000000000000000000000000000000",
   max: "0xffffffffffffffffffffffffffffffffffffffff",
   gwei: BigNumber.from(10 ** 9),
-  ether: BigNumber.from(10 ** 9).mul(BigNumber.from(10 ** 9)),
+  ether: BigNumber.from(10 ** 9).mul(BigNumber.from(10 ** 9))
 };
 
 const have = {
   value(obj: any) {
     return obj && Object.keys(obj).length != 0;
-  },
+  }
 };
 
 const convert = {
@@ -38,12 +38,12 @@ const convert = {
   },
   Base64ToHexString(base64: string) {
     return "0x" + Buffer.from(base64, "base64").toString("hex");
-  },
+  }
 };
 
 const func = {
   sleep: (time: number) => {
-    return new Promise((resolve) => setTimeout(resolve, time));
+    return new Promise(resolve => setTimeout(resolve, time));
   },
 
   retry: async (
@@ -63,7 +63,7 @@ const func = {
         await callback(res);
       }
       return res;
-    } catch (error: any) {
+    } catch (error) {
       time--;
       if (time > 0) {
         log(`retry ${time}, ${error.toString()}`);
@@ -73,12 +73,12 @@ const func = {
         throw error;
       }
     }
-  },
+  }
 };
 
 const deep = {
   clone(toObj: any, fromObj: any) {
-    Object.keys(toObj).forEach((key) => {
+    Object.keys(toObj).forEach(key => {
       if (fromObj[key]) {
         if (Object.prototype.toString.call(fromObj[key]) != "[object Object]") {
           toObj[key] = fromObj[key];
@@ -90,7 +90,7 @@ const deep = {
   },
   equal(obj1: any, obj2: any) {
     return obj1.toString() == obj2.toString();
-  },
+  }
 };
 
 const get = {
@@ -99,7 +99,7 @@ const get = {
   },
   avatar(address: string) {
     return "data:image/png;base64," + new Identicon(address, 120).toString();
-  },
+  }
 };
 
 const is = {
@@ -117,13 +117,19 @@ const is = {
       return true;
     }
     return false;
-  },
+  }
 };
 
 const format = {
   time(time: number) {
     // 大于昨天
-    if (Number(moment().add(-1, "days").startOf("day")) > time) {
+    if (
+      Number(
+        moment()
+          .add(-1, "days")
+          .startOf("day")
+      ) > time
+    ) {
       return moment(time).format("M/D HH:mm");
     }
     // 昨天
@@ -197,7 +203,7 @@ const format = {
         str.substring(str.length - halfLength);
     }
     return str;
-  },
+  }
 };
 
 const go = {
@@ -215,20 +221,20 @@ const go = {
 
   accounts(chainId: number) {
     window.open(`${chain[chainId].scan}/accounts`);
-  },
+  }
 };
 
 const chain: { [CHAIN_ID: string]: Chain } = {
   1: {
     scan: "https://etherscan.io/",
     name: "ETH",
-    node: "https://mainnet.infura.io/v3/",
+    node: "https://mainnet.infura.io/v3/"
   },
   5: {
     scan: "https://goerli.etherscan.io/",
     name: "Goerli",
-    node: "https://goerli.infura.io/v3/",
-  },
+    node: "https://goerli.infura.io/v3/"
+  }
 };
 
 export interface Chain {
@@ -248,5 +254,5 @@ export const utils = {
   go,
   convert,
   ether,
-  chain,
+  chain
 };

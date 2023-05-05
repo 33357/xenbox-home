@@ -5,26 +5,52 @@
     </template>
   </el-input>
   <el-scrollbar height="600px">
-    <el-card v-for="tokenId in state.search.tokenIdList" :key="tokenId"
-      :body-style="{ padding: '0px', marginBottom: '1px' }">
+    <el-card
+      v-for="tokenId in state.search.tokenIdList"
+      :key="tokenId"
+      :body-style="{ padding: '0px', marginBottom: '1px' }"
+    >
       <div v-if="state.app.tokenMap[tokenId].end != 0">
-        <img style="width: 100px; height: 100px" :src="`/box${state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start
-          }.png`" fit="fill" />
+        <img
+          style="width: 100px; height: 100px"
+          :src="
+            `/box${state.app.tokenMap[tokenId].end -
+              state.app.tokenMap[tokenId].start}.png`
+          "
+          fit="fill"
+        />
         <div class="bottom card-header" style="padding: 5px">
           <span>ID：{{ tokenId }}</span>
-          <span>账号数量：{{
-            state.app.tokenMap[tokenId].end -
-            state.app.tokenMap[tokenId].start
-          }}</span>
-          <span v-if="state.app.tokenMap[tokenId].term != 0">锁定时间：
+          <span
+            >账号数量：{{
+              state.app.tokenMap[tokenId].end -
+                state.app.tokenMap[tokenId].start
+            }}</span
+          >
+          <span v-if="state.app.tokenMap[tokenId].term != 0"
+            >锁定时间：
             {{ state.app.tokenMap[tokenId].term }}
-            天</span>
-          <span v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee[state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start] != 0
-            ">
+            天</span
+          >
+          <span
+            v-if="
+              !state.app.tokenMap[tokenId].mint.eq(0) &&
+                state.mint.fee[
+                  state.app.tokenMap[tokenId].end -
+                    state.app.tokenMap[tokenId].start
+                ] != 0
+            "
+          >
             实计获得：{{
               utils.format.bigToString(
                 state.app.tokenMap[tokenId].mint
-                  .mul(10000 - state.mint.fee[state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start])
+                  .mul(
+                    10000 -
+                      state.mint.fee[
+                        state.app.tokenMap[tokenId].end -
+                          state.app.tokenMap[tokenId].start
+                      ]
+                  )
                   .div(10000),
                 18
               )
@@ -53,18 +79,18 @@ export default {
     return {
       utils: utils,
       SearchIcon: SearchIcon,
-      searchInput: "",
+      searchInput: ""
     };
   },
   computed: mapState({
-    state: (state: any) => state as State,
+    state: (state: any) => state as State
   }),
   methods: {
     ...mapActions(["getSearchData"]),
     async search() {
       await this.getSearchData(this.searchInput);
-    },
-  },
+    }
+  }
 };
 </script>
 

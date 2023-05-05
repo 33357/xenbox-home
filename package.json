@@ -8,7 +8,7 @@
     "generate": "vite-ssg build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "format:fix": "yarn prettier --write \"**/*.{ts,js,vue}\""
+    "format": "yarn prettier --write \"**/*.{ts,js,vue}\""
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.2",
