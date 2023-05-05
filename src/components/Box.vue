@@ -1,16 +1,16 @@
 <template>
   <el-scrollbar height="600px">
     <el-card
-      v-for="tokenId in state.box.tokenIdList"
+      v-for="{ version, tokenId } in state.box.tokenIdList"
       :key="tokenId"
       :body-style="{ padding: '0px', marginBottom: '1px' }"
     >
-      <div v-if="state.app.tokenMap[tokenId].end != 0">
+      <div v-if="state.app.tokenMap[version][tokenId].end != 0">
         <img
           style="width: 100px; height: 100px"
           :src="
-            `/box${state.app.tokenMap[tokenId].end -
-              state.app.tokenMap[tokenId].start}.png`
+            `/box${state.app.tokenMap[version][tokenId].end -
+              state.app.tokenMap[version][tokenId].start}.png`
           "
           fit="fill"
         />
@@ -18,30 +18,30 @@
           <span>ID：{{ tokenId }}</span>
           <span
             >账号数量：{{
-              state.app.tokenMap[tokenId].end -
-                state.app.tokenMap[tokenId].start
+              state.app.tokenMap[version][tokenId].end -
+                state.app.tokenMap[version][tokenId].start
             }}</span
           >
-          <span v-if="state.app.tokenMap[tokenId].term != 0"
-            >锁定时间：{{ state.app.tokenMap[tokenId].term }} 天</span
+          <span v-if="state.app.tokenMap[version][tokenId].term != 0"
+            >锁定时间：{{ state.app.tokenMap[version][tokenId].term }} 天</span
           >
           <span
             v-if="
-              !state.app.tokenMap[tokenId].mint.eq(0) &&
+              !state.app.tokenMap[version][tokenId].mint.eq(0) &&
                 state.mint.fee[
-                  state.app.tokenMap[tokenId].end -
-                    state.app.tokenMap[tokenId].start
+                  state.app.tokenMap[version][tokenId].end -
+                    state.app.tokenMap[version][tokenId].start
                 ] != 0
             "
           >
             实计获得：{{
               utils.format.bigToString(
-                state.app.tokenMap[tokenId].mint
+                state.app.tokenMap[version][tokenId].mint
                   .mul(
                     10000 -
                       state.mint.fee[
-                        state.app.tokenMap[tokenId].end -
-                          state.app.tokenMap[tokenId].start
+                        state.app.tokenMap[version][tokenId].end -
+                          state.app.tokenMap[version][tokenId].start
                       ]
                   )
                   .div(10000),
@@ -50,16 +50,19 @@
             }}
             XEN
           </span>
-          <div v-if="state.app.tokenMap[tokenId].time != 0">
+          <div v-if="state.app.tokenMap[version][tokenId].time != 0">
             到期时间：{{
-              new Date(state.app.tokenMap[tokenId].time * 1000).toLocaleString()
+              new Date(
+                state.app.tokenMap[version][tokenId].time * 1000
+              ).toLocaleString()
             }}
           </div>
           <el-button
-            @click="doClaim(tokenId)"
+            @click="doClaim(version, tokenId)"
             :disabled="
-              new Date().getTime() / 1000 < state.app.tokenMap[tokenId].time ||
-                state.app.tokenMap[tokenId].time == 0
+              new Date().getTime() / 1000 <
+                state.app.tokenMap[version][tokenId].time ||
+                state.app.tokenMap[version][tokenId].time == 0
             "
           >
             开启
@@ -68,6 +71,7 @@
       </div>
     </el-card>
   </el-scrollbar>
+
   <el-dialog v-model="dialogVisible" title="开启宝箱" width="30%">
     <el-form label-width="30%">
       <el-form-item label="重新锁定时间">
@@ -77,7 +81,8 @@
         label="预计获得"
         v-if="
           state.mint.fee[
-            state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start
+            state.app.tokenMap[version][tokenId].end -
+              state.app.tokenMap[version][tokenId].start
           ] != 0
         "
       >
@@ -85,14 +90,14 @@
           utils.format.bigToString(
             calculateMint
               .mul(
-                state.app.tokenMap[tokenId].end -
-                  state.app.tokenMap[tokenId].start
+                state.app.tokenMap[version][tokenId].end -
+                  state.app.tokenMap[version][tokenId].start
               )
               .mul(
                 10000 -
                   state.mint.fee[
-                    state.app.tokenMap[tokenId].end -
-                      state.app.tokenMap[tokenId].start
+                    state.app.tokenMap[version][tokenId].end -
+                      state.app.tokenMap[version][tokenId].start
                   ]
               )
               .div(10000),
@@ -116,8 +121,8 @@
               .stringToBig(gasPrice, 9)
               .mul(
                 (gas / 100) *
-                  (state.app.tokenMap[tokenId].end -
-                    state.app.tokenMap[tokenId].start)
+                  (state.app.tokenMap[version][tokenId].end -
+                    state.app.tokenMap[version][tokenId].start)
               ),
             18
           )
@@ -146,6 +151,7 @@ export default {
       dialogVisible: false,
       term: 100,
       tokenId: 0,
+      version: 1,
       calculateMint: BigNumber.from(0),
       advanced: false,
       gasPrice: "",
@@ -190,7 +196,8 @@ export default {
       this.dialogVisible = false;
       this.getBoxData();
     },
-    doClaim(tokenId: number) {
+    doClaim(version: number, tokenId: number) {
+      this.version = version;
       this.tokenId = tokenId;
       this.dialogVisible = true;
       this.getCalculateMint();

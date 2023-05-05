@@ -9,8 +9,7 @@ export interface App {
   chainId: number;
   ether: Ether;
   request: Request;
-  tokenMap: { [tokenId: number]: Token };
-  token0Map: { [tokenId: number]: Token };
+  tokenMap: { [version: number]: { [tokenId: number]: Token } };
   referMap: { [tokenId: number]: string };
   rankMap: { [day: number]: number };
   start: boolean;
@@ -31,8 +30,7 @@ export interface Token {
 }
 
 export interface Box {
-  tokenIdList: number[];
-  token0IdList: number[];
+  tokenIdList: { version: number; tokenId: number }[];
 }
 
 export interface Search {
@@ -58,8 +56,7 @@ const state: State = {
     chainId: 0,
     ether: new Ether(),
     request: new Request("https://xenbox.store"),
-    tokenMap: {},
-    token0Map: {},
+    tokenMap: { 0: {}, 1: {} },
     rankMap: {},
     referMap: {},
     start: false
@@ -74,8 +71,7 @@ const state: State = {
     }
   },
   box: {
-    tokenIdList: [],
-    token0IdList: []
+    tokenIdList: []
   },
   search: {
     tokenIdList: []
@@ -168,7 +164,7 @@ const actions: ActionTree<State, State> = {
         state.search.tokenIdList = [Number(addressOrId)];
       }
       state.search.tokenIdList.forEach(async tokenId => {
-        dispatch("getTokenData", tokenId);
+        dispatch("getTokenData", { version: 1, tokenId });
       });
     }
   },
@@ -183,91 +179,75 @@ const actions: ActionTree<State, State> = {
           await toRaw(state.app.ether.xenBoxUpgradeable).totalToken()
         )
       ).map(tokenId => {
-        return tokenId.toNumber();
+        return { version: 1, tokenId: tokenId.toNumber() };
       });
-      state.box.tokenIdList.forEach(async tokenId => {
-        dispatch("getTokenData", tokenId);
-      });
-
       if (state.app.ether.xenBox) {
-        state.box.token0IdList = (
-          await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
-            toRaw(state.app.ether.xenBox).address(),
-            state.app.userAddress,
-            0,
-            await toRaw(state.app.ether.xenBox).totalToken()
-          )
-        ).map(tokenId => {
-          return tokenId.toNumber();
-        });
-        state.box.token0IdList.forEach(async tokenId => {
-          dispatch("getToken0Data", tokenId);
-        });
+        state.box.tokenIdList = [
+          ...state.box.tokenIdList,
+          ...(
+            await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
+              toRaw(state.app.ether.xenBox).address(),
+              state.app.userAddress,
+              0,
+              await toRaw(state.app.ether.xenBox).totalToken()
+            )
+          ).map(tokenId => {
+            return { version: 0, tokenId: tokenId.toNumber() };
+          })
+        ];
       }
+      state.box.tokenIdList.forEach(async e => {
+        dispatch("getTokenData", e);
+      });
     }
   },
 
-  async getToken0Data({ state }, tokenId: number) {
-    if (state.app.ether.xenBox && state.app.ether.xen && state.app.ether.xenBoxHelper) {
-      if (!state.app.token0Map[tokenId]) {
-        state.app.token0Map[tokenId] = {
+  async getTokenData({ state }, { version, tokenId }) {
+    if (
+      state.app.ether.xenBoxHelper &&
+      state.app.ether.xenBoxUpgradeable
+    ) {
+      if (!state.app.tokenMap[version][tokenId]) {
+        state.app.tokenMap[version][tokenId] = {
           start: 0,
           end: 0,
           time: 0,
           term: 0,
           mint: BigNumber.from(0)
         };
-        const token = await toRaw(state.app.ether.xenBox).tokenMap(
+        let proxy: any;
+        let userMints: any;
+        if (version == 1) {
+          const token = await toRaw(state.app.ether.xenBoxUpgradeable).tokenMap(
+            tokenId
+          );
+          state.app.tokenMap[version][tokenId].end = token.end;
+          state.app.tokenMap[version][tokenId].start = token.start;
+          proxy = await toRaw(state.app.ether.xenBoxUpgradeable).proxyAddress(
+            token.start
+          );
+          userMints = await toRaw(state.app.ether.xenBoxUpgradeable).userMints(
+            tokenId
+          );
+        } else if (state.app.ether.xenBox && state.app.ether.xen) {
+          const token = await toRaw(state.app.ether.xenBox).tokenMap(tokenId);
+          state.app.tokenMap[version][tokenId].end = token.end.toNumber();
+          state.app.tokenMap[version][tokenId].start = token.start.toNumber();
+          proxy = await toRaw(state.app.ether.xenBox).getProxyAddress(
+            token.start
+          );
+          userMints = await toRaw(state.app.ether.xen).userMints(proxy);
+        }
+        state.app.tokenMap[version][
           tokenId
-        );
-        state.app.token0Map[tokenId].end = token.end.toNumber();
-        state.app.token0Map[tokenId].start = token.start.toNumber();
-        const proxy = await toRaw(
-          state.app.ether.xenBox
-        ).getProxyAddress(token.start);
-        const userMints = await toRaw(
-          state.app.ether.xen
-        ).userMints(proxy);
-        state.app.token0Map[tokenId].time = userMints.maturityTs.toNumber();
-        state.app.token0Map[tokenId].term = userMints.term.toNumber();
+        ].time = userMints.maturityTs.toNumber();
+        state.app.tokenMap[version][tokenId].term = userMints.term.toNumber();
         const mint = await state.app.ether.xenBoxHelper.calculateMintReward(
           proxy
         );
-        state.app.token0Map[tokenId].mint = mint.mul(
-          state.app.token0Map[tokenId].end - state.app.token0Map[tokenId].start
-        );
-      }
-    }
-  },
-
-  async getTokenData({ state }, tokenId: number) {
-    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
-      if (!state.app.tokenMap[tokenId]) {
-        state.app.tokenMap[tokenId] = {
-          start: 0,
-          end: 0,
-          time: 0,
-          term: 0,
-          mint: BigNumber.from(0)
-        };
-        const token = await toRaw(state.app.ether.xenBoxUpgradeable).tokenMap(
-          tokenId
-        );
-        state.app.tokenMap[tokenId].end = token.end;
-        state.app.tokenMap[tokenId].start = token.start;
-        const proxy = await toRaw(
-          state.app.ether.xenBoxUpgradeable
-        ).proxyAddress(token.start);
-        const userMints = await toRaw(
-          state.app.ether.xenBoxUpgradeable
-        ).userMints(tokenId);
-        state.app.tokenMap[tokenId].time = userMints.maturityTs.toNumber();
-        state.app.tokenMap[tokenId].term = userMints.term.toNumber();
-        const mint = await state.app.ether.xenBoxHelper.calculateMintReward(
-          proxy
-        );
-        state.app.tokenMap[tokenId].mint = mint.mul(
-          state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start
+        state.app.tokenMap[version][tokenId].mint = mint.mul(
+          state.app.tokenMap[version][tokenId].end -
+          state.app.tokenMap[version][tokenId].start
         );
       }
     }

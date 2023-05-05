@@ -7,7 +7,7 @@ export class Request {
     this.url = url;
   }
 
-  getRank30(chainId:number) {
+  getRank30(chainId: number) {
     return axios.get(`${this.url}/api/rank/${chainId}/30`);
   }
 }

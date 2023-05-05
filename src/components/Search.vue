@@ -10,12 +10,12 @@
       :key="tokenId"
       :body-style="{ padding: '0px', marginBottom: '1px' }"
     >
-      <div v-if="state.app.tokenMap[tokenId].end != 0">
+      <div v-if="state.app.tokenMap[1][tokenId].end != 0">
         <img
           style="width: 100px; height: 100px"
           :src="
-            `/box${state.app.tokenMap[tokenId].end -
-              state.app.tokenMap[tokenId].start}.png`
+            `/box${state.app.tokenMap[1][tokenId].end -
+              state.app.tokenMap[1][tokenId].start}.png`
           "
           fit="fill"
         />
@@ -23,32 +23,32 @@
           <span>ID：{{ tokenId }}</span>
           <span
             >账号数量：{{
-              state.app.tokenMap[tokenId].end -
-                state.app.tokenMap[tokenId].start
+              state.app.tokenMap[1][tokenId].end -
+                state.app.tokenMap[1][tokenId].start
             }}</span
           >
-          <span v-if="state.app.tokenMap[tokenId].term != 0"
+          <span v-if="state.app.tokenMap[1][tokenId].term != 0"
             >锁定时间：
-            {{ state.app.tokenMap[tokenId].term }}
+            {{ state.app.tokenMap[1][tokenId].term }}
             天</span
           >
           <span
             v-if="
-              !state.app.tokenMap[tokenId].mint.eq(0) &&
+              !state.app.tokenMap[1][tokenId].mint.eq(0) &&
                 state.mint.fee[
-                  state.app.tokenMap[tokenId].end -
-                    state.app.tokenMap[tokenId].start
+                  state.app.tokenMap[1][tokenId].end -
+                    state.app.tokenMap[1][tokenId].start
                 ] != 0
             "
           >
             实计获得：{{
               utils.format.bigToString(
-                state.app.tokenMap[tokenId].mint
+                state.app.tokenMap[1][tokenId].mint
                   .mul(
                     10000 -
                       state.mint.fee[
-                        state.app.tokenMap[tokenId].end -
-                          state.app.tokenMap[tokenId].start
+                        state.app.tokenMap[1][tokenId].end -
+                          state.app.tokenMap[1][tokenId].start
                       ]
                   )
                   .div(10000),
@@ -57,9 +57,11 @@
             }}
             XEN
           </span>
-          <div v-if="state.app.tokenMap[tokenId].time != 0">
+          <div v-if="state.app.tokenMap[1][tokenId].time != 0">
             到期时间：{{
-              new Date(state.app.tokenMap[tokenId].time * 1000).toLocaleString()
+              new Date(
+                state.app.tokenMap[1][tokenId].time * 1000
+              ).toLocaleString()
             }}
           </div>
         </div>
