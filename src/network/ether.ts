@@ -24,7 +24,7 @@ export class Ether {
 
   public xenBoxHelper: XenBoxHelperClient | undefined;
 
-  async load() {
+  async load(chainId: number) {
     this.ethereum = (await detectEthereumProvider()) as any;
     if (this.ethereum) {
       this.ethereum.on("accountsChanged", () => {
@@ -37,6 +37,9 @@ export class Ether {
       this.provider = new ethers.providers.Web3Provider(this.ethereum);
       this.singer = this.provider.getSigner();
       this.chainId = await this.singer.getChainId();
+      if (this.chainId != chainId) {
+        await this.changeChain(chainId);
+      }
       if (DeploymentInfo2[this.chainId]) {
         if (this.chainId == 1) {
           this.xenBox = new XenBoxClient(
@@ -54,17 +57,41 @@ export class Ether {
         );
         this.xen = new XenClient(this.singer);
       } else {
-        await this.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [
-            {
-              chainId: "0x1"
-            }
-          ]
-        });
+        await this.changeChain(1);
       }
     } else {
       throw "Please use a browser that supports web3 to open";
+    }
+  }
+
+  async changeChain(chainId: number) {
+    if (chainId == 1) {
+      await this.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [
+          {
+            chainId: "0x1"
+          }
+        ]
+      });
+    } else if (chainId == 56) {
+      await this.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [
+          {
+            chainId: "0x38"
+          }
+        ]
+      });
+    } else if (chainId == 137) {
+      await this.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [
+          {
+            chainId: "0x89"
+          }
+        ]
+      });
     }
   }
 }

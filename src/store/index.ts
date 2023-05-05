@@ -5,12 +5,11 @@ import { toRaw } from "vue";
 
 export interface App {
   userAddress: string;
-  refer: { [chainId: number]: string };
   chainId: number;
   ether: Ether;
   request: Request;
   tokenMap: { [version: number]: { [tokenId: number]: Token } };
-  referMap: { [tokenId: number]: string };
+
   rankMap: { [day: number]: number };
   start: boolean;
 }
@@ -41,7 +40,12 @@ export interface Share {
   tokenIdList: number[];
 }
 
+export interface Storage {
+  referMap: { [tokenId: number]: string };
+}
+
 export interface State {
+  storage: Storage;
   app: App;
   mint: Mint;
   box: Box;
@@ -50,15 +54,16 @@ export interface State {
 }
 
 const state: State = {
+  storage: {
+    referMap: {}
+  },
   app: {
     userAddress: utils.num.min,
-    refer: {},
     chainId: 0,
     ether: new Ether(),
     request: new Request("https://xenbox.store"),
     tokenMap: { 0: {}, 1: {} },
     rankMap: {},
-    referMap: {},
     start: false
   },
   mint: {
@@ -82,9 +87,9 @@ const state: State = {
 };
 
 const actions: ActionTree<State, State> = {
-  async start({ state, dispatch }) {
+  async start({ state, dispatch }, { chainId, refer }) {
     try {
-      await dispatch("setApp");
+      await dispatch("setApp", { chainId, refer });
       await dispatch("getMintData");
       state.app.start = true;
       log("app start success!");
@@ -93,16 +98,41 @@ const actions: ActionTree<State, State> = {
     }
   },
 
-  async setApp({ state }) {
-    await toRaw(state.app.ether).load();
-    if (state.app.ether.singer) {
+  async setApp({ dispatch, state }, { chainId, refer }) {
+    await toRaw(state.app.ether).load(chainId);
+    if (state.app.ether.singer && state.app.ether.chainId) {
       state.app.userAddress = await toRaw(state.app.ether.singer).getAddress();
-    }
-    if (state.app.ether.chainId) {
       state.app.chainId = state.app.ether.chainId;
     }
     const res = await toRaw(state.app.request).getRank30(state.app.chainId);
     state.app.rankMap[30] = res.data.rank;
+    await dispatch("setStorage");
+    if (!state.storage.referMap[chainId] && utils.ether.isAddress(refer)) {
+      state.storage.referMap[chainId] = refer;
+    }
+  },
+
+  async setStorage({ state }) {
+    const storageName = `${state.app.chainId}`;
+    try {
+      const storage = localStorage.getItem(storageName);
+      if (storage) {
+        utils.deep.clone(state.storage, JSON.parse(storage));
+      } else {
+        throw new Error("localStorage is empty!");
+      }
+    } catch (err) {
+      localStorage.setItem(storageName, JSON.stringify(state.storage));
+    }
+    this.watch(
+      state => state.storage,
+      storage => {
+        localStorage.setItem(storageName, JSON.stringify(storage));
+      },
+      {
+        deep: true
+      }
+    );
   },
 
   async mint({ state }, { amount, term, refer, gasPrice }) {

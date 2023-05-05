@@ -119,8 +119,8 @@ export default {
       this.mint({
         amount: this.amount,
         term: this.term,
-        refer: this.state.app.refer[this.state.app.chainId]
-          ? this.state.app.refer[this.state.app.chainId]
+        refer: this.state.storage.referMap[this.state.app.chainId]
+          ? this.state.storage.referMap[this.state.app.chainId]
           : utils.num.min,
         gasPrice:
           this.gasPrice == ""

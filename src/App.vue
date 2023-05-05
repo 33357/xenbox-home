@@ -38,6 +38,16 @@ import { log } from "./const";
 import { mapState, mapActions } from "vuex";
 import { State } from "./store";
 
+function getParameterByName(name: string) {
+  var url = window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+  var results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return "";
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
 export default {
   data() {
     return {
@@ -47,8 +57,10 @@ export default {
   },
   created() {
     window.addEventListener("load", async () => {
-      log("window load");
-      await this.start();
+      const chainId = Number(getParameterByName("c"));
+      const refer = getParameterByName("r");
+      log(`window load ${chainId} ${refer}`);
+      await this.start({ chainId, refer });
     });
   },
   computed: mapState({

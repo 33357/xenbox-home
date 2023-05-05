@@ -63,7 +63,7 @@ const func = {
         await callback(res);
       }
       return res;
-    } catch (error) {
+    } catch (error:any) {
       time--;
       if (time > 0) {
         log(`retry ${time}, ${error.toString()}`);
