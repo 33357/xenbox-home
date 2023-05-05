@@ -32,6 +32,7 @@ export interface Token {
 
 export interface Box {
   tokenIdList: number[];
+  token0IdList: number[];
 }
 
 export interface Search {
@@ -65,6 +66,7 @@ const state: State = {
   },
   mint: {
     fee: {
+      0: 0,
       10: 0,
       20: 0,
       50: 0,
@@ -72,7 +74,8 @@ const state: State = {
     }
   },
   box: {
-    tokenIdList: []
+    tokenIdList: [],
+    token0IdList: []
   },
   search: {
     tokenIdList: []
@@ -115,11 +118,15 @@ const actions: ActionTree<State, State> = {
   },
 
   async claim({ state }, { tokenId, term, gasPrice }) {
-    if (state.app.ether.xenBoxUpgradeable && tokenId) {
+    if (state.app.ether.xenBoxUpgradeable) {
       await toRaw(state.app.ether.xenBoxUpgradeable).claim(tokenId, term, {
         gasPrice
       });
-    } else if (state.app.ether.xenBox && tokenId) {
+    }
+  },
+
+  async claim0({ state }, { tokenId, term, gasPrice }) {
+    if (state.app.ether.xenBox) {
       await toRaw(state.app.ether.xenBox).claim(tokenId, term, {
         gasPrice
       });
@@ -127,13 +134,15 @@ const actions: ActionTree<State, State> = {
   },
 
   async getMintData({ state }) {
-    if (state.app.ether.xenBoxUpgradeable) {
+    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBox) {
       [
+        state.mint.fee[0],
         state.mint.fee[10],
         state.mint.fee[20],
         state.mint.fee[50],
         state.mint.fee[100]
       ] = await Promise.all([
+        (await toRaw(state.app.ether.xenBox).fee()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee10()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee20()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee50()).toNumber(),
@@ -165,7 +174,7 @@ const actions: ActionTree<State, State> = {
   },
 
   async getBoxData({ state, dispatch }) {
-    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
+    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBox && state.app.ether.xenBoxHelper) {
       state.box.tokenIdList = (
         await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
           toRaw(state.app.ether.xenBoxUpgradeable).address(),
@@ -179,6 +188,53 @@ const actions: ActionTree<State, State> = {
       state.box.tokenIdList.forEach(async tokenId => {
         dispatch("getTokenData", tokenId);
       });
+
+      state.box.token0IdList = (
+        await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
+          toRaw(state.app.ether.xenBox).address(),
+          state.app.userAddress,
+          0,
+          await toRaw(state.app.ether.xenBox).totalToken()
+        )
+      ).map(tokenId => {
+        return tokenId.toNumber();
+      });
+      state.box.token0IdList.forEach(async tokenId => {
+        dispatch("getToken0Data", tokenId);
+      });
+    }
+  },
+
+  async getToken0Data({ state }, tokenId: number) {
+    if (state.app.ether.xenBox && state.app.ether.xen && state.app.ether.xenBoxHelper) {
+      if (!state.app.token0Map[tokenId]) {
+        state.app.token0Map[tokenId] = {
+          start: 0,
+          end: 0,
+          time: 0,
+          term: 0,
+          mint: BigNumber.from(0)
+        };
+        const token = await toRaw(state.app.ether.xenBox).tokenMap(
+          tokenId
+        );
+        state.app.token0Map[tokenId].end = token.end.toNumber();
+        state.app.token0Map[tokenId].start = token.start.toNumber();
+        const proxy = await toRaw(
+          state.app.ether.xenBox
+        ).getProxyAddress(token.start);
+        const userMints = await toRaw(
+          state.app.ether.xen
+        ).userMints(proxy);
+        state.app.token0Map[tokenId].time = userMints.maturityTs.toNumber();
+        state.app.token0Map[tokenId].term = userMints.term.toNumber();
+        const mint = await state.app.ether.xenBoxHelper.calculateMintReward(
+          proxy
+        );
+        state.app.token0Map[tokenId].mint = mint.mul(
+          state.app.token0Map[tokenId].end - state.app.token0Map[tokenId].start
+        );
+      }
     }
   },
 
