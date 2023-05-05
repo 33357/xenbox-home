@@ -2,7 +2,7 @@
   <el-scrollbar height="600px">
     <el-card v-for="tokenId in state.box.tokenIdList" :key="tokenId"
       :body-style="{ padding: '0px', marginBottom: '1px' }">
-      <block v-if="state.app.tokenMap[tokenId].end != 0">
+      <div v-if="state.app.tokenMap[tokenId].end != 0">
         <img style="width: 100px; height: 100px" :src="`/box${state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start
           }.png`" fit="fill" />
         <div class="card-header" style="padding: 5px">
@@ -12,12 +12,12 @@
             state.app.tokenMap[tokenId].start
           }}</span>
           <span v-if="state.app.tokenMap[tokenId].term != 0">锁定时间：{{ state.app.tokenMap[tokenId].term }} 天</span>
-          <span v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee100 != 0
+          <span v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee[state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start] != 0
             ">
             实计获得：{{
               utils.format.bigToString(
                 state.app.tokenMap[tokenId].mint
-                  .mul(10000 - state.mint.fee100)
+                  .mul(10000 - state.mint.fee[state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start])
                   .div(10000),
                 18
               )
@@ -35,7 +35,7 @@
             开启
           </el-button>
         </div>
-      </block>
+      </div>
     </el-card>
   </el-scrollbar>
   <el-dialog v-model="dialogVisible" title="开启宝箱" width="30%">
@@ -43,7 +43,7 @@
       <el-form-item label="重新锁定时间">
         <el-input-number v-model="term" :min="1" @change="termChange" /> 天
       </el-form-item>
-      <el-form-item label="预计获得" v-if="state.mint.fee100 != 0">
+      <el-form-item label="预计获得" v-if="state.mint.fee[state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start] != 0">
         {{
           utils.format.bigToString(
             calculateMint
@@ -51,7 +51,7 @@
                 state.app.tokenMap[tokenId].end -
                 state.app.tokenMap[tokenId].start
               )
-              .mul(10000 - state.mint.fee100)
+              .mul(10000 - state.mint.fee[state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start])
               .div(10000),
             18
           )

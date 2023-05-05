@@ -19,12 +19,12 @@
           <span v-if="state.app.tokenMap[tokenId].term != 0">锁定时间：
             {{ state.app.tokenMap[tokenId].term }}
             天</span>
-          <span v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee100 != 0
+          <span v-if="!state.app.tokenMap[tokenId].mint.eq(0) && state.mint.fee[state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start] != 0
             ">
             实计获得：{{
               utils.format.bigToString(
                 state.app.tokenMap[tokenId].mint
-                  .mul(10000 - state.mint.fee100)
+                  .mul(10000 - state.mint.fee[state.app.tokenMap[tokenId].end - state.app.tokenMap[tokenId].start])
                   .div(10000),
                 18
               )

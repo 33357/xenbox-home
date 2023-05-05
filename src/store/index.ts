@@ -15,10 +15,9 @@ export interface App {
 }
 
 export interface Mint {
-  fee10: number;
-  fee20: number;
-  fee50: number;
-  fee100: number;
+  fee: {
+    [amount: number]: number
+  }
 }
 
 export interface Token {
@@ -61,10 +60,12 @@ const state: State = {
     start: false,
   },
   mint: {
-    fee10: 0,
-    fee20: 0,
-    fee50: 0,
-    fee100: 0,
+    fee: {
+      10:0,
+      20:0,
+      50:0,
+      100:0,
+    }
   },
   box: {
     tokenIdList: [],
@@ -126,7 +127,7 @@ const actions: ActionTree<State, State> = {
 
   async getMintData({ state }) {
     if (state.app.ether.xenBoxUpgradeable) {
-      [state.mint.fee10, state.mint.fee20, state.mint.fee50, state.mint.fee100] = await Promise.all([
+      [state.mint.fee[10], state.mint.fee[20], state.mint.fee[50], state.mint.fee[100]] = await Promise.all([
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee10()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee20()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee50()).toNumber(),

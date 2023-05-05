@@ -9,10 +9,10 @@
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
     <el-form-item label="XEN 宝箱">
-      <img style="width: 250px; height: 250px" :src="`/box${account}.png`" fit="fill" />
+      <img style="width: 250px; height: 250px" :src="`/box${amount}.png`" fit="fill" />
     </el-form-item>
     <el-form-item label="账号数量：">
-      <el-radio-group v-model="account" label="label position">
+      <el-radio-group v-model="amount" label="label position">
         <el-radio-button label="100">100</el-radio-button>
         <el-radio-button label="50">50</el-radio-button>
         <el-radio-button label="20">20</el-radio-button>
@@ -22,12 +22,15 @@
     <el-form-item label="锁定时间：">
       <el-input-number v-model="term" :min="1" @change="termChange" /> 天
     </el-form-item>
-    <el-form-item label="预计获得：" v-if="state.mint.fee != 0">
+    <el-form-item label="手续费率：">
+      {{ state.mint.fee[amount] / 100 }} %
+    </el-form-item>
+    <el-form-item label="预计获得：" v-if="state.mint.fee[amount] != 0">
       {{
         utils.format.bigToString(
           calculateMint
-            .mul(account)
-            .mul(10000 - state.mint.fee)
+            .mul(amount)
+            .mul(10000 - state.mint.fee[amount])
             .div(10000),
           18
         )
@@ -44,7 +47,7 @@
     <el-form-item label="预计 Gas 费用:" v-if="advanced && gasPrice != ''">
       {{
         utils.format.bigToString(
-          utils.format.stringToBig(gasPrice, 9).mul((gas / 100) * account),
+          utils.format.stringToBig(gasPrice, 9).mul((gas / 100) * amount),
           18
         )
       }}
@@ -65,7 +68,7 @@ export default {
   data() {
     return {
       utils: utils,
-      account: 100,
+      amount: 100,
       term: 100,
       calculateMint: BigNumber.from(0),
       advanced: false,
@@ -110,7 +113,7 @@ export default {
     },
     doMint() {
       this.mint({
-        amount: this.account,
+        amount: this.amount,
         term: this.term,
         refer: this.state.app.refer[this.state.app.chainId] ? this.state.app.refer[this.state.app.chainId] : utils.num.min,
         gasPrice:
