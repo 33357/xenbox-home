@@ -39,7 +39,7 @@
     </el-form-item>
     <el-form-item
       label="预计获得："
-      v-if="state.mint.feeMap[version][amount] != 0"
+      v-if="state.mint.feeMap[version][amount] != 0 && !calculateMint.eq(0)"
     >
       {{
         `${utils.format.bigToString(
