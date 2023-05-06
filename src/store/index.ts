@@ -272,6 +272,21 @@ const actions: ActionTree<State, State> = {
       ).map(tokenId => {
         return tokenId.toNumber();
       });
+      const ownedTokenIdList = (
+        await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
+          toRaw(state.app.ether.xenBoxUpgradeable).address(),
+          state.app.userAddress,
+          0,
+          await toRaw(state.app.ether.xenBoxUpgradeable).totalToken()
+        )
+      ).map(tokenId => {
+        return tokenId.toNumber();
+      });
+      state.share.tokenIdList.forEach((tokenId, index) => {
+        if (ownedTokenIdList.indexOf(tokenId) != -1) {
+          state.share.tokenIdList.splice(index, 1);
+        }
+      });
       state.share.tokenIdList.forEach(async tokenId => {
         await dispatch("getTokenData", { version: 1, tokenId });
       });
