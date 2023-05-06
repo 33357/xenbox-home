@@ -8,6 +8,9 @@
     <el-form-item label="社群：">
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
+    <el-form-item label="Gas 预测：">
+      <a href="https://gas.33357.club" target="_blank"> https://gas.33357.club </a>
+    </el-form-item>
     <el-form-item label="XEN 宝箱">
       <img
         style="width: 250px; height: 250px"
