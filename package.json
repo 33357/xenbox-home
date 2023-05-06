@@ -17,7 +17,6 @@
     "@types/identicon.js": "^2.3.1",
     "@types/node": "^17.0.35",
     "@uniswap/v3-periphery": "^1.4.3",
-    "@uniswap/v3-sdk": "^3.9.0",
     "@vitejs/plugin-vue": "^2.3.3",
     "axios": "^1.2.2",
     "element-plus": "^2.2.13",
