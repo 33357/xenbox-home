@@ -28,7 +28,7 @@
           <span
             v-if="
               !state.app.tokenMap[version][tokenId].mint.eq(0) &&
-                state.mint.feeMap[version][
+                state.app.feeMap[version][
                   state.app.tokenMap[version][tokenId].end -
                     state.app.tokenMap[version][tokenId].start
                 ] != 0
@@ -39,7 +39,7 @@
                 state.app.tokenMap[version][tokenId].mint
                   .mul(
                     10000 -
-                      state.mint.feeMap[version][
+                      state.app.feeMap[version][
                         state.app.tokenMap[version][tokenId].end -
                           state.app.tokenMap[version][tokenId].start
                       ]
@@ -53,7 +53,7 @@
                 state.app.tokenMap[version][tokenId].mint
                   .mul(
                     10000 -
-                      state.mint.feeMap[version][
+                      state.app.feeMap[version][
                         state.app.tokenMap[version][tokenId].end -
                           state.app.tokenMap[version][tokenId].start
                       ]
@@ -61,14 +61,14 @@
                   .div(10000)
                   .mul(
                     10000 -
-                      state.mint.feeMap[version][
+                      state.app.feeMap[version][
                         state.app.tokenMap[version][tokenId].end -
                           state.app.tokenMap[version][tokenId].start
                       ]
                   )
                   .div(10000)
                   .mul(utils.num.ether)
-                  .div(state.mint.perEthAmount),
+                  .div(state.app.perEthAmount),
                 18,
                 6
               )} ${state.app.symbolMap[state.app.chainId].eth})`
@@ -104,7 +104,7 @@
       <el-form-item
         label="预计获得"
         v-if="
-          state.mint.feeMap[version][
+          state.app.feeMap[version][
             state.app.tokenMap[version][tokenId].end -
               state.app.tokenMap[version][tokenId].start
           ] != 0
@@ -119,7 +119,7 @@
               )
               .mul(
                 10000 -
-                  state.mint.feeMap[version][
+                  state.app.feeMap[version][
                     state.app.tokenMap[version][tokenId].end -
                       state.app.tokenMap[version][tokenId].start
                   ]
@@ -137,14 +137,14 @@
               )
               .mul(
                 10000 -
-                  state.mint.feeMap[version][
+                  state.app.feeMap[version][
                     state.app.tokenMap[version][tokenId].end -
                       state.app.tokenMap[version][tokenId].start
                   ]
               )
               .div(10000)
               .mul(utils.num.ether)
-              .div(state.mint.perEthAmount),
+              .div(state.app.perEthAmount),
             18,
             6
           )} ${state.app.symbolMap[state.app.chainId].eth})`

@@ -63,10 +63,10 @@ const func = {
         await callback(res);
       }
       return res;
-    } catch (error: any) {
+    } catch (error) {
       time--;
       if (time > 0) {
-        log(`retry ${time}, ${error.toString()}`);
+        log(`retry ${time}, ${error}`);
         await func.sleep(1000);
         return await func.retry(_func, time, args, callback);
       } else {
@@ -153,9 +153,15 @@ const format = {
 
   bigToString(big: BigNumber, decimals: number, fix: number) {
     let str = big.toString();
+    if (str == "0") {
+      return str;
+    }
     const change = str.length - decimals;
     if (change > 0) {
-      str = `${str.substring(0, change)}.${str.substring(change, change + fix)}`;
+      str = `${str.substring(0, change)}.${str.substring(
+        change,
+        change + fix
+      )}`;
     } else {
       for (let i = 0; i > change; i--) {
         str = `0${str}`;

@@ -17,14 +17,11 @@ export interface App {
       xen: string;
     };
   };
-  start: boolean;
-}
-
-export interface Mint {
   perEthAmount: BigNumber;
   feeMap: {
     [version: number]: { [amount: number]: number };
   };
+  start: boolean;
 }
 
 export interface Token {
@@ -44,6 +41,8 @@ export interface Search {
 }
 
 export interface Share {
+  referFeePercent: number;
+  reward: BigNumber;
   tokenIdList: number[];
 }
 
@@ -54,7 +53,6 @@ export interface Storage {
 export interface State {
   storage: Storage;
   app: App;
-  mint: Mint;
   box: Box;
   search: Search;
   share: Share;
@@ -77,9 +75,6 @@ const state: State = {
     },
     defaultTerm: 100,
     rankMap: {},
-    start: false
-  },
-  mint: {
     perEthAmount: BigNumber.from(0),
     feeMap: {
       0: {
@@ -94,7 +89,8 @@ const state: State = {
         50: 0,
         100: 0
       }
-    }
+    },
+    start: false
   },
   box: {
     tokenIdList: []
@@ -103,29 +99,20 @@ const state: State = {
     tokenIdList: []
   },
   share: {
+    referFeePercent: 0,
+    reward: BigNumber.from(0),
     tokenIdList: []
   }
 };
 
 const actions: ActionTree<State, State> = {
-  async start({ state, dispatch }, { chainId, refer }) {
-    try {
-      await dispatch("setApp", { chainId, refer });
-      await dispatch("getMintData");
-      state.app.start = true;
-      log("app start success!");
-    } catch (err) {
-      log(err);
-    }
-  },
-
-  async setApp({ dispatch, state }, { chainId, refer }) {
+  async start({ dispatch, state }, { chainId, refer }) {
     await toRaw(state.app.ether).load(chainId);
     if (state.app.ether.singer && state.app.ether.chainId) {
       state.app.userAddress = await toRaw(state.app.ether.singer).getAddress();
       state.app.chainId = state.app.ether.chainId;
     }
-    const res = await toRaw(state.app.request).getRank30(
+    const res = await toRaw(state.app.request).getRank(
       state.app.chainId,
       state.app.defaultTerm
     );
@@ -134,6 +121,28 @@ const actions: ActionTree<State, State> = {
     if (!state.storage.referMap[chainId] && utils.ether.isAddress(refer)) {
       state.storage.referMap[chainId] = refer;
     }
+    if (state.app.ether.xenBoxUpgradeable) {
+      [
+        state.app.feeMap[1][10],
+        state.app.feeMap[1][20],
+        state.app.feeMap[1][50],
+        state.app.feeMap[1][100],
+        state.app.perEthAmount
+      ] = await Promise.all([
+        (await toRaw(state.app.ether.xenBoxUpgradeable).fee10()).toNumber(),
+        (await toRaw(state.app.ether.xenBoxUpgradeable).fee20()).toNumber(),
+        (await toRaw(state.app.ether.xenBoxUpgradeable).fee50()).toNumber(),
+        (await toRaw(state.app.ether.xenBoxUpgradeable).fee100()).toNumber(),
+        toRaw(state.app.ether).getEthPrice(state.app.chainId)
+      ]);
+    }
+    if (state.app.ether.xenBox) {
+      state.app.feeMap[0][10] = state.app.feeMap[0][20] = state.app.feeMap[0][50] = state.app.feeMap[0][100] = (
+        await toRaw(state.app.ether.xenBox).fee()
+      ).toNumber();
+    }
+    state.app.start = true;
+    log("app start success!");
   },
 
   async setStorage({ state }) {
@@ -176,29 +185,6 @@ const actions: ActionTree<State, State> = {
       await toRaw(state.app.ether.xenBox).claim(tokenId, term, {
         gasPrice
       });
-    }
-  },
-
-  async getMintData({ state }) {
-    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
-      [
-        state.mint.feeMap[1][10],
-        state.mint.feeMap[1][20],
-        state.mint.feeMap[1][50],
-        state.mint.feeMap[1][100],
-        state.mint.perEthAmount
-      ] = await Promise.all([
-        (await toRaw(state.app.ether.xenBoxUpgradeable).fee10()).toNumber(),
-        (await toRaw(state.app.ether.xenBoxUpgradeable).fee20()).toNumber(),
-        (await toRaw(state.app.ether.xenBoxUpgradeable).fee50()).toNumber(),
-        (await toRaw(state.app.ether.xenBoxUpgradeable).fee100()).toNumber(),
-        toRaw(state.app.ether).getEthPrice(state.app.chainId)
-      ]);
-    }
-    if (state.app.ether.xenBox) {
-      state.mint.feeMap[0][10] = state.mint.feeMap[0][20] = state.mint.feeMap[0][50] = state.mint.feeMap[0][100] = (
-        await toRaw(state.app.ether.xenBox).fee()
-      ).toNumber();
     }
   },
 
@@ -253,6 +239,30 @@ const actions: ActionTree<State, State> = {
       }
       state.box.tokenIdList.forEach(async e => {
         dispatch("getTokenData", e);
+      });
+    }
+  },
+
+  async getShareData({ dispatch, state }) {
+    if (state.app.ether.xenBoxHelper && state.app.ether.xenBoxUpgradeable) {
+      state.share.referFeePercent = (
+        await toRaw(state.app.ether.xenBoxUpgradeable).referFeePercent()
+      ).toNumber();
+      state.share.reward = await toRaw(
+        state.app.ether.xenBoxUpgradeable
+      ).rewardMap(state.app.userAddress);
+      state.share.tokenIdList = (
+        await toRaw(state.app.ether.xenBoxHelper).getReferTokenIdList(
+          toRaw(state.app.ether.xenBoxUpgradeable).address(),
+          state.app.userAddress,
+          0,
+          await toRaw(state.app.ether.xenBoxUpgradeable).totalToken()
+        )
+      ).map(tokenId => {
+        return tokenId.toNumber();
+      });
+      state.search.tokenIdList.forEach(async tokenId => {
+        dispatch("getTokenData", { version: 1, tokenId });
       });
     }
   },
