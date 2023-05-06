@@ -86,9 +86,9 @@ export class Ether {
         Quoter.abi,
         this.provider
       );
-      return await quoterContract.callStatic.quoteExactInputSingle(
-        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      return await quoterContract.callStatic.quoteExactOutputSingle(
         "0x06450dEe7FD2Fb8E39061434BAbCFC05599a6Fb8",
+        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
         10000,
         utils.num.ether,
         0
@@ -99,9 +99,9 @@ export class Ether {
         Quoter.abi,
         this.provider
       );
-      return await quoterContract.callStatic.quoteExactInputSingle(
-        "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+      return await quoterContract.callStatic.quoteExactOutputSingle(
         "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e",
+        "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
         10000,
         utils.num.ether,
         0
@@ -112,9 +112,9 @@ export class Ether {
         Quoter.abi,
         this.provider
       );
-      return await quoterContract.callStatic.quoteExactInputSingle(
-        "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      return await quoterContract.callStatic.quoteExactOutputSingle(
         "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e",
+        "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
         10000,
         utils.num.ether,
         0
