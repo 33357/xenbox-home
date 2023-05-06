@@ -12,14 +12,15 @@ export interface App {
   rankMap: { [day: number]: number };
   symbolMap: {
     [chainId: number]: {
-      eth: string,
-      xen: string
-    }
-  }
+      eth: string;
+      xen: string;
+    };
+  };
   start: boolean;
 }
 
 export interface Mint {
+  perEthAmount: BigNumber;
   feeMap: {
     [version: number]: { [amount: number]: number };
   };
@@ -69,14 +70,16 @@ const state: State = {
     request: new Request("https://xenbox.store"),
     tokenMap: { 0: {}, 1: {} },
     symbolMap: {
-      1: { eth: 'ETH', xen: 'XEN' },
-      56: { eth: 'BNB', xen: 'BXEN' },
-      137: { eth: 'MATIC', xen: 'MXEN' },
+      1: { eth: "ETH", xen: "XEN" },
+      56: { eth: "BNB", xen: "BXEN" },
+      137: { eth: "MATIC", xen: "MXEN" }
     },
+
     rankMap: {},
     start: false
   },
   mint: {
+    perEthAmount: BigNumber.from(0),
     feeMap: {
       0: {
         10: 0,
@@ -173,17 +176,19 @@ const actions: ActionTree<State, State> = {
   },
 
   async getMintData({ state }) {
-    if (state.app.ether.xenBoxUpgradeable) {
+    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
       [
         state.mint.feeMap[1][10],
         state.mint.feeMap[1][20],
         state.mint.feeMap[1][50],
-        state.mint.feeMap[1][100]
+        state.mint.feeMap[1][100],
+        state.mint.perEthAmount
       ] = await Promise.all([
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee10()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee20()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee50()).toNumber(),
-        (await toRaw(state.app.ether.xenBoxUpgradeable).fee100()).toNumber()
+        (await toRaw(state.app.ether.xenBoxUpgradeable).fee100()).toNumber(),
+        toRaw(state.app.ether).getEthPrice(state.app.chainId)
       ]);
     }
     if (state.app.ether.xenBox) {
@@ -294,7 +299,7 @@ const actions: ActionTree<State, State> = {
         );
         state.app.tokenMap[version][tokenId].mint = mint.mul(
           state.app.tokenMap[version][tokenId].end -
-          state.app.tokenMap[version][tokenId].start
+            state.app.tokenMap[version][tokenId].start
         );
       }
     }

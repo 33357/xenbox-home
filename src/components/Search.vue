@@ -52,8 +52,31 @@
                       ]
                   )
                   .div(10000),
-                18
-              )} ${state.app.symbolMap[state.app.chainId].xen}`
+                18,0
+              )} ${
+                state.app.symbolMap[state.app.chainId].xen
+              } (${utils.format.bigToString(
+                state.app.tokenMap[1][tokenId].mint
+                  .mul(
+                    10000 -
+                      state.mint.feeMap[version][
+                        state.app.tokenMap[1][tokenId].end -
+                          state.app.tokenMap[1][tokenId].start
+                      ]
+                  )
+                  .div(10000)
+                  .mul(
+                    10000 -
+                      state.mint.feeMap[version][
+                        state.app.tokenMap[version][tokenId].end -
+                          state.app.tokenMap[version][tokenId].start
+                      ]
+                  )
+                  .div(10000)
+                  .mul(utils.num.ether)
+                  .div(state.mint.perEthAmount),
+                18,4
+              )} ${state.app.symbolMap[state.app.chainId].eth})`
             }}
           </span>
           <div v-if="state.app.tokenMap[1][tokenId].time != 0">

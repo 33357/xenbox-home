@@ -45,8 +45,32 @@
                       ]
                   )
                   .div(10000),
-                18
-              )} ${state.app.symbolMap[state.app.chainId].xen}`
+                18,0
+              )} ${
+                state.app.symbolMap[state.app.chainId].xen
+              } (${utils.format.bigToString(
+                state.app.tokenMap[version][tokenId].mint
+                  .mul(
+                    10000 -
+                      state.mint.feeMap[version][
+                        state.app.tokenMap[version][tokenId].end -
+                          state.app.tokenMap[version][tokenId].start
+                      ]
+                  )
+                  .div(10000)
+                  .mul(
+                    10000 -
+                      state.mint.feeMap[version][
+                        state.app.tokenMap[version][tokenId].end -
+                          state.app.tokenMap[version][tokenId].start
+                      ]
+                  )
+                  .div(10000)
+                  .mul(utils.num.ether)
+                  .div(state.mint.perEthAmount),
+                18,
+                4
+              )} ${state.app.symbolMap[state.app.chainId].eth})`
             }}
           </span>
           <div v-if="state.app.tokenMap[version][tokenId].time != 0">
@@ -100,8 +124,29 @@
                   ]
               )
               .div(10000),
-            18
-          )} ${state.app.symbolMap[state.app.chainId].xen}`
+            18,
+            0
+          )} ${
+            state.app.symbolMap[state.app.chainId].xen
+          } (${utils.format.bigToString(
+            calculateMint
+              .mul(
+                state.app.tokenMap[version][tokenId].end -
+                  state.app.tokenMap[version][tokenId].start
+              )
+              .mul(
+                10000 -
+                  state.mint.feeMap[version][
+                    state.app.tokenMap[version][tokenId].end -
+                      state.app.tokenMap[version][tokenId].start
+                  ]
+              )
+              .div(10000)
+              .mul(utils.num.ether)
+              .div(state.mint.perEthAmount),
+            18,
+            4
+          )} ${state.app.symbolMap[state.app.chainId].eth})`
         }}
       </el-form-item>
       <el-form-item label="高级设置：">
@@ -122,7 +167,7 @@
                   (state.app.tokenMap[version][tokenId].end -
                     state.app.tokenMap[version][tokenId].start)
               ),
-            18
+            18,4
           )} ${state.app.symbolMap[state.app.chainId].eth}`
         }}
       </el-form-item>

@@ -9,7 +9,11 @@
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
     <el-form-item label="XEN 宝箱">
-      <img style="width: 250px; height: 250px" :src="`/box${amount}.png`" fit="fill" />
+      <img
+        style="width: 250px; height: 250px"
+        :src="`/box${amount}.png`"
+        fit="fill"
+      />
     </el-form-item>
     <el-form-item label="账号数量：">
       <el-radio-group v-model="amount" label="label position">
@@ -25,14 +29,27 @@
     <el-form-item label="手续费率：">
       {{ state.mint.feeMap[version][amount] / 100 }} %
     </el-form-item>
-    <el-form-item label="预计获得：" v-if="state.mint.feeMap[version][amount] != 0">
+    <el-form-item
+      label="预计获得："
+      v-if="state.mint.feeMap[version][amount] != 0"
+    >
       {{
         `${utils.format.bigToString(
-          calculateMint,
-          18
-        )} ${state.app.symbolMap[state.app.chainId].xen} (${utils.format.bigToString(
-          ethPrice,
-          18
+          calculateMint
+            .mul(amount)
+            .mul(10000 - state.mint.feeMap[version][amount])
+            .div(10000),
+          18,0
+        )} ${
+          state.app.symbolMap[state.app.chainId].xen
+        } (${utils.format.bigToString(
+          calculateMint
+            .mul(amount)
+            .mul(10000 - state.mint.feeMap[version][amount])
+            .div(10000)
+            .mul(utils.num.ether)
+            .div(state.mint.perEthAmount),
+          18,4
         )} ${state.app.symbolMap[state.app.chainId].eth})`
       }}
     </el-form-item>
@@ -40,14 +57,15 @@
       <el-switch v-model="advanced" />
     </el-form-item>
     <el-form-item label="Gas 价格：" v-if="advanced">
-      <el-input v-model="gasPrice" placeholder="gasPrice"><template #append> Gwei </template>
+      <el-input v-model="gasPrice" placeholder="gasPrice"
+        ><template #append> Gwei </template>
       </el-input>
     </el-form-item>
     <el-form-item label="预计 Gas 费用:" v-if="advanced && gasPrice != ''">
       {{
         `${utils.format.bigToString(
           utils.format.stringToBig(gasPrice, 9).mul((gas / 100) * amount),
-          18
+          18,4
         )} ${state.app.symbolMap[state.app.chainId].eth}`
       }}
     </el-form-item>
@@ -100,15 +118,11 @@ export default {
     ...mapActions(["getMintData", "mint"]),
     async getCalculateMint() {
       if (this.state.app.ether.xenBoxHelper) {
-        this.calculateMint = (await toRaw(this.state.app.ether.xenBoxHelper).calculateMintRewardNew(
+        this.calculateMint = await toRaw(
+          this.state.app.ether.xenBoxHelper
+        ).calculateMintRewardNew(
           Math.ceil((this.state.app.rankMap[30] * this.term) / 30),
           this.term
-        )).mul(this.amount)
-          .mul(10000 - this.state.mint.feeMap[this.version][this.amount])
-          .div(10000);
-        this.ethPrice = await toRaw(this.state.app.ether).getEthPrice(
-          this.state.app.chainId,
-          this.calculateMint
         );
       }
     },

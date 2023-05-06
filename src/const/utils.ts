@@ -63,7 +63,7 @@ const func = {
         await callback(res);
       }
       return res;
-    } catch (error:any) {
+    } catch (error: any) {
       time--;
       if (time > 0) {
         log(`retry ${time}, ${error.toString()}`);
@@ -151,21 +151,18 @@ const format = {
     }
   },
 
-  bigToString(big: BigNumber, decimals: number) {
+  bigToString(big: BigNumber, decimals: number, fix: number) {
     let str = big.toString();
     const change = str.length - decimals;
     if (change > 0) {
-      str = `${str.substring(0, change)}.${str.substring(change)}`;
+      str = `${str.substring(0, change)}.${str.substring(change, change + fix)}`;
     } else {
       for (let i = 0; i > change; i--) {
         str = `0${str}`;
       }
-      str = `0.${str}`;
+      str = `0.${str}`.substring(0, fix + 2);
     }
-    while (str[str.length - 1] == "0") {
-      str = str.substring(0, str.length - 1);
-    }
-    if (str[str.length - 1] == ".") {
+    while (str[str.length - 1] == "0" || str[str.length - 1] == ".") {
       str = str.substring(0, str.length - 1);
     }
     return str;
