@@ -43,6 +43,7 @@ export interface Search {
 export interface Share {
   referFeePercent: number;
   reward: BigNumber;
+  isRefer: Boolean;
   tokenIdList: number[];
 }
 
@@ -99,6 +100,7 @@ const state: State = {
     tokenIdList: []
   },
   share: {
+    isRefer: false,
     referFeePercent: 0,
     reward: BigNumber.from(0),
     tokenIdList: []
@@ -118,7 +120,11 @@ const actions: ActionTree<State, State> = {
     );
     state.app.rankMap[state.app.defaultTerm] = res.data.rank;
     await dispatch("setStorage");
-    if (!state.storage.referMap[chainId] && utils.ether.isAddress(refer)) {
+    if (
+      !state.storage.referMap[chainId] &&
+      utils.ether.isAddress(refer) &&
+      refer != state.app.userAddress
+    ) {
       state.storage.referMap[chainId] = refer;
     }
     if (state.app.ether.xenBoxUpgradeable) {
@@ -211,7 +217,7 @@ const actions: ActionTree<State, State> = {
         state.search.tokenIdList = [Number(addressOrId)];
       }
       state.search.tokenIdList.forEach(async tokenId => {
-        dispatch("getTokenData", { version: 1, tokenId });
+        await dispatch("getTokenData", { version: 1, tokenId });
       });
     }
   },
@@ -244,7 +250,7 @@ const actions: ActionTree<State, State> = {
         ];
       }
       state.box.tokenIdList.forEach(async e => {
-        dispatch("getTokenData", e);
+        await dispatch("getTokenData", e);
       });
     }
   },
@@ -257,6 +263,9 @@ const actions: ActionTree<State, State> = {
       state.share.reward = await toRaw(
         state.app.ether.xenBoxUpgradeable
       ).rewardMap(state.app.userAddress);
+      state.share.isRefer = await toRaw(
+        state.app.ether.xenBoxUpgradeable
+      ).isRefer(state.app.userAddress);
       state.share.tokenIdList = (
         await toRaw(state.app.ether.xenBoxHelper).getReferTokenIdList(
           toRaw(state.app.ether.xenBoxUpgradeable).address(),
@@ -267,8 +276,8 @@ const actions: ActionTree<State, State> = {
       ).map(tokenId => {
         return tokenId.toNumber();
       });
-      state.search.tokenIdList.forEach(async tokenId => {
-        dispatch("getTokenData", { version: 1, tokenId });
+      state.share.tokenIdList.forEach(async tokenId => {
+        await dispatch("getTokenData", { version: 1, tokenId });
       });
     }
   },
