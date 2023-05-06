@@ -9,11 +9,7 @@
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
     <el-form-item label="XEN 宝箱">
-      <img
-        style="width: 250px; height: 250px"
-        :src="`/box${amount}.png`"
-        fit="fill"
-      />
+      <img style="width: 250px; height: 250px" :src="`/box${amount}.png`" fit="fill" />
     </el-form-item>
     <el-form-item label="账号数量：">
       <el-radio-group v-model="amount" label="label position">
@@ -27,36 +23,33 @@
       <el-input-number v-model="term" :min="1" @change="termChange" /> 天
     </el-form-item>
     <el-form-item label="手续费率：">
-      {{ state.mint.fee[amount] / 100 }} %
+      {{ state.mint.feeMap[version][amount] / 100 }} %
     </el-form-item>
-    <el-form-item label="预计获得：" v-if="state.mint.fee[amount] != 0">
+    <el-form-item label="预计获得：" v-if="state.mint.feeMap[version][amount] != 0">
       {{
-        utils.format.bigToString(
-          calculateMint
-            .mul(amount)
-            .mul(10000 - state.mint.fee[amount])
-            .div(10000),
+        `${utils.format.bigToString(
+          calculateMint,
           18
-        )
+        )} ${state.app.symbolMap[state.app.chainId].xen} (${utils.format.bigToString(
+          ethPrice,
+          18
+        )} ${state.app.symbolMap[state.app.chainId].eth})`
       }}
-      XEN
     </el-form-item>
     <el-form-item label="高级设置：">
       <el-switch v-model="advanced" />
     </el-form-item>
     <el-form-item label="Gas 价格：" v-if="advanced">
-      <el-input v-model="gasPrice" placeholder="gasPrice"
-        ><template #append> Gwei </template>
+      <el-input v-model="gasPrice" placeholder="gasPrice"><template #append> Gwei </template>
       </el-input>
     </el-form-item>
     <el-form-item label="预计 Gas 费用:" v-if="advanced && gasPrice != ''">
       {{
-        utils.format.bigToString(
+        `${utils.format.bigToString(
           utils.format.stringToBig(gasPrice, 9).mul((gas / 100) * amount),
           18
-        )
+        )} ${state.app.symbolMap[state.app.chainId].eth}`
       }}
-      ETH
     </el-form-item>
     <el-form-item>
       <el-button type="primary" round @click="doMint"> 铸造 </el-button>
@@ -68,6 +61,7 @@
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
 import { BigNumber, utils, log } from "../const";
+import { toRaw } from "vue";
 
 export default {
   data() {
@@ -75,7 +69,9 @@ export default {
       utils: utils,
       amount: 100,
       term: 100,
+      version: 1,
       calculateMint: BigNumber.from(0),
+      ethPrice: BigNumber.from(0),
       advanced: false,
       gasPrice: "",
       gas: 19000000
@@ -104,9 +100,15 @@ export default {
     ...mapActions(["getMintData", "mint"]),
     async getCalculateMint() {
       if (this.state.app.ether.xenBoxHelper) {
-        this.calculateMint = await this.state.app.ether.xenBoxHelper.calculateMintRewardNew(
+        this.calculateMint = (await toRaw(this.state.app.ether.xenBoxHelper).calculateMintRewardNew(
           Math.ceil((this.state.app.rankMap[30] * this.term) / 30),
           this.term
+        )).mul(this.amount)
+          .mul(10000 - this.state.mint.feeMap[this.version][this.amount])
+          .div(10000);
+        this.ethPrice = await toRaw(this.state.app.ether).getEthPrice(
+          this.state.app.chainId,
+          this.calculateMint
         );
       }
     },

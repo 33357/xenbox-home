@@ -10,12 +10,18 @@ export interface App {
   request: Request;
   tokenMap: { [version: number]: { [tokenId: number]: Token } };
   rankMap: { [day: number]: number };
+  symbolMap: {
+    [chainId: number]: {
+      eth: string,
+      xen: string
+    }
+  }
   start: boolean;
 }
 
 export interface Mint {
-  fee: {
-    [amount: number]: number;
+  feeMap: {
+    [version: number]: { [amount: number]: number };
   };
 }
 
@@ -62,16 +68,28 @@ const state: State = {
     ether: new Ether(),
     request: new Request("https://xenbox.store"),
     tokenMap: { 0: {}, 1: {} },
+    symbolMap: {
+      1: { eth: 'ETH', xen: 'XEN' },
+      56: { eth: 'BNB', xen: 'BXEN' },
+      137: { eth: 'MATIC', xen: 'MXEN' },
+    },
     rankMap: {},
     start: false
   },
   mint: {
-    fee: {
-      0: 0,
-      10: 0,
-      20: 0,
-      50: 0,
-      100: 0
+    feeMap: {
+      0: {
+        10: 0,
+        20: 0,
+        50: 0,
+        100: 0
+      },
+      1: {
+        10: 0,
+        20: 0,
+        50: 0,
+        100: 0
+      }
     }
   },
   box: {
@@ -157,10 +175,10 @@ const actions: ActionTree<State, State> = {
   async getMintData({ state }) {
     if (state.app.ether.xenBoxUpgradeable) {
       [
-        state.mint.fee[10],
-        state.mint.fee[20],
-        state.mint.fee[50],
-        state.mint.fee[100]
+        state.mint.feeMap[1][10],
+        state.mint.feeMap[1][20],
+        state.mint.feeMap[1][50],
+        state.mint.feeMap[1][100]
       ] = await Promise.all([
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee10()).toNumber(),
         (await toRaw(state.app.ether.xenBoxUpgradeable).fee20()).toNumber(),
@@ -169,7 +187,7 @@ const actions: ActionTree<State, State> = {
       ]);
     }
     if (state.app.ether.xenBox) {
-      state.mint.fee[0] = (
+      state.mint.feeMap[0][10] = state.mint.feeMap[0][20] = state.mint.feeMap[0][50] = state.mint.feeMap[0][100] = (
         await toRaw(state.app.ether.xenBox).fee()
       ).toNumber();
     }
@@ -276,7 +294,7 @@ const actions: ActionTree<State, State> = {
         );
         state.app.tokenMap[version][tokenId].mint = mint.mul(
           state.app.tokenMap[version][tokenId].end -
-            state.app.tokenMap[version][tokenId].start
+          state.app.tokenMap[version][tokenId].start
         );
       }
     }

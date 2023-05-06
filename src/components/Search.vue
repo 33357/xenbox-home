@@ -35,27 +35,26 @@
           <span
             v-if="
               !state.app.tokenMap[1][tokenId].mint.eq(0) &&
-                state.mint.fee[
+                state.mint.feeMap[version][
                   state.app.tokenMap[1][tokenId].end -
                     state.app.tokenMap[1][tokenId].start
                 ] != 0
             "
           >
             实计获得：{{
-              utils.format.bigToString(
+              `${utils.format.bigToString(
                 state.app.tokenMap[1][tokenId].mint
                   .mul(
                     10000 -
-                      state.mint.fee[
+                      state.mint.feeMap[version][
                         state.app.tokenMap[1][tokenId].end -
                           state.app.tokenMap[1][tokenId].start
                       ]
                   )
                   .div(10000),
                 18
-              )
+              )} ${state.app.symbolMap[state.app.chainId].xen}`
             }}
-            XEN
           </span>
           <div v-if="state.app.tokenMap[1][tokenId].time != 0">
             到期时间：{{
@@ -81,7 +80,8 @@ export default {
     return {
       utils: utils,
       SearchIcon: SearchIcon,
-      searchInput: ""
+      searchInput: "",
+      version: 1
     };
   },
   computed: mapState({

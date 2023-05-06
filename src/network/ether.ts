@@ -5,7 +5,8 @@ import {
   DeploymentInfo as DeploymentInfo2
 } from "xenbox2-contract-sdk";
 import detectEthereumProvider from "@metamask/detect-provider";
-import { ethers, Signer, providers } from "ethers";
+import { ethers, Signer, providers, BigNumber } from "ethers";
+import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
 
 export class Ether {
   public ethereum: any;
@@ -65,33 +66,58 @@ export class Ether {
   }
 
   async changeChain(chainId: number) {
+    if (chainId == 1 ||chainId == 56 ||chainId == 137) {
+      await this.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [
+          {
+            chainId: `0x${chainId.toString(16)}`
+          }
+        ]
+      });
+    }
+  }
+
+  async getEthPrice(chainId: number, amount: BigNumber) {
     if (chainId == 1) {
-      await this.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [
-          {
-            chainId: "0x1"
-          }
-        ]
-      });
+      const quoterContract = new ethers.Contract(
+        '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6',
+        Quoter.abi,
+        this.provider
+      );
+      return await quoterContract.callStatic.quoteExactInputSingle(
+        "0x06450dEe7FD2Fb8E39061434BAbCFC05599a6Fb8",
+        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        10000,
+        amount,
+        0
+      );
     } else if (chainId == 56) {
-      await this.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [
-          {
-            chainId: "0x38"
-          }
-        ]
-      });
+      const quoterContract = new ethers.Contract(
+        '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6',
+        Quoter.abi,
+        this.provider
+      );
+      return await quoterContract.callStatic.quoteExactInputSingle(
+        "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e",
+        "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+        10000,
+        amount,
+        0
+      );
     } else if (chainId == 137) {
-      await this.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [
-          {
-            chainId: "0x89"
-          }
-        ]
-      });
+      const quoterContract = new ethers.Contract(
+        '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6',
+        Quoter.abi,
+        this.provider
+      );
+      return await quoterContract.callStatic.quoteExactInputSingle(
+        "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e",
+        "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        10000,
+        amount,
+        0
+      );
     }
   }
 }

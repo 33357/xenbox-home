@@ -28,27 +28,26 @@
           <span
             v-if="
               !state.app.tokenMap[version][tokenId].mint.eq(0) &&
-                state.mint.fee[
+                state.mint.feeMap[version][
                   state.app.tokenMap[version][tokenId].end -
                     state.app.tokenMap[version][tokenId].start
                 ] != 0
             "
           >
             实计获得：{{
-              utils.format.bigToString(
+              `${utils.format.bigToString(
                 state.app.tokenMap[version][tokenId].mint
                   .mul(
                     10000 -
-                      state.mint.fee[
+                      state.mint.feeMap[version][
                         state.app.tokenMap[version][tokenId].end -
                           state.app.tokenMap[version][tokenId].start
                       ]
                   )
                   .div(10000),
                 18
-              )
+              )} ${state.app.symbolMap[state.app.chainId].xen}`
             }}
-            XEN
           </span>
           <div v-if="state.app.tokenMap[version][tokenId].time != 0">
             到期时间：{{
@@ -80,14 +79,14 @@
       <el-form-item
         label="预计获得"
         v-if="
-          state.mint.fee[
+          state.mint.feeMap[version][
             state.app.tokenMap[version][tokenId].end -
               state.app.tokenMap[version][tokenId].start
           ] != 0
         "
       >
         {{
-          utils.format.bigToString(
+          `${utils.format.bigToString(
             calculateMint
               .mul(
                 state.app.tokenMap[version][tokenId].end -
@@ -95,16 +94,15 @@
               )
               .mul(
                 10000 -
-                  state.mint.fee[
+                  state.mint.feeMap[version][
                     state.app.tokenMap[version][tokenId].end -
                       state.app.tokenMap[version][tokenId].start
                   ]
               )
               .div(10000),
             18
-          )
+          )} ${state.app.symbolMap[state.app.chainId].xen}`
         }}
-        XEN
       </el-form-item>
       <el-form-item label="高级设置：">
         <el-switch v-model="advanced" />
@@ -116,7 +114,7 @@
       </el-form-item>
       <el-form-item label="预计 Gas 费用:" v-if="advanced && gasPrice != ''">
         {{
-          utils.format.bigToString(
+          `${utils.format.bigToString(
             utils.format
               .stringToBig(gasPrice, 9)
               .mul(
@@ -125,9 +123,8 @@
                     state.app.tokenMap[version][tokenId].start)
               ),
             18
-          )
+          )} ${state.app.symbolMap[state.app.chainId].eth}`
         }}
-        ETH
       </el-form-item>
     </el-form>
     <template #footer>
