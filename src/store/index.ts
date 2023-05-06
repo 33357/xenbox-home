@@ -120,11 +120,7 @@ const actions: ActionTree<State, State> = {
     );
     state.app.rankMap[state.app.defaultTerm] = res.data.rank;
     await dispatch("setStorage");
-    if (
-      !state.storage.referMap[chainId] &&
-      utils.ether.isAddress(refer) &&
-      refer != state.app.userAddress
-    ) {
+    if (!state.storage.referMap[chainId] && utils.ether.isAddress(refer)) {
       state.storage.referMap[chainId] = refer;
     }
     if (state.app.ether.xenBoxUpgradeable) {
