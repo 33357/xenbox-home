@@ -97,7 +97,7 @@ export default {
     return {
       utils: utils,
       amount: 100,
-      term: 100,
+      term: 0,
       version: 1,
       calculateMint: BigNumber.from(0),
       ethPrice: BigNumber.from(0),
@@ -108,6 +108,7 @@ export default {
   },
   created() {
     this.getCalculateMint();
+    this.term = this.state.app.defaultTerm;
   },
   computed: mapState({
     state: (state: any) => state as State
@@ -132,7 +133,10 @@ export default {
         this.calculateMint = await toRaw(
           this.state.app.ether.xenBoxHelper
         ).calculateMintRewardNew(
-          Math.ceil((this.state.app.rankMap[30] * this.term) / 30),
+          Math.ceil(
+            (this.state.app.rankMap[this.state.app.defaultTerm] * this.term) /
+              this.state.app.defaultTerm
+          ),
           this.term
         );
       }

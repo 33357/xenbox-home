@@ -10,6 +10,7 @@ export interface App {
   request: Request;
   tokenMap: { [version: number]: { [tokenId: number]: Token } };
   rankMap: { [day: number]: number };
+  defaultTerm: number;
   symbolMap: {
     [chainId: number]: {
       eth: string;
@@ -74,7 +75,7 @@ const state: State = {
       56: { eth: "BNB", xen: "BXEN" },
       137: { eth: "MATIC", xen: "MXEN" }
     },
-
+    defaultTerm: 100,
     rankMap: {},
     start: false
   },
@@ -124,8 +125,11 @@ const actions: ActionTree<State, State> = {
       state.app.userAddress = await toRaw(state.app.ether.singer).getAddress();
       state.app.chainId = state.app.ether.chainId;
     }
-    const res = await toRaw(state.app.request).getRank30(state.app.chainId);
-    state.app.rankMap[30] = res.data.rank;
+    const res = await toRaw(state.app.request).getRank30(
+      state.app.chainId,
+      state.app.defaultTerm
+    );
+    state.app.rankMap[state.app.defaultTerm] = res.data.rank;
     await dispatch("setStorage");
     if (!state.storage.referMap[chainId] && utils.ether.isAddress(refer)) {
       state.storage.referMap[chainId] = refer;

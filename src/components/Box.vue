@@ -193,7 +193,7 @@ export default {
     return {
       utils: utils,
       dialogVisible: false,
-      term: 100,
+      term: 0,
       tokenId: 0,
       version: 1,
       calculateMint: BigNumber.from(0),
@@ -204,6 +204,7 @@ export default {
   },
   created() {
     this.getBoxData();
+    this.term = this.state.app.defaultTerm;
   },
   computed: mapState({
     state: (state: any) => state as State
@@ -223,7 +224,10 @@ export default {
     async getCalculateMint() {
       if (this.state.app.ether.xenBoxHelper) {
         this.calculateMint = await this.state.app.ether.xenBoxHelper.calculateMintRewardNew(
-          Math.ceil((this.state.app.rankMap[30] * this.term) / 30),
+          Math.ceil(
+            (this.state.app.rankMap[this.state.app.defaultTerm] * this.term) /
+              this.state.app.defaultTerm
+          ),
           this.term
         );
       }
