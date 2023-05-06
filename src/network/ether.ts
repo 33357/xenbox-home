@@ -7,7 +7,7 @@ import {
 import { utils } from "../const";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers, Signer, providers } from "ethers";
-import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
+import QuoterV2 from "@uniswap/v3-periphery/artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json";
 
 export class Ether {
   public ethereum: any;
@@ -82,43 +82,49 @@ export class Ether {
   async getEthPrice(chainId: number) {
     if (chainId == 1) {
       const quoterContract = new ethers.Contract(
-        "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6",
-        Quoter.abi,
+        "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+        QuoterV2.abi,
         this.provider
       );
-      return await quoterContract.callStatic.quoteExactOutputSingle(
-        "0x06450dEe7FD2Fb8E39061434BAbCFC05599a6Fb8",
-        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-        10000,
-        utils.num.ether,
-        0
-      );
+      return (
+        await quoterContract.callStatic.quoteExactOutputSingle({
+          tokenIn: "0x06450dEe7FD2Fb8E39061434BAbCFC05599a6Fb8",
+          tokenOut: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+          amount: utils.num.ether,
+          fee: 10000,
+          sqrtPriceLimitX96: 0
+        })
+      )[0];
     } else if (chainId == 56) {
       const quoterContract = new ethers.Contract(
-        "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6",
-        Quoter.abi,
+        "0xB048Bbc1Ee6b733FFfCFb9e9CeF7375518e25997",
+        QuoterV2.abi,
         this.provider
       );
-      return await quoterContract.callStatic.quoteExactOutputSingle(
-        "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e",
-        "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
-        10000,
-        utils.num.ether,
-        0
-      );
+      return (
+        await quoterContract.callStatic.quoteExactOutputSingle({
+          tokenIn: "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e",
+          tokenOut: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+          amount: utils.num.ether,
+          fee: 10000,
+          sqrtPriceLimitX96: 0
+        })
+      )[0];
     } else if (chainId == 137) {
       const quoterContract = new ethers.Contract(
-        "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6",
-        Quoter.abi,
+        "0x61fFE014bA17989E743c5F6cB21bF9697530B21e",
+        QuoterV2.abi,
         this.provider
       );
-      return await quoterContract.callStatic.quoteExactOutputSingle(
-        "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e",
-        "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
-        10000,
-        utils.num.ether,
-        0
-      );
+      return (
+        await quoterContract.callStatic.quoteExactOutputSingle({
+          tokenIn: "0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e",
+          tokenOut: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+          amount: utils.num.ether,
+          fee: 10000,
+          sqrtPriceLimitX96: 0
+        })
+      )[0];
     }
   }
 }
