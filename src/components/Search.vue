@@ -52,7 +52,8 @@
                       ]
                   )
                   .div(10000),
-                18,0
+                18,
+                0
               )} ${
                 state.app.symbolMap[state.app.chainId].xen
               } (${utils.format.bigToString(
@@ -75,7 +76,8 @@
                   .div(10000)
                   .mul(utils.num.ether)
                   .div(state.mint.perEthAmount),
-                18,4
+                18,
+                4
               )} ${state.app.symbolMap[state.app.chainId].eth})`
             }}
           </span>

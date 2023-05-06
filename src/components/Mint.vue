@@ -9,7 +9,9 @@
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
     <el-form-item label="Gas 预测：">
-      <a href="https://gas.33357.club" target="_blank"> https://gas.33357.club </a>
+      <a href="https://gas.33357.club" target="_blank">
+        https://gas.33357.club
+      </a>
     </el-form-item>
     <el-form-item label="XEN 宝箱">
       <img
@@ -29,7 +31,10 @@
     <el-form-item label="锁定时间：">
       <el-input-number v-model="term" :min="1" @change="termChange" /> 天
     </el-form-item>
-    <el-form-item label="手续费率：">
+    <el-form-item
+      label="手续费率："
+      v-if="state.mint.feeMap[version][amount] != 0"
+    >
       {{ state.mint.feeMap[version][amount] / 100 }} %
     </el-form-item>
     <el-form-item
@@ -42,7 +47,8 @@
             .mul(amount)
             .mul(10000 - state.mint.feeMap[version][amount])
             .div(10000),
-          18,0
+          18,
+          0
         )} ${
           state.app.symbolMap[state.app.chainId].xen
         } (${utils.format.bigToString(
@@ -52,7 +58,8 @@
             .div(10000)
             .mul(utils.num.ether)
             .div(state.mint.perEthAmount),
-          18,4
+          18,
+          4
         )} ${state.app.symbolMap[state.app.chainId].eth})`
       }}
     </el-form-item>
@@ -68,7 +75,8 @@
       {{
         `${utils.format.bigToString(
           utils.format.stringToBig(gasPrice, 9).mul((gas / 100) * amount),
-          18,4
+          18,
+          4
         )} ${state.app.symbolMap[state.app.chainId].eth}`
       }}
     </el-form-item>

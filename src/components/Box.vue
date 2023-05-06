@@ -45,7 +45,8 @@
                       ]
                   )
                   .div(10000),
-                18,0
+                18,
+                0
               )} ${
                 state.app.symbolMap[state.app.chainId].xen
               } (${utils.format.bigToString(
@@ -167,7 +168,8 @@
                   (state.app.tokenMap[version][tokenId].end -
                     state.app.tokenMap[version][tokenId].start)
               ),
-            18,4
+            18,
+            4
           )} ${state.app.symbolMap[state.app.chainId].eth}`
         }}
       </el-form-item>

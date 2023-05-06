@@ -6,7 +6,7 @@ import {
 } from "xenbox2-contract-sdk";
 import { utils } from "../const";
 import detectEthereumProvider from "@metamask/detect-provider";
-import { ethers, Signer, providers, BigNumber } from "ethers";
+import { ethers, Signer, providers } from "ethers";
 import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
 
 export class Ether {
