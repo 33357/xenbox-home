@@ -59,14 +59,6 @@
                       ]
                   )
                   .div(10000)
-                  .mul(
-                    10000 -
-                      state.app.feeMap[version][
-                        state.app.tokenMap[version][tokenId].end -
-                          state.app.tokenMap[version][tokenId].start
-                      ]
-                  )
-                  .div(10000)
                   .mul(utils.num.ether)
                   .div(state.app.perEthAmount),
                 18,

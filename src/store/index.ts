@@ -188,6 +188,12 @@ const actions: ActionTree<State, State> = {
     }
   },
 
+  async getReward({ state }) {
+    if (state.app.ether.xenBoxUpgradeable) {
+      await toRaw(state.app.ether.xenBoxUpgradeable).getReward();
+    }
+  },
+
   async getSearchData({ state, dispatch }, addressOrId: string) {
     if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
       if (utils.ether.isAddress(addressOrId)) {
