@@ -77,7 +77,7 @@
                   .mul(utils.num.ether)
                   .div(state.mint.perEthAmount),
                 18,
-                4
+                6
               )} ${state.app.symbolMap[state.app.chainId].eth})`
             }}
           </span>

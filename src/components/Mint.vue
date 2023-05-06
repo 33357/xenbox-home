@@ -59,7 +59,7 @@
             .mul(utils.num.ether)
             .div(state.mint.perEthAmount),
           18,
-          4
+          6
         )} ${state.app.symbolMap[state.app.chainId].eth})`
       }}
     </el-form-item>
@@ -76,7 +76,7 @@
         `${utils.format.bigToString(
           utils.format.stringToBig(gasPrice, 9).mul((gas / 100) * amount),
           18,
-          4
+          6
         )} ${state.app.symbolMap[state.app.chainId].eth}`
       }}
     </el-form-item>
