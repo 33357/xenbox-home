@@ -13,7 +13,7 @@
         `https://xenbox.store/?c=${state.app.chainId}&r=${state.app.userAddress}`
       }}
     </el-form-item>
-    <el-form-item label="未领奖励()：">
+    <el-form-item label="未领奖励：">
       {{
         `${utils.format.bigToString(state.share.reward, 18, 0)} ${
           state.app.symbolMap[state.app.chainId].xen
