@@ -9,8 +9,8 @@
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
     <el-form-item label="Gas 预测：">
-      <a href="https://gas.33357.club" target="_blank">
-        https://gas.33357.club
+      <a :href="`https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}`" target="_blank">
+        {{ `https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}` }}
       </a>
     </el-form-item>
     <el-form-item label="XEN 宝箱">
@@ -74,7 +74,7 @@
     <el-form-item label="预计 Gas 费用:" v-if="advanced && gasPrice != ''">
       {{
         `${utils.format.bigToString(
-          utils.format.stringToBig(gasPrice, 9).mul((gas / 100) * amount),
+          utils.format.stringToBig(gasPrice, 9).mul((gasLimit / 100) * amount),
           18,
           6
         )} ${state.app.symbolMap[state.app.chainId].eth}`
@@ -103,7 +103,7 @@ export default {
       ethPrice: BigNumber.from(0),
       advanced: false,
       gasPrice: "",
-      gas: 19000000
+      gasLimit: 19000000
     };
   },
   created() {
