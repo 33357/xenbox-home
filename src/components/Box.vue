@@ -142,6 +142,14 @@
           )} ${state.app.symbolMap[state.app.chainId].eth})`
         }}
       </el-form-item>
+      <el-form-item label="Gas 预测：">
+        <a
+          :href="`https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}`"
+          target="_blank"
+        >
+          {{ `https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}` }}
+        </a>
+      </el-form-item>
       <el-form-item label="高级设置：">
         <el-switch v-model="advanced" />
       </el-form-item>
@@ -156,7 +164,7 @@
             utils.format
               .stringToBig(gasPrice, 9)
               .mul(
-                (gas / 100) *
+                (gasLimit / 100) *
                   (state.app.tokenMap[version][tokenId].end -
                     state.app.tokenMap[version][tokenId].start)
               ),
@@ -191,7 +199,7 @@ export default {
       calculateMint: BigNumber.from(0),
       advanced: false,
       gasPrice: "",
-      gas: 7000000
+      gasLimit: 7000000
     };
   },
   created() {
@@ -226,6 +234,7 @@ export default {
     },
     async confirm() {
       await this.claim({
+        version: this.version,
         tokenId: this.tokenId,
         term: this.term,
         gasPrice:

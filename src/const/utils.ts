@@ -46,7 +46,7 @@ const func = {
     return new Promise(resolve => setTimeout(resolve, time));
   },
 
-  getParameterByName:(name: string)=> {
+  getParameterByName: (name: string) => {
     var url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");

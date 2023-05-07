@@ -9,7 +9,10 @@
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
     <el-form-item label="Gas 预测：">
-      <a :href="`https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}`" target="_blank">
+      <a
+        :href="`https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}`"
+        target="_blank"
+      >
         {{ `https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}` }}
       </a>
     </el-form-item>
