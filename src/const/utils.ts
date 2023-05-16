@@ -178,7 +178,10 @@ const format = {
       }
       str = `0.${str}`.substring(0, fix + 2);
     }
-    while (str[str.length - 1] == "0" || str[str.length - 1] == ".") {
+    while (
+      (str[str.length - 1] == "0" && str.indexOf(".") != -1) ||
+      str[str.length - 1] == "."
+    ) {
       str = str.substring(0, str.length - 1);
     }
     return str;
