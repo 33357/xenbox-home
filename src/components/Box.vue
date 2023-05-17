@@ -186,7 +186,7 @@
 <script lang="ts">
 import { mapState, mapActions } from "vuex";
 import { State } from "../store";
-import { BigNumber, utils } from "../const";
+import { BigNumber, utils, log } from "../const";
 
 export default {
   data() {

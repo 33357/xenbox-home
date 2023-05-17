@@ -110,8 +110,8 @@ export default {
     };
   },
   created() {
-    this.getCalculateMint();
     this.term = this.state.app.defaultTerm;
+    this.getCalculateMint();
   },
   computed: mapState({
     state: (state: any) => state as State

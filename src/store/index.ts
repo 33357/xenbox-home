@@ -198,12 +198,13 @@ const actions: ActionTree<State, State> = {
 
   async getSearchData({ state, dispatch }, addressOrId: string) {
     if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
+      let tokenIdList: number[] = [];
       if (utils.ether.isAddress(addressOrId)) {
         const totalToken = await toRaw(
           state.app.ether.xenBoxUpgradeable
         ).totalToken();
         if (totalToken.gt(BigNumber.from(0))) {
-          state.search.tokenIdList = (
+          tokenIdList = (
             await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
               toRaw(state.app.ether.xenBoxUpgradeable).address(),
               addressOrId,
@@ -215,21 +216,23 @@ const actions: ActionTree<State, State> = {
           });
         }
       } else if (addressOrId != "") {
-        state.search.tokenIdList = [Number(addressOrId)];
+        tokenIdList = [Number(addressOrId)];
       }
-      state.search.tokenIdList.forEach(async tokenId => {
+      tokenIdList.forEach(async tokenId => {
         await dispatch("getTokenData", { version: 1, tokenId });
       });
+      state.search.tokenIdList = tokenIdList;
     }
   },
 
   async getBoxData({ state, dispatch }) {
     if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
+      let tokenIdList: { version: number; tokenId: number }[] = [];
       const totalToken = await toRaw(
         state.app.ether.xenBoxUpgradeable
       ).totalToken();
       if (totalToken.gt(BigNumber.from(0))) {
-        state.box.tokenIdList = (
+        tokenIdList = (
           await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
             toRaw(state.app.ether.xenBoxUpgradeable).address(),
             state.app.userAddress,
@@ -241,8 +244,8 @@ const actions: ActionTree<State, State> = {
         });
       }
       if (state.app.ether.xenBox) {
-        state.box.tokenIdList = [
-          ...state.box.tokenIdList,
+        tokenIdList = [
+          ...tokenIdList,
           ...(
             await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
               toRaw(state.app.ether.xenBox).address(),
@@ -255,14 +258,16 @@ const actions: ActionTree<State, State> = {
           })
         ];
       }
-      state.box.tokenIdList.forEach(async e => {
+      tokenIdList.forEach(async e => {
         await dispatch("getTokenData", e);
       });
+      state.box.tokenIdList = tokenIdList;
     }
   },
 
   async getShareData({ dispatch, state }) {
     if (state.app.ether.xenBoxHelper && state.app.ether.xenBoxUpgradeable) {
+      let tokenIdList: number[] = [];
       state.share.referFeePercent = (
         await toRaw(state.app.ether.xenBoxUpgradeable).referFeePercent()
       ).toNumber();
@@ -276,7 +281,7 @@ const actions: ActionTree<State, State> = {
         state.app.ether.xenBoxUpgradeable
       ).totalToken();
       if (totalToken.gt(BigNumber.from(0))) {
-        state.share.tokenIdList = (
+        tokenIdList = (
           await toRaw(state.app.ether.xenBoxHelper).getReferTokenIdList(
             toRaw(state.app.ether.xenBoxUpgradeable).address(),
             state.app.userAddress,
@@ -296,15 +301,16 @@ const actions: ActionTree<State, State> = {
         ).map(tokenId => {
           return tokenId.toNumber();
         });
-        state.share.tokenIdList.forEach((tokenId, index) => {
+        tokenIdList.forEach((tokenId, index) => {
           if (ownedTokenIdList.indexOf(tokenId) != -1) {
-            state.share.tokenIdList.splice(index, 1);
+            tokenIdList.splice(index, 1);
           }
         });
-        state.share.tokenIdList.forEach(async tokenId => {
+        tokenIdList.forEach(async tokenId => {
           await dispatch("getTokenData", { version: 1, tokenId });
         });
       }
+      state.share.tokenIdList = tokenIdList;
     }
   },
 
