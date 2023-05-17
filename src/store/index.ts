@@ -40,6 +40,10 @@ export interface Search {
   tokenIdList: number[];
 }
 
+export interface Force {
+  tokenIdList: number[];
+}
+
 export interface Share {
   referFeePercent: number;
   reward: BigNumber;
@@ -55,6 +59,7 @@ export interface State {
   storage: Storage;
   app: App;
   box: Box;
+  force: Force;
   search: Search;
   share: Share;
 }
@@ -94,6 +99,9 @@ const state: State = {
     start: false
   },
   box: {
+    tokenIdList: []
+  },
+  force: {
     tokenIdList: []
   },
   search: {
@@ -196,6 +204,14 @@ const actions: ActionTree<State, State> = {
     }
   },
 
+  async force({ state }, { tokenId, term, gasPrice }) {
+    if (state.app.ether.xenBoxUpgradeable) {
+      await toRaw(state.app.ether.xenBoxUpgradeable).force(tokenId, term, {
+        gasPrice
+      });
+    }
+  },
+
   async getSearchData({ state, dispatch }, addressOrId: string) {
     if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
       let tokenIdList: number[] = [];
@@ -262,6 +278,30 @@ const actions: ActionTree<State, State> = {
         await dispatch("getTokenData", e);
       });
       state.box.tokenIdList = tokenIdList;
+    }
+  },
+
+  async getForceData({ state, dispatch }) {
+    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
+      let tokenIdList: number[] = [];
+      const totalToken = await toRaw(
+        state.app.ether.xenBoxUpgradeable
+      ).totalToken();
+      if (totalToken.gt(BigNumber.from(0))) {
+        tokenIdList = (
+          await toRaw(state.app.ether.xenBoxHelper).getForceTokenIdList(
+            toRaw(state.app.ether.xenBoxUpgradeable).address(),
+            0,
+            totalToken
+          )
+        ).map(tokenId => {
+          return tokenId.toNumber();
+        });
+      }
+      tokenIdList.forEach(async e => {
+        await dispatch("getTokenData", e);
+      });
+      state.force.tokenIdList = tokenIdList;
     }
   },
 

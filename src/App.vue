@@ -6,10 +6,11 @@
       :ellipsis="false"
       @select="handleSelect"
     >
-      <el-menu-item index="1" class="item"> Mint </el-menu-item>
-      <el-menu-item index="2" class="item"> Box </el-menu-item>
-      <el-menu-item index="3" class="item"> Share </el-menu-item>
-      <el-menu-item index="4" class="item"> Search </el-menu-item>
+      <el-menu-item index="1" class="item"> 打造 </el-menu-item>
+      <el-menu-item index="2" class="item"> 我的 </el-menu-item>
+      <el-menu-item index="3" class="item"> 邀请 </el-menu-item>
+      <el-menu-item index="4" class="item"> 重铸 </el-menu-item>
+      <el-menu-item index="5" class="item"> 查找 </el-menu-item>
       <el-menu-item index="-1" class="item" @click="toggleDark()">
         <button
           class="border-none w-full bg-transparent cursor-pointer"
@@ -27,7 +28,8 @@
       <Mint v-if="activeIndex == '1'"></Mint>
       <Box v-if="activeIndex == '2'"></Box>
       <Share v-if="activeIndex == '3'"></Share>
-      <Search v-if="activeIndex == '4'"></Search>
+      <Force v-if="activeIndex == '4'"></Force>
+      <Search v-if="activeIndex == '5'"></Search>
     </el-card>
   </el-config-provider>
 </template>

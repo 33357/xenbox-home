@@ -1,7 +1,7 @@
 <template>
   <el-scrollbar height="600px">
     <el-card
-      v-for="{ version, tokenId } in state.box.tokenIdList"
+      v-for="tokenId in state.force.tokenIdList"
       :key="tokenId"
       :body-style="{ padding: '0px', marginBottom: '1px' }"
     >
@@ -74,21 +74,21 @@
             }}
           </div>
           <el-button
-            @click="doClaim(version, tokenId)"
+            @click="doForce(tokenId)"
             :disabled="
               new Date().getTime() / 1000 <
                 state.app.tokenMap[version][tokenId].time ||
                 state.app.tokenMap[version][tokenId].time == 0
             "
           >
-            开启
+            重铸
           </el-button>
         </div>
       </div>
     </el-card>
   </el-scrollbar>
 
-  <el-dialog v-model="dialogVisible" title="开启宝箱" width="30%">
+  <el-dialog v-model="dialogVisible" title="重铸宝箱" width="30%">
     <el-form label-width="30%">
       <el-form-item label="重新锁定时间">
         <el-input-number v-model="term" :min="1" @change="termChange" /> 天
@@ -204,7 +204,7 @@ export default {
   },
   created() {
     this.term = this.state.app.defaultTerm;
-    this.getBoxData();
+    this.getForceData();
   },
   computed: mapState({
     state: (state: any) => state as State
@@ -220,7 +220,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getBoxData", "claim"]),
+    ...mapActions(["getForceData", "force"]),
     async getCalculateMint() {
       if (this.state.app.ether.xenBoxHelper) {
         this.calculateMint = await this.state.app.ether.xenBoxHelper.calculateMintRewardNew(
@@ -233,8 +233,7 @@ export default {
       }
     },
     async confirm() {
-      await this.claim({
-        version: this.version,
+      await this.force({
         tokenId: this.tokenId,
         term: this.term,
         gasPrice:
@@ -243,10 +242,9 @@ export default {
             : utils.format.stringToBig(this.gasPrice, 9)
       });
       this.dialogVisible = false;
-      this.getBoxData();
+      this.getForceData();
     },
-    doClaim(version: number, tokenId: number) {
-      this.version = version;
+    doForce(tokenId: number) {
       this.tokenId = tokenId;
       this.dialogVisible = true;
       this.getCalculateMint();
