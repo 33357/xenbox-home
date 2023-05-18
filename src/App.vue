@@ -6,7 +6,7 @@
       :ellipsis="false"
       @select="handleSelect"
     >
-      <el-menu-item index="1" class="item"> 打造 </el-menu-item>
+      <el-menu-item index="1" class="item"> 铸造 </el-menu-item>
       <el-menu-item index="2" class="item"> 我的 </el-menu-item>
       <el-menu-item index="3" class="item"> 邀请 </el-menu-item>
       <el-menu-item index="4" class="item"> 重铸 </el-menu-item>

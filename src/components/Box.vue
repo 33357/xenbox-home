@@ -90,7 +90,7 @@
 
   <el-dialog v-model="dialogVisible" title="开启宝箱" width="30%">
     <el-form label-width="30%">
-      <el-form-item label="重新锁定时间">
+      <el-form-item label="下一轮锁定时间">
         <el-input-number v-model="term" :min="1" @change="termChange" /> 天
       </el-form-item>
       <el-form-item
