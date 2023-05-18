@@ -79,6 +79,22 @@ export class Ether {
     }
   }
 
+  async addToken(symbol: string) {
+    if (this.xenBoxUpgradeable) {
+      await this.ethereum.request({
+        method: "wallet_watchAsset",
+        params: {
+          type: "ERC20",
+          options: {
+            address: await this.xenBoxUpgradeable.xenAddress(),
+            symbol,
+            decimals: 18
+          }
+        }
+      });
+    }
+  }
+
   async getEthPrice(chainId: number) {
     if (chainId == 1) {
       const quoterContract = new ethers.Contract(

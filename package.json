@@ -33,7 +33,7 @@
     "vue-tsc": "^0.34.16",
     "vuex": "^4.1.0",
     "xenbox-sdk": "^0.0.11",
-    "xenbox2-contract-sdk": "^0.0.15"
+    "xenbox2-contract-sdk": "^0.0.16"
   },
   "license": "MIT"
 }

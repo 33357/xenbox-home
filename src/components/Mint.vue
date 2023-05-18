@@ -85,6 +85,14 @@
     </el-form-item>
     <el-form-item>
       <el-button type="primary" round @click="doMint"> 铸造 </el-button>
+      <el-button
+        type="primary"
+        round
+        @click="addToken"
+        v-if="state.app.chainId"
+      >
+        {{ `添加 ${state.app.symbolMap[state.app.chainId].xen}` }}
+      </el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -148,6 +156,11 @@ export default {
       if (num) {
         this.term = num;
       }
+    },
+    addToken() {
+      this.state.app.ether.addToken(
+        this.state.app.symbolMap[this.state.app.chainId].xen
+      );
     },
     doMint() {
       this.mint({
