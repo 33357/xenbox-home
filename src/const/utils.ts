@@ -240,6 +240,28 @@ const go = {
   }
 };
 
+function getPenalty(time: number) {
+  const late = new Date().getTime() / 1000 - time;
+  const day = 24 * 60 * 60;
+  if (late < 1 * day) {
+    return 0;
+  } else if (late < 2 * day) {
+    return 1;
+  } else if (late < 3 * day) {
+    return 3;
+  } else if (late < 4 * day) {
+    return 8;
+  } else if (late < 5 * day) {
+    return 17;
+  } else if (late < 6 * day) {
+    return 35;
+  } else if (late < 7 * day) {
+    return 72;
+  } else {
+    return 99;
+  }
+}
+
 const chain: { [CHAIN_ID: string]: Chain } = {
   1: {
     scan: "https://etherscan.io/",
@@ -260,6 +282,7 @@ export interface Chain {
 }
 
 export const utils = {
+  getPenalty,
   num,
   func,
   deep,

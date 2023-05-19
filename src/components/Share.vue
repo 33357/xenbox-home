@@ -113,9 +113,11 @@
             </span>
             <div v-if="state.app.tokenMap[version][tokenId].time != 0">
               到期时间：{{
-                new Date(
+                `${new Date(
                   state.app.tokenMap[version][tokenId].time * 1000
-                ).toLocaleString()
+                ).toLocaleString()} (延期惩罚: ${utils.getPenalty(
+                  state.app.tokenMap[version][tokenId].time
+                )}%)`
               }}
             </div>
           </div>
