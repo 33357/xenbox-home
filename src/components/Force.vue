@@ -15,15 +15,16 @@
           fit="fill"
         />
         <div class="card-header" style="padding: 5px">
-          <span>ID：{{ tokenId }}</span>
+          <span>ID: {{ tokenId }}</span>
           <span
-            >账号数量：{{
+            >账号数量:
+            {{
               state.app.tokenMap[version][tokenId].end -
                 state.app.tokenMap[version][tokenId].start
             }}</span
           >
           <span v-if="state.app.tokenMap[version][tokenId].term != 0"
-            >锁定时间：{{ state.app.tokenMap[version][tokenId].term }} 天</span
+            >锁定时间: {{ state.app.tokenMap[version][tokenId].term }} 天</span
           >
           <span
             v-if="
@@ -34,7 +35,8 @@
                 ] != 0
             "
           >
-            实计获得：{{
+            实计获得:
+            {{
               `${utils.format.bigToString(
                 state.app.tokenMap[version][tokenId].mint
                   .mul(
@@ -67,7 +69,8 @@
             }}
           </span>
           <div v-if="state.app.tokenMap[version][tokenId].time != 0">
-            到期时间：{{
+            到期时间:
+            {{
               `${new Date(
                 state.app.tokenMap[version][tokenId].time * 1000
               ).toLocaleString()} (延期惩罚: ${utils.getPenalty(
@@ -144,7 +147,7 @@
           )} ${state.app.chainMap[state.app.chainId].eth})`
         }}
       </el-form-item>
-      <el-form-item label="Gas 预测：">
+      <el-form-item label="Gas 预测:">
         <a
           :href="`https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}`"
           target="_blank"
@@ -152,10 +155,10 @@
           {{ `https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}` }}
         </a>
       </el-form-item>
-      <el-form-item label="高级设置：">
+      <el-form-item label="高级设置:">
         <el-switch v-model="advanced" />
       </el-form-item>
-      <el-form-item label="Gas 价格：" v-if="advanced">
+      <el-form-item label="Gas 价格:" v-if="advanced">
         <el-input v-model="gasPrice" placeholder="gasPrice"
           ><template #append> Gwei </template>
         </el-input>

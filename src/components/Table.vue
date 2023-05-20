@@ -1,9 +1,9 @@
 <template>
   <el-form label-width="30%">
-    <el-form-item label="xenbox 总量：">
+    <el-form-item label="xenbox 总量:">
       {{ state.table.totalToken }}
     </el-form-item>
-    <el-form-item label="xenbox 地址：">
+    <el-form-item label="xenbox 地址:">
       <a
         :href="
           `${state.app.chainMap[state.app.chainId].scan}address/${
@@ -15,9 +15,7 @@
         点击跳转
       </a>
     </el-form-item>
-    <el-form-item
-      :label="`${state.app.chainMap[state.app.chainId].xen} 地址：`"
-    >
+    <el-form-item :label="`${state.app.chainMap[state.app.chainId].xen} 地址:`">
       <a
         :href="
           `${state.app.chainMap[state.app.chainId].scan}token/${
@@ -39,14 +37,16 @@
         {{ `添加 ${state.app.chainMap[state.app.chainId].xen}` }}
       </el-button></el-form-item
     >
-    <el-form-item label="资金池：">
+    <el-form-item
+      :label="`${state.app.chainMap[state.app.chainId].xen} 资金池:`"
+    >
       {{
         `${utils.format.bigToString(state.table.poolBalance, 18, 6)} ${
           state.app.chainMap[state.app.chainId].eth
         }`
       }}
     </el-form-item>
-    <el-form-item label="交易：">
+    <el-form-item :label="`交易 ${state.app.chainMap[state.app.chainId].xen}:`">
       <a
         :href="
           `${state.app.chainMap[state.app.chainId].swap}${

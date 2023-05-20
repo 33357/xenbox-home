@@ -3,7 +3,7 @@
     <el-form-item label="社群：">
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
-    <el-form-item label="Gas 预测：">
+    <el-form-item label="Gas 预测:">
       <a
         :href="`https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}`"
         target="_blank"
@@ -11,14 +11,14 @@
         {{ `https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}` }}
       </a>
     </el-form-item>
-    <el-form-item label="XEN 宝箱">
+    <el-form-item label="XEN 宝箱:">
       <img
         style="width: 250px; height: 250px"
         :src="`/box${amount}.png`"
         fit="fill"
       />
     </el-form-item>
-    <el-form-item label="账号数量：">
+    <el-form-item label="账号数量:">
       <el-radio-group v-model="amount" label="label position">
         <el-radio-button label="100">100</el-radio-button>
         <el-radio-button label="50">50</el-radio-button>
@@ -61,10 +61,10 @@
         )} ${state.app.chainMap[state.app.chainId].eth})`
       }}
     </el-form-item>
-    <el-form-item label="高级设置：">
+    <el-form-item label="高级设置:">
       <el-switch v-model="advanced" />
     </el-form-item>
-    <el-form-item label="Gas 价格：" v-if="advanced">
+    <el-form-item label="Gas 价格:" v-if="advanced">
       <el-input v-model="gasPrice" placeholder="gasPrice"
         ><template #append> Gwei </template>
       </el-input>
