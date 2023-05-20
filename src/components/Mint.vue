@@ -1,10 +1,5 @@
 <template>
   <el-form label-width="30%">
-    <el-form-item label="交易：">
-      <a href="https://opensea.io/zh-CN/collection/xenbox" target="_blank">
-        Opensea
-      </a>
-    </el-form-item>
     <el-form-item label="社群：">
       <a href="https://t.me/xenboxstore" target="_blank"> Telegram </a>
     </el-form-item>
