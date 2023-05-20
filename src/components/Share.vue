@@ -19,12 +19,12 @@
     <el-form-item label="未领奖励：">
       {{
         `${utils.format.bigToString(state.share.reward, 18, 0)} ${
-          state.app.symbolMap[state.app.chainId].xen
+          state.app.chainMap[state.app.chainId].xen
         } (${utils.format.bigToString(
           state.share.reward.mul(utils.num.ether).div(state.app.perEthAmount),
           18,
           6
-        )} ${state.app.symbolMap[state.app.chainId].eth})`
+        )} ${state.app.chainMap[state.app.chainId].eth})`
       }}
     </el-form-item>
     <el-form-item>
@@ -91,7 +91,7 @@
                   18,
                   0
                 )} ${
-                  state.app.symbolMap[state.app.chainId].xen
+                  state.app.chainMap[state.app.chainId].xen
                 } (${utils.format.bigToString(
                   state.app.tokenMap[version][tokenId].mint
                     .mul(
@@ -108,7 +108,7 @@
                     .div(state.app.perEthAmount),
                   18,
                   6
-                )} ${state.app.symbolMap[state.app.chainId].eth})`
+                )} ${state.app.chainMap[state.app.chainId].eth})`
               }}
             </span>
             <div v-if="state.app.tokenMap[version][tokenId].time != 0">

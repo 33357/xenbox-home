@@ -6,8 +6,20 @@ import {
 } from "xenbox2-contract-sdk";
 import { utils } from "../const";
 import detectEthereumProvider from "@metamask/detect-provider";
-import { ethers, Signer, providers } from "ethers";
+import { ethers, Signer, providers, Contract } from "ethers";
 import QuoterV2 from "@uniswap/v3-periphery/artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json";
+
+const ABI = [
+  {
+    constant: true,
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    name: "balanceOf",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    payable: false,
+    stateMutability: "view",
+    type: "function"
+  }
+];
 
 export class Ether {
   public ethereum: any;
@@ -93,6 +105,11 @@ export class Ether {
         }
       });
     }
+  }
+
+  async getBalance(token: string, owner: string) {
+    const contract = new Contract(token, ABI, this.provider);
+    return contract.balanceOf(owner);
   }
 
   async getEthPrice(chainId: number) {

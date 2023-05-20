@@ -11,10 +11,14 @@ export interface App {
   tokenMap: { [version: number]: { [tokenId: number]: Token } };
   rankMap: { [day: number]: number };
   defaultTerm: number;
-  symbolMap: {
+  chainMap: {
     [chainId: number]: {
       eth: string;
       xen: string;
+      scan: string;
+      weth: string;
+      swap: string;
+      poolList: string[];
     };
   };
   perEthAmount: BigNumber;
@@ -44,6 +48,13 @@ export interface Force {
   tokenIdList: number[];
 }
 
+export interface Table {
+  totalToken: number;
+  tokenAddress: string;
+  xenAddress: string;
+  poolBalance: BigNumber;
+}
+
 export interface Share {
   referFeePercent: number;
   reward: BigNumber;
@@ -62,6 +73,7 @@ export interface State {
   force: Force;
   search: Search;
   share: Share;
+  table: Table;
 }
 
 const state: State = {
@@ -74,10 +86,38 @@ const state: State = {
     ether: new Ether(),
     request: new Request("https://xenbox.store"),
     tokenMap: { 0: {}, 1: {} },
-    symbolMap: {
-      1: { eth: "ETH", xen: "XEN" },
-      56: { eth: "BNB", xen: "BXEN" },
-      137: { eth: "MATIC", xen: "MXEN" }
+    chainMap: {
+      1: {
+        eth: "ETH",
+        xen: "XEN",
+        scan: "https://etherscan.io/",
+        weth: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        swap: "https://app.uniswap.org/#/tokens/ethereum/",
+        poolList: [
+          "0x2a9d2ba41aba912316D16742f259412B681898Db",
+          "0xC0d776E2223c9a2ad13433DAb7eC08cB9C5E76ae"
+        ]
+      },
+      56: {
+        eth: "BNB",
+        xen: "BXEN",
+        scan: "https://bscscan.com/",
+        weth: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+        swap:
+          "https://pancakeswap.finance/swap?chain=bsc&outputCurrency=BNB&inputCurrency=",
+        poolList: [
+          "0x9F8ca02962dE84a7094c381d66efD46e01c2b8f0",
+          "0xaaa77F0aCDc01CbE71e74f177EFd38697B5a7FEB"
+        ]
+      },
+      137: {
+        eth: "MATIC",
+        xen: "MXEN",
+        scan: "https://polygonscan.com/",
+        weth: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+        swap: "https://app.uniswap.org/#/tokens/polygon/",
+        poolList: ["0x97FFB2574257280e0FB2FA522345F0E81fAae711"]
+      }
     },
     defaultTerm: 100,
     rankMap: {},
@@ -106,6 +146,12 @@ const state: State = {
   },
   search: {
     tokenIdList: []
+  },
+  table: {
+    totalToken: 0,
+    tokenAddress: "",
+    xenAddress: "",
+    poolBalance: BigNumber.from(0)
   },
   share: {
     isRefer: false,
@@ -278,6 +324,30 @@ const actions: ActionTree<State, State> = {
         await dispatch("getTokenData", e);
       });
       state.box.tokenIdList = tokenIdList;
+    }
+  },
+
+  async getTableData({ state }) {
+    if (state.app.ether.xenBoxUpgradeable && state.app.ether.xenBoxHelper) {
+      state.table.tokenAddress = state.app.ether.xenBoxUpgradeable.address();
+      [state.table.xenAddress, state.table.totalToken] = await Promise.all([
+        state.app.ether.xenBoxUpgradeable.xenAddress(),
+        (await state.app.ether.xenBoxUpgradeable.totalToken()).toNumber()
+      ]);
+      let pList: any[] = [];
+      state.app.chainMap[state.app.chainId].poolList.forEach(poolAddress => {
+        pList.push(
+          toRaw(state.app.ether).getBalance(
+            state.app.chainMap[state.app.chainId].weth,
+            poolAddress
+          )
+        );
+      });
+      let poolBalance = BigNumber.from(0);
+      (await Promise.all(pList)).forEach(balance => {
+        poolBalance = poolBalance.add(balance);
+      });
+      state.table.poolBalance = poolBalance;
     }
   },
 

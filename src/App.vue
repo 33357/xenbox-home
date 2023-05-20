@@ -11,6 +11,7 @@
       <el-menu-item index="3" class="item"> 邀请 </el-menu-item>
       <el-menu-item index="4" class="item"> 重铸 </el-menu-item>
       <el-menu-item index="5" class="item"> 查找 </el-menu-item>
+      <el-menu-item index="6" class="item"> 数据 </el-menu-item>
       <el-menu-item index="-1" class="item" @click="toggleDark()">
         <button
           class="border-none w-full bg-transparent cursor-pointer"
@@ -30,6 +31,7 @@
       <Share v-if="activeIndex == '3'"></Share>
       <Force v-if="activeIndex == '4'"></Force>
       <Search v-if="activeIndex == '5'"></Search>
+      <Table v-if="activeIndex == '6'"></Table>
     </el-card>
   </el-config-provider>
 </template>

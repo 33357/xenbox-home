@@ -24,6 +24,7 @@ declare module '@vue/runtime-core' {
     Mint: typeof import('./components/Mint.vue')['default']
     Search: typeof import('./components/Search.vue')['default']
     Share: typeof import('./components/Share.vue')['default']
+    Table: typeof import('./components/Table.vue')['default']
   }
 }
 

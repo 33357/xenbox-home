@@ -58,7 +58,7 @@
                   18,
                   0
                 )} ${
-                  state.app.symbolMap[state.app.chainId].xen
+                  state.app.chainMap[state.app.chainId].xen
                 } (${utils.format.bigToString(
                   state.app.tokenMap[version][tokenId].mint
                     .mul(
@@ -73,7 +73,7 @@
                     .div(state.app.perEthAmount),
                   18,
                   6
-                )} ${state.app.symbolMap[state.app.chainId].eth})`
+                )} ${state.app.chainMap[state.app.chainId].eth})`
               }}
             </span>
             <div v-if="state.app.tokenMap[version][tokenId].time != 0">
@@ -132,7 +132,7 @@
               18,
               0
             )} ${
-              state.app.symbolMap[state.app.chainId].xen
+              state.app.chainMap[state.app.chainId].xen
             } (${utils.format.bigToString(
               calculateMint
                 .mul(
@@ -151,7 +151,7 @@
                 .div(state.app.perEthAmount),
               18,
               6
-            )} ${state.app.symbolMap[state.app.chainId].eth})`
+            )} ${state.app.chainMap[state.app.chainId].eth})`
           }}
         </el-form-item>
         <el-form-item label="Gas 预测：">
@@ -184,7 +184,7 @@
                 ),
               18,
               6
-            )} ${state.app.symbolMap[state.app.chainId].eth}`
+            )} ${state.app.chainMap[state.app.chainId].eth}`
           }}
         </el-form-item>
       </el-form>
