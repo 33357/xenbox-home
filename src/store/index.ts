@@ -9,6 +9,8 @@ export interface App {
   ether: Ether;
   request: Request;
   tokenMap: { [version: number]: { [tokenId: number]: Token } };
+  loadAmount: number;
+  maxLoadAmount: number;
   rankMap: { [day: number]: number };
   defaultTerm: number;
   chainMap: {
@@ -86,6 +88,8 @@ const state: State = {
     ether: new Ether(),
     request: new Request("https://xenbox.store"),
     tokenMap: { 0: {}, 1: {} },
+    loadAmount: 0,
+    maxLoadAmount: 10,
     chainMap: {
       1: {
         eth: "ETH",
@@ -434,6 +438,10 @@ const actions: ActionTree<State, State> = {
           term: 0,
           mint: BigNumber.from(0)
         };
+        while (state.app.loadAmount >= state.app.maxLoadAmount) {
+          await utils.func.sleep(100);
+        }
+        state.app.loadAmount++;
         let proxy: any;
         let userMints: any;
         if (version == 1 && state.app.ether.xenBoxUpgradeable) {
@@ -472,6 +480,7 @@ const actions: ActionTree<State, State> = {
           state.app.tokenMap[version][tokenId].end -
             state.app.tokenMap[version][tokenId].start
         );
+        state.app.loadAmount--;
       }
     }
   }
