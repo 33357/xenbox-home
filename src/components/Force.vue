@@ -149,10 +149,10 @@
       </el-form-item>
       <el-form-item label="Gas 预测:">
         <a
-          :href="`https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}`"
+          :href="`https://gas.33357.xyz/?c=${state.app.chainId}&g=${gasLimit}`"
           target="_blank"
         >
-          {{ `https://gas.33357.club/?c=${state.app.chainId}&g=${gasLimit}` }}
+          {{ `https://gas.33357.xyz/?c=${state.app.chainId}&g=${gasLimit}` }}
         </a>
       </el-form-item>
       <el-form-item label="高级设置:">
