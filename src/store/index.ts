@@ -86,7 +86,7 @@ const state: State = {
     userAddress: utils.num.min,
     chainId: 0,
     ether: new Ether(),
-    request: new Request("https://xenbox.store"),
+    request: new Request("https://xenbox.33357.xyz"),
     tokenMap: { 0: {}, 1: {} },
     loadAmount: 0,
     maxLoadAmount: 10,
