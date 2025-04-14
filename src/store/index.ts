@@ -123,7 +123,7 @@ const state: State = {
         poolList: ["0x97FFB2574257280e0FB2FA522345F0E81fAae711"]
       }
     },
-    defaultTerm: 100,
+    defaultTerm: 365,
     rankMap: {},
     perEthAmount: BigNumber.from(0),
     feeMap: {
@@ -297,8 +297,9 @@ const actions: ActionTree<State, State> = {
       const totalToken = await toRaw(
         state.app.ether.xenBoxUpgradeable
       ).totalToken();
+      log(totalToken)
       if (totalToken.gt(BigNumber.from(0))) {
-        tokenIdList = (
+        tokenIdList.push(... (
           await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
             toRaw(state.app.ether.xenBoxUpgradeable).address(),
             state.app.userAddress,
@@ -307,11 +308,11 @@ const actions: ActionTree<State, State> = {
           )
         ).map(tokenId => {
           return { version: 1, tokenId: tokenId.toNumber() };
-        });
+        }))
       }
+      log(tokenIdList)
       if (state.app.ether.xenBox) {
-        tokenIdList = [
-          ...tokenIdList,
+        tokenIdList.push(
           ...(
             await toRaw(state.app.ether.xenBoxHelper).getOwnedTokenIdList(
               toRaw(state.app.ether.xenBox).address(),
@@ -322,8 +323,9 @@ const actions: ActionTree<State, State> = {
           ).map(tokenId => {
             return { version: 0, tokenId: tokenId.toNumber() };
           })
-        ];
+        );
       }
+      log(tokenIdList)
       tokenIdList.forEach(async e => {
         await dispatch("getTokenData", e);
       });
@@ -478,7 +480,7 @@ const actions: ActionTree<State, State> = {
         );
         state.app.tokenMap[version][tokenId].mint = mint.mul(
           state.app.tokenMap[version][tokenId].end -
-            state.app.tokenMap[version][tokenId].start
+          state.app.tokenMap[version][tokenId].start
         );
         state.app.loadAmount--;
       }
