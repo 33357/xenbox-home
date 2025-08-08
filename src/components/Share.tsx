@@ -416,8 +416,10 @@ const Share = () => {
         .invite-link {
           flex: 1;
           padding: var(--space-md);
-          background: var(--bg-secondary);
-          border: 2px solid var(--glass-border);
+          background: var(--glass-bg);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid var(--glass-border);
           border-radius: var(--radius-md);
           color: var(--text-primary);
           font-family: 'Space Grotesk', monospace;
@@ -425,18 +427,24 @@ const Share = () => {
           font-weight: 500;
           transition: all var(--transition-base);
           position: relative;
+          cursor: text;
+          user-select: all;
+          -webkit-user-select: all;
+          -moz-user-select: all;
+          -ms-user-select: all;
         }
 
         .invite-link:focus {
           outline: none;
           border-color: var(--accent);
-          background: var(--bg-primary);
-          box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.1);
+          background: var(--glass-bg);
+          box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
         .invite-link:hover {
           border-color: var(--primary);
-          background: var(--bg-primary);
+          background: var(--glass-bg);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .copy-button {
@@ -617,10 +625,14 @@ const Share = () => {
         }
 
         .claim-button:disabled {
-          background: var(--bg-tertiary);
+          background: var(--glass-bg);
           color: var(--text-tertiary);
           cursor: not-allowed;
           box-shadow: none;
+          border: 1px solid var(--glass-border);
+          opacity: 0.6;
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
         }
 
         .button-icon {

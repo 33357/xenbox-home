@@ -145,7 +145,7 @@ export const useXenBox = () => {
 
     try {
       // 获取排名数据
-      const rankData = await fetchRankData(wallet.chainId, state.defaultTerm);
+      const rankData = await calculateRankData(wallet.chainId, state.defaultTerm);
       
       // 获取费用数据
       const feeData = await fetchFeeData(contracts);
@@ -173,15 +173,58 @@ export const useXenBox = () => {
     }
   };
 
-  // 获取排名数据
-  const fetchRankData = async (chainId: number, term: number): Promise<number> => {
+  // 本地计算排名数据
+  const calculateRankData = async (chainId: number, term: number): Promise<number> => {
     try {
-      const response = await fetch(`/api/rank/${chainId}/${term}`);
-      const data = await response.json();
-      return data.rank || 1000000;
+      if (!contracts?.xen) {
+        console.warn('XEN合约未初始化，使用默认排名');
+        return 1000000;
+      }
+
+      // 获取当前区块和排名
+      const provider = wallet.signer?.provider;
+      if (!provider) {
+        console.warn('Provider未初始化，使用默认排名');
+        return 1000000;
+      }
+
+      const [currentRank, currentBlock] = await Promise.all([
+        contracts.xen.globalRank(),
+        provider.getBlockNumber()
+      ]);
+
+      // 计算指定天数前的区块（假设平均12秒一个区块）
+      const blocksPerDay = (24 * 60 * 60) / 12;
+      const targetBlock = Math.max(0, currentBlock - Math.floor(term * blocksPerDay));
+
+      // 获取目标区块的排名
+      const targetRank = await contracts.xen.globalRank({
+        blockTag: targetBlock
+      });
+
+      // 计算排名增长
+      const rankGrowth = currentRank.sub(targetRank).toNumber();
+      
+      log(`排名计算: 当前排名=${currentRank.toNumber()}, ${term}天前排名=${targetRank.toNumber()}, 增长=${rankGrowth}`);
+      
+      return Math.max(1, rankGrowth);
     } catch (error) {
-      console.warn('获取排名数据失败:', error);
-      return 1000000;
+      console.warn('本地排名计算失败:', error);
+      
+      // 特殊处理chainId为30的情况
+      if (chainId === 30) {
+        return 1000000; // 默认值
+      }
+      
+      // 返回基于链ID和天数的估算值
+      const baseRank = 1000000;
+      const dailyGrowth = {
+        1: 50000,   // 以太坊
+        56: 30000,  // BSC
+        137: 20000  // Polygon
+      }[chainId] || 10000;
+      
+      return Math.max(1, Math.floor(baseRank + (term * dailyGrowth * Math.random())));
     }
   };
 

@@ -207,7 +207,7 @@ const Table = () => {
                   href={getSwapUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="action-button secondary"
+                  className="action-button primary"
                 >
                   <span className="button-icon">🚀</span>
                   去交易
@@ -434,13 +434,17 @@ const Table = () => {
         .address {
           font-family: 'Space Grotesk', monospace;
           font-size: 0.9rem;
-          color: var(--text-secondary);
-          background: var(--bg-tertiary);
-          padding: var(--space-sm);
+          color: var(--text-primary);
+          background: var(--glass-bg);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid var(--glass-border);
+          padding: var(--space-sm) var(--space-md);
           border-radius: var(--radius-md);
           word-break: break-all;
           flex: 1;
           min-width: 0;
+          transition: all var(--transition-base);
         }
 
         .link-button {

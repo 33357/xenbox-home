@@ -225,13 +225,6 @@ const Box = () => {
                         <span className="info-label">锁定时间</span>
                         <div className="info-value-container">
                           <span className="info-value">{token.term} 天</span>
-                          <span className="info-date">
-                            到期: {new Date(token.time * 1000).toLocaleDateString('zh-CN', {
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit'
-                            })}
-                          </span>
                         </div>
                       </div>
                     )}
@@ -240,23 +233,26 @@ const Box = () => {
                       <div className="info-row">
                         <span className="info-label">收益</span>
                         <span className="info-value">
-                          {utils.format.bigToString(
-                            token.mint.mul(10000 - xenbox.feeMap[version][accountCount]).div(10000),
-                            18,
-                            0
-                          )} XEN
+                          {penalty > 0 ? (
+                            <>
+                              {utils.format.bigToString(
+                                token.mint.mul(10000 - xenbox.feeMap[version][accountCount]).div(10000),
+                                18,
+                                0
+                              )} XEN
+                              <span className="penalty-text">(-{penalty}%)</span>
+                            </>
+                          ) : (
+                            `${utils.format.bigToString(
+                              token.mint.mul(10000 - xenbox.feeMap[version][accountCount]).div(10000),
+                              18,
+                              0
+                            )} XEN`
+                          )}
                         </span>
                       </div>
                     )}
-                    
-                    {token.time > 0 && isExpired && (
-                      <div className="time-info">
-                        <span className="time-icon">✅</span>
-                        <span className="time-text">
-                          {penalty > 0 ? `延期惩罚: ${penalty}%` : '已到期'}
-                        </span>
-                      </div>
-                    )}
+                  
                   </div>
 
                   <button
@@ -372,6 +368,18 @@ const Box = () => {
                       <div className="input-border"></div>
                     </div>
                   </div>
+                  
+                  <div className="gas-prediction">
+                    <a
+                      href={`https://gas.33357.xyz/?c=${wallet.chainId}&g=7000000`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="gas-link"
+                    >
+                      <span className="link-icon">⛽</span>
+                      Gas 预测
+                    </a>
+                  </div>
                 </div>
               )}
             </div>
@@ -394,17 +402,6 @@ const Box = () => {
               </button>
             </div>
 
-            <div className="modal-footer">
-              <a
-                href={`https://gas.33357.xyz/?c=${wallet.chainId}&g=7000000`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="footer-link"
-              >
-                <span className="link-icon">⛽</span>
-                Gas 预测
-              </a>
-            </div>
           </div>
         </div>
       )}
@@ -606,13 +603,13 @@ const Box = () => {
         }
 
         .box-status.ready {
-          background: var(--success);
+          background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
           color: white;
         }
 
         .box-status.locked {
-          background: var(--bg-secondary);
-          color: var(--text-tertiary);
+          background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+          color: white;
         }
 
         .box-image-container {
@@ -709,6 +706,12 @@ const Box = () => {
           color: var(--text-secondary);
         }
 
+        .penalty-text {
+          color: var(--danger);
+          font-size: 0.875rem;
+          margin-left: var(--space-xs);
+        }
+
         .claim-button {
           width: 100%;
           display: flex;
@@ -731,8 +734,8 @@ const Box = () => {
         }
 
         .claim-button:disabled {
-          background: var(--bg-tertiary);
-          color: var(--text-tertiary);
+          background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+          color: white;
           cursor: not-allowed;
         }
 
@@ -934,6 +937,31 @@ const Box = () => {
 
         .advanced-content {
           animation: slideIn 0.3s ease-out;
+        }
+
+        .gas-prediction {
+          margin-top: var(--space-md);
+          text-align: center;
+        }
+
+        .gas-link {
+          display: inline-flex;
+          align-items: center;
+          gap: var(--space-xs);
+          color: var(--text-secondary);
+          text-decoration: none;
+          font-weight: 500;
+          padding: var(--space-sm) var(--space-md);
+          border: 1px solid var(--glass-border);
+          border-radius: var(--radius-md);
+          transition: all var(--transition-base);
+          background: var(--bg-tertiary);
+        }
+
+        .gas-link:hover {
+          color: var(--primary);
+          border-color: var(--primary);
+          background: var(--bg-secondary);
         }
 
         .modal-actions {

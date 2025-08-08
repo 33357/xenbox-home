@@ -112,29 +112,41 @@ const Home = () => {
               ))}
             </div>
 
-            <div className="nav-wallet">
-              {wallet.isConnected ? (
-                <div className="wallet-connected">
-                  <div className="wallet-status"></div>
-                  <div className="wallet-details">
-                    <span className="wallet-address">
-                      {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
-                    </span>
-                    <span className="wallet-network">
-                      {xenbox.chainConfig?.eth || 'Unknown'}
-                    </span>
+            <div className="nav-right">
+              <a 
+                href="https://t.me/xenboxstore"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="community-link"
+              >
+                <span className="community-icon">💬</span>
+                <span className="community-text">加入社区</span>
+              </a>
+              
+              <div className="nav-wallet">
+                {wallet.isConnected ? (
+                  <div className="wallet-connected">
+                    <div className="wallet-status"></div>
+                    <div className="wallet-details">
+                      <span className="wallet-address">
+                        {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
+                      </span>
+                      <span className="wallet-network">
+                        {xenbox.chainConfig?.eth || 'Unknown'}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <button 
-                  onClick={handleConnectWallet} 
-                  disabled={wallet.isConnecting}
-                  className="connect-btn"
-                >
-                  <span className="connect-icon">🔗</span>
-                  {wallet.isConnecting ? '连接中...' : '连接钱包'}
-                </button>
-              )}
+                ) : (
+                  <button 
+                    onClick={handleConnectWallet} 
+                    disabled={wallet.isConnecting}
+                    className="connect-btn"
+                  >
+                    <span className="connect-icon">🔗</span>
+                    {wallet.isConnecting ? '连接中...' : '连接钱包'}
+                  </button>
+                )}
+              </div>
             </div>
 
             <button 
@@ -359,8 +371,42 @@ const Home = () => {
           display: block;
         }
 
-        .nav-wallet {
+        .nav-right {
+          display: flex;
+          align-items: center;
+          gap: var(--space-md);
           margin-left: auto;
+        }
+
+        .community-link {
+          display: flex;
+          align-items: center;
+          gap: var(--space-xs);
+          padding: var(--space-sm) var(--space-md);
+          background: var(--glass-bg);
+          border: 1px solid var(--glass-border);
+          border-radius: var(--radius-lg);
+          color: var(--text-secondary);
+          text-decoration: none;
+          font-weight: 500;
+          transition: all var(--transition-base);
+          backdrop-filter: blur(10px);
+        }
+
+        .community-link:hover {
+          color: var(--primary);
+          border-color: var(--primary);
+          background: var(--bg-tertiary);
+          transform: translateY(-2px);
+        }
+
+        .community-icon {
+          font-size: 1.2rem;
+        }
+
+        .community-text {
+          font-size: 0.9rem;
+          white-space: nowrap;
         }
 
         .wallet-connected {
@@ -667,6 +713,20 @@ const Home = () => {
 
           .hero-stats {
             grid-template-columns: repeat(1, 1fr);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .nav-right {
+            gap: var(--space-sm);
+          }
+
+          .community-text {
+            display: none;
+          }
+
+          .community-link {
+            padding: var(--space-sm);
           }
         }
 

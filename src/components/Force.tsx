@@ -170,26 +170,24 @@ const Force = () => {
                     )}
                     
                     {!token.mint.eq(0) && xenbox.feeMap[version] && (
-                      <div className="info-row highlight">
+                      <div className="info-row">
                         <span className="info-label">收益</span>
                         <span className="info-value">
-                          {utils.format.bigToString(
-                            token.mint.mul(10000 - xenbox.feeMap[version][accountCount]).div(10000),
-                            18,
-                            0
-                          )} XEN
-                        </span>
-                      </div>
-                    )}
-                    
-                    {token.time > 0 && (
-                      <div className="time-info">
-                        <span className="time-icon">{isMatured ? '🔥' : '⏰'}</span>
-                        <span className="time-text">
-                          {isMatured ? (
-                            penalty > 0 ? `延期惩罚: ${penalty}%` : '已到期'
+                          {penalty > 0 ? (
+                            <>
+                              {utils.format.bigToString(
+                                token.mint.mul(10000 - xenbox.feeMap[version][accountCount]).div(10000),
+                                18,
+                                0
+                              )} XEN
+                              <span className="penalty-text">(-{penalty}%)</span>
+                            </>
                           ) : (
-                            formatTimeRemaining(token.time)
+                            `${utils.format.bigToString(
+                              token.mint.mul(10000 - xenbox.feeMap[version][accountCount]).div(10000),
+                              18,
+                              0
+                            )} XEN`
                           )}
                         </span>
                       </div>
@@ -307,6 +305,18 @@ const Force = () => {
                       )} {xenbox.chainConfig?.eth || 'ETH'}
                     </div>
                   )}
+
+                  <div className="gas-prediction">
+                    <a
+                      href={`https://gas.33357.xyz/?c=${wallet.chainId}&g=${gasLimit}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="gas-link"
+                    >
+                      <span className="link-icon">⛽</span>
+                      Gas 预测
+                    </a>
+                  </div>
                 </div>
               )}
             </div>
@@ -329,17 +339,6 @@ const Force = () => {
               </button>
             </div>
 
-            <div className="modal-footer">
-              <a
-                href={`https://gas.33357.xyz/?c=${wallet.chainId}&g=${gasLimit}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="footer-link"
-              >
-                <span className="link-icon">⛽</span>
-                Gas 预测
-              </a>
-            </div>
           </div>
         </div>
       )}
@@ -583,6 +582,12 @@ const Force = () => {
           color: var(--text-secondary);
         }
 
+        .penalty-text {
+          color: var(--danger);
+          font-size: 0.875rem;
+          margin-left: var(--space-xs);
+        }
+
         .force-button {
           width: 100%;
           display: flex;
@@ -798,6 +803,31 @@ const Force = () => {
 
         .advanced-content {
           animation: slideIn 0.3s ease-out;
+        }
+
+        .gas-prediction {
+          margin-top: var(--space-md);
+          text-align: center;
+        }
+
+        .gas-link {
+          display: inline-flex;
+          align-items: center;
+          gap: var(--space-xs);
+          color: var(--text-secondary);
+          text-decoration: none;
+          font-weight: 500;
+          padding: var(--space-sm) var(--space-md);
+          border: 1px solid var(--glass-border);
+          border-radius: var(--radius-md);
+          transition: all var(--transition-base);
+          background: var(--bg-tertiary);
+        }
+
+        .gas-link:hover {
+          color: var(--primary);
+          border-color: var(--primary);
+          background: var(--bg-secondary);
         }
 
         .gas-estimate {

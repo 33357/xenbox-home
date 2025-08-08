@@ -110,30 +110,29 @@ const Search = () => {
                     )}
                     
                     {!token.mint.eq(0) && xenbox.feeMap[version] && (
-                      <div className="info-row highlight">
+                      <div className="info-row">
                         <span className="info-label">收益</span>
                         <span className="info-value">
-                          {utils.format.bigToString(
-                            token.mint.mul(10000 - xenbox.feeMap[version][accountCount]).div(10000),
-                            18,
-                            0
-                          )} XEN
-                        </span>
-                      </div>
-                    )}
-                    
-                    {token.time > 0 && (
-                      <div className="time-info">
-                        <span className="time-icon">{isExpired ? '✅' : '⏰'}</span>
-                        <span className="time-text">
-                          {isExpired ? (
-                            penalty > 0 ? `延期惩罚: ${penalty}%` : '已到期'
+                          {penalty > 0 ? (
+                            <>
+                              {utils.format.bigToString(
+                                token.mint.mul(10000 - xenbox.feeMap[version][accountCount]).div(10000),
+                                18,
+                                0
+                              )} XEN
+                              <span className="penalty-text">(-{penalty}%)</span>
+                            </>
                           ) : (
-                            new Date(token.time * 1000).toLocaleString()
+                            `${utils.format.bigToString(
+                              token.mint.mul(10000 - xenbox.feeMap[version][accountCount]).div(10000),
+                              18,
+                              0
+                            )} XEN`
                           )}
                         </span>
                       </div>
                     )}
+                  
                   </div>
                 </div>
               );
@@ -154,18 +153,14 @@ const Search = () => {
           align-items: center;
           gap: var(--space-md);
           margin-bottom: var(--space-xl);
-          background: var(--glass-bg);
-          padding: var(--space-md);
-          border-radius: var(--radius-lg);
-          backdrop-filter: blur(10px);
-          border: 1px solid var(--glass-border);
         }
 
         .search-input {
           flex: 1;
           padding: var(--space-md);
-          background: var(--bg-tertiary);
-          border: 2px solid transparent;
+          background: var(--glass-bg);
+          backdrop-filter: blur(10px);
+          border: 1px solid var(--glass-border);
           border-radius: var(--radius-md);
           color: var(--text-primary);
           font-size: 1.125rem;
@@ -176,11 +171,13 @@ const Search = () => {
         .search-input:focus {
           outline: none;
           border-color: var(--primary);
-          background: var(--bg-primary);
+          background: var(--glass-bg);
+          box-shadow: 0 0 0 1px var(--primary);
         }
 
         .search-input:disabled {
-          background: var(--bg-tertiary);
+          background: var(--glass-bg);
+          border-color: var(--glass-border);
           color: var(--text-tertiary);
           cursor: not-allowed;
         }
@@ -200,6 +197,7 @@ const Search = () => {
           transition: all var(--transition-base);
           min-width: 120px;
           box-shadow: 0 4px 12px var(--primary-glow);
+          font-size: 1.25rem;
         }
 
         .search-button:hover:not(:disabled) {
@@ -208,8 +206,10 @@ const Search = () => {
         }
 
         .search-button:disabled {
-          background: var(--bg-tertiary);
-          color: var(--text-tertiary);
+          background: var(--glass-bg);
+          backdrop-filter: blur(10px);
+          border: 1px solid var(--glass-border);
+          color: var(--text-secondary);
           cursor: not-allowed;
           box-shadow: none;
         }
@@ -335,13 +335,13 @@ const Search = () => {
         }
 
         .box-status.ready {
-          background: var(--success);
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           color: white;
         }
 
         .box-status.locked {
-          background: var(--bg-secondary);
-          color: var(--text-tertiary);
+          background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+          color: white;
         }
 
         .box-image-container {
@@ -422,6 +422,12 @@ const Search = () => {
         .time-text {
           font-weight: 500;
           color: var(--text-secondary);
+        }
+
+        .penalty-text {
+          color: var(--danger);
+          font-size: 0.875rem;
+          margin-left: var(--space-xs);
         }
 
         /* Responsive */

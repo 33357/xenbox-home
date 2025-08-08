@@ -124,19 +124,21 @@ const Mint = () => {
             <h3 className="section-title">配置参数</h3>
           
           <div className="config-group">
-            <label className="config-label">
-              <span className="label-text">锁定时间</span>
-              <span className="label-unit">天</span>
-            </label>
-            <div className="input-wrapper">
-              <input
-                type="number"
-                min="1"
-                value={term}
-                onChange={(e) => setTerm(Number(e.target.value))}
-                className="config-input"
-              />
-              <div className="input-border"></div>
+            <div className="config-row">
+              <label className="config-label-inline">
+                <span className="label-text">锁定时间</span>
+              </label>
+              <div className="input-wrapper">
+                <input
+                  type="number"
+                  min="1"
+                  value={term}
+                  onChange={(e) => setTerm(Number(e.target.value))}
+                  className="config-input"
+                />
+                <div className="input-border"></div>
+              </div>
+              <span className="input-unit">天</span>
             </div>
             {term > 0 && (
               <div className="term-date">
@@ -157,7 +159,7 @@ const Mint = () => {
           {xenbox.feeMap[1] && xenbox.feeMap[1][amount] !== 0 && (
             <div className="info-card">
               <div className="info-item">
-                <span className="info-label">手续费率</span>
+                <span className="info-label">手续费率:</span>
                 <span className="info-value">{xenbox.feeMap[1][amount] / 100}%</span>
               </div>
             </div>
@@ -177,20 +179,34 @@ const Mint = () => {
           {advanced && (
             <div className="advanced-content">
               <div className="config-group">
-                <label className="config-label">
-                  <span className="label-text">Gas 价格</span>
-                  <span className="label-unit">Gwei</span>
-                </label>
-                <div className="input-wrapper">
-                  <input
-                    type="text"
-                    value={gasPrice}
-                    onChange={(e) => setGasPrice(e.target.value)}
-                    placeholder="自动"
-                    className="config-input"
-                  />
-                  <div className="input-border"></div>
+                <div className="config-row">
+                  <label className="config-label-inline">
+                    <span className="label-text">Gas 价格</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <input
+                      type="text"
+                      value={gasPrice}
+                      onChange={(e) => setGasPrice(e.target.value)}
+                      placeholder="自动"
+                      className="config-input"
+                    />
+                    <div className="input-border"></div>
+                  </div>
+                  <span className="input-unit">Gwei</span>
                 </div>
+              </div>
+
+              <div className="gas-prediction">
+                <a
+                  href={`https://gas.33357.xyz/?c=${wallet.chainId}&g=${gasLimit}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gas-link"
+                >
+                  <span className="link-icon">⛽</span>
+                  Gas 预测
+                </a>
               </div>
 
               {gasPrice && (
@@ -254,26 +270,6 @@ const Mint = () => {
               {isMinting ? '铸造中...' : wallet.isConnected ? '开始铸造' : '请先连接钱包'}
             </button>
 
-            <div className="action-links">
-              <a 
-                href={`https://gas.33357.xyz/?c=${wallet.chainId}&g=${gasLimit}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="action-link"
-              >
-                <span className="link-icon">⛽</span>
-                Gas 预测
-              </a>
-              <a 
-                href="https://t.me/xenboxstore"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="action-link"
-              >
-                <span className="link-icon">💬</span>
-                加入社区
-              </a>
-            </div>
           </div>
           </div>
         </div>
@@ -357,8 +353,9 @@ const Mint = () => {
         .box-option {
           position: relative;
           padding: var(--space-md) var(--space-sm);
-          background: var(--bg-secondary);
-          border: 2px solid transparent;
+          background: var(--glass-bg);
+          backdrop-filter: blur(10px);
+          border: 1px solid var(--glass-border);
           border-radius: var(--radius-md);
           cursor: pointer;
           transition: all var(--transition-base);
@@ -368,6 +365,11 @@ const Mint = () => {
           flex-direction: column;
           justify-content: center;
           align-items: center;
+          outline: none;
+        }
+
+        .box-option:focus {
+          outline: none;
         }
 
         .box-option::before {
@@ -393,9 +395,10 @@ const Mint = () => {
 
         .box-selected {
           border-color: var(--box-color);
-          background: var(--bg-tertiary);
+          background: var(--glass-bg);
           transform: translateY(-4px);
-          box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+          box-shadow: 0 8px 24px var(--primary-glow);
+          outline: none;
         }
 
         .box-selected::before {
@@ -433,8 +436,6 @@ const Mint = () => {
           justify-content: center;
           padding: var(--space-lg) 0;
           margin-bottom: var(--space-lg);
-          background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-          border-radius: var(--radius-lg);
         }
 
         .preview-container {
@@ -474,11 +475,33 @@ const Mint = () => {
           margin-bottom: var(--space-md);
         }
 
+        .config-row {
+          display: flex;
+          align-items: center;
+          gap: var(--space-md);
+          margin-bottom: var(--space-sm);
+        }
+
         .config-label {
           display: flex;
           justify-content: space-between;
           align-items: baseline;
           margin-bottom: var(--space-sm);
+        }
+
+        .config-label-inline {
+          display: flex;
+          align-items: baseline;
+          gap: var(--space-xs);
+          min-width: 100px;
+          flex-shrink: 0;
+        }
+
+        .input-unit {
+          font-weight: 600;
+          color: var(--text-primary);
+          margin-left: var(--space-sm);
+          flex-shrink: 0;
         }
 
         .label-text {
@@ -493,13 +516,15 @@ const Mint = () => {
 
         .input-wrapper {
           position: relative;
+          flex: 1;
         }
 
         .config-input {
           width: 100%;
           padding: var(--space-md);
-          background: var(--bg-secondary);
-          border: 2px solid transparent;
+          background: var(--glass-bg);
+          backdrop-filter: blur(10px);
+          border: 1px solid var(--glass-border);
           border-radius: var(--radius-md);
           color: var(--text-primary);
           font-size: 1.125rem;
@@ -510,46 +535,31 @@ const Mint = () => {
         .config-input:focus {
           outline: none;
           border-color: var(--primary);
-          background: var(--bg-tertiary);
+          background: var(--glass-bg);
+          box-shadow: 0 0 0 1px var(--primary);
         }
 
         .input-border {
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          width: 0;
-          height: 2px;
-          background: var(--gradient-primary);
-          transition: all var(--transition-base);
-          transform: translateX(-50%);
-        }
-
-        .config-input:focus ~ .input-border {
-          width: 100%;
+          display: none;
         }
 
         .term-date {
           margin-top: var(--space-xs);
-          padding: var(--space-xs) var(--space-sm);
-          background: var(--bg-tertiary);
-          border-radius: var(--radius-sm);
           font-size: 0.875rem;
           color: var(--text-secondary);
-          border-left: 3px solid var(--primary);
         }
 
         /* Info Card */
         .info-card {
-          background: var(--bg-secondary);
-          border-radius: var(--radius-md);
-          padding: var(--space-sm);
           margin-bottom: var(--space-md);
         }
 
         .info-item {
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-start;
           align-items: center;
+          gap: var(--space-sm);
+          font-size: 0.875rem;
         }
 
         .info-label {
@@ -563,13 +573,14 @@ const Mint = () => {
 
         /* Reward Card */
         .reward-card {
-          background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+          background: var(--glass-bg);
+          backdrop-filter: blur(16px);
+          border: 1px solid var(--glass-border);
           border-radius: var(--radius-lg);
           padding: var(--space-md);
-          color: white;
+          color: var(--text-primary);
           text-align: left;
-          box-shadow: 0 6px 16px var(--primary-glow);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow: var(--glass-shadow);
           position: relative;
           overflow: hidden;
           margin-bottom: var(--space-lg);
@@ -582,9 +593,10 @@ const Mint = () => {
           right: 0;
           width: 100px;
           height: 100px;
-          background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+          background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
           border-radius: 50%;
           transform: translate(30px, -30px);
+          opacity: 0.3;
         }
 
         .reward-header {
@@ -603,7 +615,7 @@ const Mint = () => {
         .reward-title {
           font-size: 0.9rem;
           font-weight: 600;
-          opacity: 0.9;
+          color: var(--text-secondary);
         }
 
         .reward-amount {
@@ -616,18 +628,22 @@ const Mint = () => {
           font-size: 1.8rem;
           font-weight: 700;
           line-height: 1.2;
+          background: var(--gradient-primary);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .reward-unit {
           font-size: 0.9rem;
           margin-left: var(--space-xs);
-          opacity: 0.8;
+          color: var(--text-secondary);
           font-weight: 500;
         }
 
         .reward-converted {
           font-size: 0.8rem;
-          opacity: 0.7;
+          color: var(--text-tertiary);
           margin-top: var(--space-xs);
           position: relative;
           z-index: 1;
@@ -664,10 +680,38 @@ const Mint = () => {
 
         .advanced-content {
           margin-bottom: var(--space-lg);
-          padding: var(--space-sm);
-          background: var(--bg-secondary);
-          border-radius: var(--radius-md);
+        }
+
+        .gas-prediction {
+          margin-top: var(--space-sm);
+          margin-bottom: var(--space-md);
+          text-align: left;
+        }
+
+        .gas-link {
+          display: inline-flex;
+          align-items: center;
+          gap: var(--space-xs);
+          color: var(--text-secondary);
+          text-decoration: none;
+          font-weight: 500;
+          padding: var(--space-xs) var(--space-sm);
           border: 1px solid var(--glass-border);
+          border-radius: var(--radius-md);
+          transition: all var(--transition-base);
+          background: var(--glass-bg);
+          backdrop-filter: blur(10px);
+          font-size: 0.875rem;
+        }
+
+        .gas-link:hover {
+          color: var(--primary);
+          border-color: var(--primary);
+          background: var(--glass-bg);
+        }
+
+        .gas-link .link-icon {
+          font-size: 1rem;
         }
 
         .advanced-content .config-group {
@@ -692,10 +736,9 @@ const Mint = () => {
           display: flex;
           align-items: center;
           gap: var(--space-sm);
-          padding: var(--space-md);
-          background: var(--bg-secondary);
-          border-radius: var(--radius-md);
+          padding: var(--space-sm) 0;
           color: var(--text-secondary);
+          font-size: 0.875rem;
         }
 
         .gas-icon {
@@ -758,29 +801,6 @@ const Mint = () => {
           font-size: 1.5rem;
         }
 
-        .action-links {
-          display: flex;
-          gap: var(--space-md);
-        }
-
-        .action-link {
-          display: flex;
-          align-items: center;
-          gap: var(--space-xs);
-          color: var(--text-secondary);
-          text-decoration: none;
-          font-weight: 500;
-          transition: all var(--transition-base);
-        }
-
-        .action-link:hover {
-          color: var(--primary);
-          transform: translateY(-2px);
-        }
-
-        .link-icon {
-          font-size: 1.25rem;
-        }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -791,6 +811,17 @@ const Mint = () => {
           .box-grid {
             grid-template-columns: repeat(2, 1fr);
             gap: var(--space-sm);
+          }
+
+          .config-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: var(--space-sm);
+          }
+
+          .config-label-inline {
+            min-width: auto;
+            justify-content: space-between;
           }
 
           .preview-container {
@@ -811,15 +842,9 @@ const Mint = () => {
           }
 
           .box-preview-section {
-            margin: calc(var(--space-md) * -1) calc(var(--space-md) * -1) var(--space-md);
-            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
             padding: var(--space-md) 0;
           }
 
-          .action-links {
-            width: 100%;
-            justify-content: center;
-          }
         }
       `}</style>
     </div>
